@@ -1,4 +1,4 @@
-const CACHE = "chrono-pwa-v1";
+const CACHE = "chrono-pwa-v2";
 const FILES = [
   "./",
   "./index.html",
@@ -20,3 +20,4 @@ self.addEventListener("fetch", event => {
     )
   );
 });
+
