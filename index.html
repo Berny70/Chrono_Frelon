@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chronos multiples</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#000000">
+</head>
+<body>
+
+<h1>Chronos</h1>
+
+<div class="ligne rouge">
+  <div class="temps" id="t0">0 s</div>
+  <button onclick="startStop(0)">START / STOP</button>
+  <button onclick="sup(0)">SUP</button>
+  <button onclick="rst(0)">RST</button>
+  <div class="stats">
+    Essais : <span id="n0">0</span> |
+    Moyenne : <span id="m0">0</span> s |
+    Dist : <span id="d0">0</span> m
+  </div>
+</div>
+
+<div class="ligne bleue">
+  <div class="temps" id="t1">0 s</div>
+  <button onclick="startStop(1)">START / STOP</button>
+  <button onclick="sup(1)">SUP</button>
+  <button onclick="rst(1)">RST</button>
+  <div class="stats">
+    Essais : <span id="n1">0</span> |
+    Moyenne : <span id="m1">0</span> s |
+    Dist : <span id="d1">0</span> m
+  </div>
+</div>
+
+<div class="ligne verte">
+  <div class="temps" id="t2">0 s</div>
+  <button onclick="startStop(2)">START / STOP</button>
+  <button onclick="sup(2)">SUP</button>
+  <button onclick="rst(2)">RST</button>
+  <div class="stats">
+    Essais : <span id="n2">0</span> |
+    Moyenne : <span id="m2">0</span> s |
+    Dist : <span id="d2">0</span> m
+  </div>
+</div>
+
+<div class="ligne blanche">
+  <div class="temps" id="t3">0 s</div>
+  <button onclick="startStop(3)">START / STOP</button>
+  <button onclick="sup(3)">SUP</button>
+  <button onclick="rst(3)">RST</button>
+  <div class="stats">
+    Essais : <span id="n3">0</span> |
+    Moyenne : <span id="m3">0</span> s |
+    Dist : <span id="d3">0</span> m
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("service-worker.js");
+    }
+    </script>
+  
+</body>
+</html>
