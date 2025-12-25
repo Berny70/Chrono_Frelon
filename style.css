@@ -54,20 +54,18 @@ body {
 
 .chrono {
   display: flex;
-  flex-direction: column; /* chrono en haut, infos en dessous, boutons en bas */
-  justify-content: space-between;
+  flex-direction: column;
   padding: 12px;
   border-radius: 8px;
-  color: #000;
 }
 
-/* Pastel par couleur */
-.chrono.red    { background-color: #f8d7da; border: 2px solid #c00; }
-.chrono.blue   { background-color: #d0e7f9; border: 2px solid #0077cc; }
-.chrono.green  { background-color: #d4edda; border: 2px solid #0a0; }
-.chrono.white  { background-color: #f0f0f0; border: 2px solid #999; }
+/* Couleurs pastel */
+.chrono.red    { background: #f8d7da; border: 2px solid #c00; }
+.chrono.blue   { background: #d0e7f9; border: 2px solid #0077cc; }
+.chrono.green  { background: #d4edda; border: 2px solid #0a0; }
+.chrono.white  { background: #f0f0f0; border: 2px solid #999; }
 
-/* Temps en gros */
+/* Temps */
 .chrono .time {
   font-size: 2em;
   font-weight: bold;
@@ -75,42 +73,71 @@ body {
   margin-bottom: 6px;
 }
 
-/* Ligne info : essai / moy / dist sur une seule ligne */
+/* Ligne info */
 .chrono .info {
   display: flex;
-  justify-content: space-between; /* essai à gauche, moy au centre, dist à droite */
+  justify-content: space-between;
   font-size: 1em;
   margin-bottom: 6px;
 }
 
-/* Boutons en bas */
+/* Boutons */
 .chrono .buttons {
   display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 8px;
+  align-items: center;
+  margin-top: 10px;
 }
 
 .chrono button {
-  padding: 6px 12px;
-  font-size: 1em;
-  border-radius: 4px;
+  padding: 10px 16px;
+  font-size: 1.1em;
+  font-weight: bold;
+  border-radius: 6px;
   border: none;
   cursor: pointer;
 }
 
-.chrono button.start { background: #4caf50; color: #fff; }
-.chrono button.undo  { background: #ff9800; color: #000; }
-.chrono button.reset { background: #f44336; color: #fff; }
+/* Placement + couleurs */
+.chrono button.undo {
+  background: #ff9800;
+  color: #000;
+  margin-right: auto;
+}
+
+.chrono button.start {
+  background: #4caf50;
+  color: #fff;
+}
+
+.chrono button.reset {
+  background: #f44336;
+  color: #fff;
+  margin-left: auto;
+}
 
 /* ================================
-   Responsive
+   RESPONSIVE
 ================================ */
 @media (max-width: 600px) {
-  .top-title { font-size: 1.8em; }
-  .top-logo { width: 48px; height: 48px; }
+  .top-title {
+    font-size: 1.8em;
+  }
 
-  .chrono .time { font-size: 1.6em; }
-  .chrono .info { font-size: 0.9em; }
-  .chrono button { font-size: 0.9em; padding: 5px 8px; }
+  .top-logo {
+    width: 48px;
+    height: 48px;
+  }
+
+  .chrono .time {
+    font-size: 1.6em;
+  }
+
+  .chrono .info {
+    font-size: 0.9em;
+  }
+
+  .chrono button {
+    font-size: 1em;
+    padding: 8px 12px;
+  }
 }
