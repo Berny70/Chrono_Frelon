@@ -38,22 +38,22 @@ body {
 .footer {
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  gap: 16px;
-  padding: 12px;
+  justify-content: space-between; /* clé */
+  padding: 12px 16px;
   margin-top: 20px;
   border-top: 1px solid #ccc;
-  font-size: 1em;
 }
 
 .footer-logo {
-  width: 64px;
-  height: 64px;
+  width: 72px;        /* assez gros */
+  height: 72px;
 }
 
 .footer-text {
-  text-align: left;
-  line-height: 1.3em;
+  text-align: right;  /* texte à droite */
+  line-height: 1.4em;
+  font-size: 1em;
 }
 
   
+
