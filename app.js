@@ -100,7 +100,7 @@ function updateStats(i) {
 
   const total = essais.reduce((a, b) => a + b, 0);
   const moyenne = total / essais.length;
-  const distance = moyenne * 5;
+  const distance = moyenne * 2;
 
   document.getElementById(`m${i}`).textContent = moyenne.toFixed(2);
   document.getElementById(`d${i}`).textContent = distance.toFixed(2);
@@ -121,3 +121,4 @@ function tick() {
 }
 
 setInterval(tick, 50);
+
