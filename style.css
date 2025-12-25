@@ -54,7 +54,7 @@ body {
 
 .chrono {
   display: flex;
-  flex-direction: column; /* chrono en haut, infos en dessous */
+  flex-direction: column; /* chrono en haut, infos en dessous, boutons en bas */
   justify-content: space-between;
   padding: 12px;
   border-radius: 8px;
@@ -75,13 +75,12 @@ body {
   margin-bottom: 6px;
 }
 
-/* Ligne info (essai, moy, dist) */
-.chrono .count,
-.chrono .avg,
-.chrono .dist {
+/* Ligne info : essai / moy / dist sur une seule ligne */
+.chrono .info {
+  display: flex;
+  justify-content: space-between; /* essai à gauche, moy au centre, dist à droite */
   font-size: 1em;
-  text-align: center;
-  margin: 2px 0;
+  margin-bottom: 6px;
 }
 
 /* Boutons en bas */
@@ -112,8 +111,6 @@ body {
   .top-logo { width: 48px; height: 48px; }
 
   .chrono .time { font-size: 1.6em; }
-  .chrono .count,
-  .chrono .avg,
-  .chrono .dist { font-size: 0.9em; }
+  .chrono .info { font-size: 0.9em; }
   .chrono button { font-size: 0.9em; padding: 5px 8px; }
 }
