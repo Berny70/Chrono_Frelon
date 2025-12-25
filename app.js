@@ -1,13 +1,9 @@
-// ===============================
-// Données des chronos
-// ===============================
 const chronoColors = ["red", "blue", "green", "white"];
 const chronos = [];
 
 window.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("chronos");
 
-  // Création des 4 chronos
   chronoColors.forEach((color, i) => {
     const c = {
       running: false,
@@ -24,16 +20,15 @@ window.addEventListener("DOMContentLoaded", () => {
     div.innerHTML = `
       <button class="start">Start / Stop</button>
       <span class="time" id="t${i}">0.00 s</span>
-      <span class="count" id="n${i}">0</span>
-      <span class="avg" id="m${i}">0</span>
-      <span class="dist" id="d${i}">0</span>
+      <span class="count" id="n${i}">0 essai</span>
+      <span class="avg" id="m${i}">moy: 0.00 s</span>
+      <span class="dist" id="d${i}">dist: 0.00 m</span>
       <button class="undo">SUP</button>
       <button class="reset">RST</button>
     `;
 
     container.appendChild(div);
 
-    // Boutons
     div.querySelector(".start").addEventListener("click", () => startStop(i));
     div.querySelector(".undo").addEventListener("click", () => sup(i));
     div.querySelector(".reset").addEventListener("click", () => rst(i));
@@ -84,26 +79,26 @@ function rst(i) {
 }
 
 // ==========================
-// Mise à jour stats
+// Mise à jour stats avec textes
 // ==========================
 function updateStats(i) {
   const c = chronos[i];
   const essais = c.essais;
 
-  document.getElementById(`n${i}`).textContent = essais.length;
+  document.getElementById(`n${i}`).textContent = essais.length + " essai";
 
   if (essais.length === 0) {
-    document.getElementById(`m${i}`).textContent = "0";
-    document.getElementById(`d${i}`).textContent = "0";
+    document.getElementById(`m${i}`).textContent = "moy: 0.00 s";
+    document.getElementById(`d${i}`).textContent = "dist: 0.00 m";
     return;
   }
 
   const total = essais.reduce((a, b) => a + b, 0);
   const moyenne = total / essais.length;
-  const distance = moyenne * 2;
+  const distance = moyenne * 5;
 
-  document.getElementById(`m${i}`).textContent = moyenne.toFixed(2);
-  document.getElementById(`d${i}`).textContent = distance.toFixed(2);
+  document.getElementById(`m${i}`).textContent = "moy: " + moyenne.toFixed(2) + " s";
+  document.getElementById(`d${i}`).textContent = "dist: " + distance.toFixed(2) + " m";
 }
 
 // ==========================
@@ -121,4 +116,3 @@ function tick() {
 }
 
 setInterval(tick, 50);
-
