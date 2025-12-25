@@ -1,3 +1,6 @@
+// ===============================
+// Données des chronos
+// ===============================
 const chronoColors = ["red", "blue", "green", "white"];
 const chronos = [];
 
@@ -38,7 +41,7 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 // ==========================
-// Fonctions Start / Stop
+// START / STOP
 // ==========================
 function startStop(i) {
   const c = chronos[i];
@@ -48,8 +51,7 @@ function startStop(i) {
     c.startTime = now;
     c.running = true;
   } else {
-    const elapsedMs = now - c.startTime;
-    const elapsedSec = elapsedMs / 1000;
+    const elapsedSec = (now - c.startTime) / 1000;
     c.essais.push(elapsedSec);
     c.running = false;
 
