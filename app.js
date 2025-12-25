@@ -97,3 +97,18 @@ function tick() {
 
 // Rafraîchissement fluide pour les centièmes
 setInterval(tick, 50);
+
+if (navigator.serviceWorker) {
+  navigator.serviceWorker.ready.then(reg => {
+    if (reg.active) {
+      reg.active.postMessage("GET_VERSION");
+    }
+  });
+
+  navigator.serviceWorker.addEventListener("message", event => {
+    if (event.data && event.data.version) {
+      document.getElementById("version").textContent =
+        "version " + event.data.version;
+    }
+  });
+}
