@@ -1,4 +1,5 @@
-const CACHE = "chrono-pwa-v3";
+const APP_VERSION = "1.04";
+const CACHE = "chrono-pwa-v1.04";
 const FILES = [
   "./",
   "./index.html",
@@ -19,6 +20,12 @@ self.addEventListener("fetch", event => {
       response => response || fetch(event.request)
     )
   );
+self.addEventListener("message", event => {
+  if (event.data === "GET_VERSION") {
+    event.source.postMessage({ version: APP_VERSION });
+  }
 });
+
+
 
 
