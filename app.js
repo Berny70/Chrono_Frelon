@@ -104,7 +104,8 @@ function updateStats(i) {
   const distance = moyenne * 2;
 
   document.getElementById(`m${i}`).textContent = "moy: " + moyenne.toFixed(2) + " s";
-  document.getElementById(`d${i}`).textContent = "dist: " + distance.toFixed(2) + " m";
+  document.getElementById(`d${i}`).textContent = "dist: " + Math.round(distance) + " m";
+
 }
 
 // ==========================
@@ -122,5 +123,6 @@ function tick() {
 }
 
 setInterval(tick, 50);
+
 
 
