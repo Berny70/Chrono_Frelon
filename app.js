@@ -29,9 +29,9 @@ window.addEventListener("DOMContentLoaded", () => {
     div.innerHTML = `
       <span class="time" id="t${i}">0.00 s</span>
       <div class="info">
-        <span class="count" id="n${i}">0 essai</span>
-        <span class="avg" id="m${i}">moy: 0.00 s</span>
-        <span class="dist" id="d${i}">dist: 0 m</span>
+        <span class="count" id="n${i}">0 ess.</span>
+        <span class="avg" id="m${i}">moy.: 0.00 s</span>
+        <span class="dist" id="d${i}">dist.: 0 m</span>
       </div>
       <div class="buttons">
         <button class="undo">SUP</button>
@@ -133,6 +133,7 @@ function tick() {
 }
 
 setInterval(tick, 50);
+
 
 
 
