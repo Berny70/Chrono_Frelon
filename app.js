@@ -16,16 +16,19 @@ window.addEventListener("DOMContentLoaded", () => {
     const div = document.createElement("div");
     div.className = `chrono ${color}`;
     div.id = `chrono-${i}`;
-
+    
     div.innerHTML = `
-      <button class="start">Start / Stop</button>
       <span class="time" id="t${i}">0.00 s</span>
       <span class="count" id="n${i}">0 essai</span>
       <span class="avg" id="m${i}">moy: 0.00 s</span>
       <span class="dist" id="d${i}">dist: 0.00 m</span>
-      <button class="undo">SUP</button>
-      <button class="reset">RST</button>
+      <div class="buttons">
+        <button class="start">Start / Stop</button>
+        <button class="undo">SUP</button>
+        <button class="reset">RST</button>
+      </div>
     `;
+
 
     container.appendChild(div);
 
@@ -116,3 +119,4 @@ function tick() {
 }
 
 setInterval(tick, 50);
+
