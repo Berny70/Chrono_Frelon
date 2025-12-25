@@ -38,6 +38,7 @@ window.addEventListener("DOMContentLoaded", () => {
         <button class="start">Start / Stop</button>
         <button class="reset">RST</button>
       </div>
+
     `;
 
 
@@ -132,6 +133,7 @@ function tick() {
 }
 
 setInterval(tick, 50);
+
 
 
 
