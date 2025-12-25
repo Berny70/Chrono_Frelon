@@ -1,7 +1,6 @@
 /* ================================
    GLOBAL
 ================================ */
-
 * {
   box-sizing: border-box;
 }
@@ -16,7 +15,6 @@ body {
 /* ================================
    HEADER
 ================================ */
-
 .topbar {
   display: flex;
   align-items: center;
@@ -45,22 +43,17 @@ body {
 }
 
 /* ================================
-   MAIN
-================================ */
-
-main {
-  padding: 10px;
-}
-
-/* ================================
    CHRONOS
 ================================ */
+#chronos {
+  padding: 10px;
+}
 
 .chrono {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 6px;
+  justify-content: flex-start;
+  gap: 8px;
   padding: 8px;
   margin-bottom: 10px;
   border-radius: 6px;
@@ -68,35 +61,25 @@ main {
   border: 2px solid #000;
 }
 
-/* Couleurs */
-
+/* Couleurs par chrono */
 .chrono.red    { border-color: #c00; }
 .chrono.blue   { border-color: #0077cc; }
 .chrono.green  { border-color: #0a0; }
 .chrono.white  { border-color: #999; }
 
-/* ================================
-   TEXTES
-================================ */
-
-.chrono .time {
-  font-size: 1.4em;
-  font-weight: bold;
-  min-width: 80px;
-}
-
+/* Temps, essais, moyenne, distance */
+.chrono .time,
 .chrono .count,
 .chrono .avg,
 .chrono .dist {
-  font-size: 0.9em;
-  min-width: 90px;
+  min-width: 50px;
+  text-align: center;
+  font-weight: bold;
+  font-size: 1em;
 }
 
-/* ================================
-   BOUTONS
-================================ */
-
-button {
+/* Boutons */
+.chrono button {
   padding: 6px 10px;
   font-size: 0.9em;
   border-radius: 4px;
@@ -104,41 +87,34 @@ button {
   cursor: pointer;
 }
 
-button.start {
+.chrono button.start {
   background: #4caf50;
   color: #fff;
 }
 
-button.undo {
+.chrono button.undo {
   background: #ff9800;
   color: #000;
 }
 
-button.reset {
+.chrono button.reset {
   background: #f44336;
   color: #fff;
 }
 
 /* ================================
-   RESPONSIVE
+   Responsive
 ================================ */
-
 @media (max-width: 600px) {
-  .top-title {
-    font-size: 1.8em;
-  }
-
-  .top-logo {
-    width: 48px;
-    height: 48px;
-  }
-
   .chrono {
-    flex-direction: column;
-    align-items: flex-start;
+    flex-wrap: wrap;
   }
 
-  .chrono .time {
-    font-size: 1.6em;
+  .chrono .time,
+  .chrono .count,
+  .chrono .avg,
+  .chrono .dist {
+    min-width: 40px;
+    font-size: 0.9em;
   }
 }
