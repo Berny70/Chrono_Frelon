@@ -1,59 +1,144 @@
+/* ================================
+   GLOBAL
+================================ */
+
+* {
+  box-sizing: border-box;
+}
+
 body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-  }
-  
-  h1 {
-    margin-bottom: 20px;
-  }
-  
-  .ligne {
-    padding: 12px;
-    margin: 12px auto;
-    max-width: 520px;
-    border-radius: 10px;
-  }
-  
-  .temps {
-    font-size: 2.5em;
-    margin-bottom: 8px;
-  }
-  
-  .stats {
-    margin-top: 6px;
-    font-size: 0.9em;
-  }
-  
-  button {
-    margin: 3px;
-    padding: 6px 10px;
-    font-size: 0.95em;
-  }
-  
-  /* Couleurs */
-  .rouge  { background: #e74c3c; color: white; }
-  .bleue  { background: #3498db; color: white; }
-  .verte  { background: #2ecc71; color: white; }
-  .blanche{ background: #ecf0f1; color: black; }
-.footer {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f5f5f5;
+  color: #000;
+}
+
+/* ================================
+   HEADER
+================================ */
+
+.topbar {
   display: flex;
   align-items: center;
-  justify-content: space-between; /* clé */
-  padding: 12px 16px;
-  margin-top: 20px;
-  border-top: 1px solid #ccc;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: #ffffff;
+  border-bottom: 2px solid #ccc;
 }
 
-.footer-logo {
-  width: 72px;        /* assez gros */
-  height: 72px;
+.top-logo {
+  width: 56px;
+  height: 56px;
 }
 
-.footer-text {
-  text-align: right;  /* texte à droite */
+.top-title {
+  flex: 1;
+  text-align: center;
+  font-size: 2.2em;
+  font-weight: bold;
+}
+
+.top-right {
+  text-align: right;
+  font-size: 0.9em;
   line-height: 1.4em;
-  font-size: 1em;
 }
 
-  
+/* ================================
+   MAIN
+================================ */
 
+main {
+  padding: 10px;
+}
+
+/* ================================
+   CHRONOS
+================================ */
+
+.chrono {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 8px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  background: #fff;
+  border: 2px solid #000;
+}
+
+/* Couleurs */
+
+.chrono.red    { border-color: #c00; }
+.chrono.blue   { border-color: #0077cc; }
+.chrono.green  { border-color: #0a0; }
+.chrono.white  { border-color: #999; }
+
+/* ================================
+   TEXTES
+================================ */
+
+.chrono .time {
+  font-size: 1.4em;
+  font-weight: bold;
+  min-width: 80px;
+}
+
+.chrono .count,
+.chrono .avg,
+.chrono .dist {
+  font-size: 0.9em;
+  min-width: 90px;
+}
+
+/* ================================
+   BOUTONS
+================================ */
+
+button {
+  padding: 6px 10px;
+  font-size: 0.9em;
+  border-radius: 4px;
+  border: none;
+  cursor: pointer;
+}
+
+button.start {
+  background: #4caf50;
+  color: #fff;
+}
+
+button.undo {
+  background: #ff9800;
+  color: #000;
+}
+
+button.reset {
+  background: #f44336;
+  color: #fff;
+}
+
+/* ================================
+   RESPONSIVE
+================================ */
+
+@media (max-width: 600px) {
+  .top-title {
+    font-size: 1.8em;
+  }
+
+  .top-logo {
+    width: 48px;
+    height: 48px;
+  }
+
+  .chrono {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .chrono .time {
+    font-size: 1.6em;
+  }
+}
