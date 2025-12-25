@@ -35,4 +35,25 @@ body {
   .bleue  { background: #3498db; color: white; }
   .verte  { background: #2ecc71; color: white; }
   .blanche{ background: #ecf0f1; color: black; }
+.footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 16px;
+  padding: 12px;
+  margin-top: 20px;
+  border-top: 1px solid #ccc;
+  font-size: 1em;
+}
+
+.footer-logo {
+  width: 64px;
+  height: 64px;
+}
+
+.footer-text {
+  text-align: left;
+  line-height: 1.3em;
+}
+
   
