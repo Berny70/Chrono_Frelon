@@ -19,15 +19,18 @@ window.addEventListener("DOMContentLoaded", () => {
     
     div.innerHTML = `
       <span class="time" id="t${i}">0.00 s</span>
-      <span class="count" id="n${i}">0 essai</span>
-      <span class="avg" id="m${i}">moy: 0.00 s</span>
-      <span class="dist" id="d${i}">dist: 0.00 m</span>
+      <div class="info">
+        <span class="count" id="n${i}">0 essai</span>
+        <span class="avg" id="m${i}">moy: 0.00 s</span>
+        <span class="dist" id="d${i}">dist: 0 m</span>
+      </div>
       <div class="buttons">
         <button class="start">Start / Stop</button>
         <button class="undo">SUP</button>
         <button class="reset">RST</button>
       </div>
     `;
+
 
 
     container.appendChild(div);
@@ -98,7 +101,7 @@ function updateStats(i) {
 
   const total = essais.reduce((a, b) => a + b, 0);
   const moyenne = total / essais.length;
-  const distance = moyenne * 5;
+  const distance = moyenne * 2;
 
   document.getElementById(`m${i}`).textContent = "moy: " + moyenne.toFixed(2) + " s";
   document.getElementById(`d${i}`).textContent = "dist: " + distance.toFixed(2) + " m";
@@ -119,4 +122,5 @@ function tick() {
 }
 
 setInterval(tick, 50);
+
 
