@@ -88,6 +88,12 @@ body {
   margin-top: 10px;
 }
 
+.chrono .buttons {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
 .chrono button {
   padding: 10px 16px;
   font-size: 1.1em;
@@ -97,11 +103,10 @@ body {
   cursor: pointer;
 }
 
-/* Placement + couleurs */
 .chrono button.undo {
   background: #ff9800;
   color: #000;
-  margin-right: auto;
+  margin-right: auto;   /* pousse vers la gauche */
 }
 
 .chrono button.start {
@@ -112,7 +117,7 @@ body {
 .chrono button.reset {
   background: #f44336;
   color: #fff;
-  margin-left: auto;
+  margin-left: auto;    /* pousse vers la droite */
 }
 
 /* ================================
@@ -141,3 +146,4 @@ body {
     padding: 8px 12px;
   }
 }
+
