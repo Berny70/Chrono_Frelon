@@ -47,74 +47,73 @@ body {
 ================================ */
 #chronos {
   padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .chrono {
   display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 8px;
-  padding: 8px;
-  margin-bottom: 10px;
-  border-radius: 6px;
-  background: #fff;
-  border: 2px solid #000;
+  flex-direction: column; /* chrono en haut, infos en dessous */
+  justify-content: space-between;
+  padding: 12px;
+  border-radius: 8px;
+  color: #000;
 }
 
-/* Couleurs par chrono */
-.chrono.red    { border-color: #c00; }
-.chrono.blue   { border-color: #0077cc; }
-.chrono.green  { border-color: #0a0; }
-.chrono.white  { border-color: #999; }
+/* Pastel par couleur */
+.chrono.red    { background-color: #f8d7da; border: 2px solid #c00; }
+.chrono.blue   { background-color: #d0e7f9; border: 2px solid #0077cc; }
+.chrono.green  { background-color: #d4edda; border: 2px solid #0a0; }
+.chrono.white  { background-color: #f0f0f0; border: 2px solid #999; }
 
-/* Temps, essais, moyenne, distance */
-.chrono .time,
+/* Temps en gros */
+.chrono .time {
+  font-size: 2em;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+/* Ligne info (essai, moy, dist) */
 .chrono .count,
 .chrono .avg,
 .chrono .dist {
-  min-width: 50px;
-  text-align: center;
-  font-weight: bold;
   font-size: 1em;
+  text-align: center;
+  margin: 2px 0;
 }
 
-/* Boutons */
+/* Boutons en bas */
+.chrono .buttons {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+
 .chrono button {
-  padding: 6px 10px;
-  font-size: 0.9em;
+  padding: 6px 12px;
+  font-size: 1em;
   border-radius: 4px;
   border: none;
   cursor: pointer;
 }
 
-.chrono button.start {
-  background: #4caf50;
-  color: #fff;
-}
-
-.chrono button.undo {
-  background: #ff9800;
-  color: #000;
-}
-
-.chrono button.reset {
-  background: #f44336;
-  color: #fff;
-}
+.chrono button.start { background: #4caf50; color: #fff; }
+.chrono button.undo  { background: #ff9800; color: #000; }
+.chrono button.reset { background: #f44336; color: #fff; }
 
 /* ================================
    Responsive
 ================================ */
 @media (max-width: 600px) {
-  .chrono {
-    flex-wrap: wrap;
-  }
+  .top-title { font-size: 1.8em; }
+  .top-logo { width: 48px; height: 48px; }
 
-  .chrono .time,
+  .chrono .time { font-size: 1.6em; }
   .chrono .count,
   .chrono .avg,
-  .chrono .dist {
-    min-width: 40px;
-    font-size: 0.9em;
-  }
+  .chrono .dist { font-size: 0.9em; }
+  .chrono button { font-size: 0.9em; padding: 5px 8px; }
 }
