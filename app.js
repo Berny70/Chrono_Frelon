@@ -34,8 +34,8 @@ window.addEventListener("DOMContentLoaded", () => {
         <span class="dist" id="d${i}">dist: 0 m</span>
       </div>
       <div class="buttons">
-        <button class="start">Start / Stop</button>
         <button class="undo">SUP</button>
+        <button class="start">Start / Stop</button>
         <button class="reset">RST</button>
       </div>
     `;
@@ -132,6 +132,7 @@ function tick() {
 }
 
 setInterval(tick, 50);
+
 
 
 
