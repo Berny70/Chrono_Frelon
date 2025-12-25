@@ -1,11 +1,46 @@
 // ===============================
 // Données des chronos
 // ===============================
-const chronos = Array.from({ length: 4 }, () => ({
-  running: false,
-  startTime: 0,   // en SECONDES
-  essais: []      // essais en SECONDES ENTIÈRES
-}));
+const chronoColors = ["red", "blue", "green", "white"];
+const chronos = [];
+
+// ===============================
+// INITIALISATION DES CHRONOS
+// ===============================
+window.addEventListener("DOMContentLoaded", () => {
+  const container = document.getElementById("chronos");
+
+  chronoColors.forEach((color, i) => {
+    const c = {
+      running: false,
+      startTime: 0,
+      essais: [],
+      color: color
+    };
+    chronos.push(c);
+
+    // Création HTML
+    const div = document.createElement("div");
+    div.className = `chrono ${color}`;
+    div.id = `chrono-${i}`;
+    div.innerHTML = `
+      <button class="start">Start / Stop</button>
+      <span class="time" id="t${i}">0.00 s</span>
+      <span class="count" id="n${i}">0</span>
+      <span class="avg" id="m${i}">0</span>
+      <span class="dist" id="d${i}">0</span>
+      <button class="undo">SUO</button>
+      <button class="reset">RST</button>
+    `;
+
+    container.appendChild(div);
+
+    // Événements
+    div.querySelector(".start").addEventListener("click", () => startStop(i));
+    div.querySelector(".undo").addEventListener("click", () => sup(i));
+    div.querySelector(".reset").addEventListener("click", () => rst(i));
+  });
+});
 
 // ===============================
 // START / STOP
@@ -49,7 +84,8 @@ function rst(i) {
   chronos[i] = {
     running: false,
     startTime: 0,
-    essais: []
+    essais: [],
+    color: chronos[i].color
   };
 
   document.getElementById(`t${i}`).textContent = "0 s";
@@ -95,20 +131,5 @@ function tick() {
   });
 }
 
-// Rafraîchissement fluide pour les centièmes
+// Rafraîchissement fluide pour centièmes
 setInterval(tick, 50);
-
-if (navigator.serviceWorker) {
-  navigator.serviceWorker.ready.then(reg => {
-    if (reg.active) {
-      reg.active.postMessage("GET_VERSION");
-    }
-  });
-
-  navigator.serviceWorker.addEventListener("message", event => {
-    if (event.data && event.data.version) {
-      document.getElementById("version").textContent =
-        "version " + event.data.version;
-    }
-  });
-}
