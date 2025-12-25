@@ -1,6 +1,15 @@
+
+// Lecture de la version depuis le service worker
+fetch('service-worker.js')
+  .then(r => r.text())
+  .then(txt => {
+    const match = txt.match(/APP_VERSION\s*=\s*["']([^"']+)["']/);
+    if (match) {
+      document.getElementById('version').textContent = "version " + match[1];
+    }
+  });
 const chronoColors = ["red", "blue", "green", "white"];
 const chronos = [];
-
 window.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("chronos");
 
@@ -123,6 +132,7 @@ function tick() {
 }
 
 setInterval(tick, 50);
+
 
 
 
