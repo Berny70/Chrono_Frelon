@@ -10,7 +10,7 @@ Distribution vers Androïd et IoS d'un chrono quadruple avec mémorisation
 L'apiculteur installe un pot à mèche et marque les frelons qu'il voit avec les crayons marqueur de reine.
 Quatre couleurs sont possible : Rouge, Bleue, Verte et Blanche 
 Les quatres chronos sont indépendants et comporte 
-  - 4 touches : Start/Stop, SUP, RST et DET pour détail des mesures prises avec possibilté
+- 4 touches : Start/Stop, SUP, RST et DET pour détail des mesures prises avec possibilté
   - d'annuler certaine mesures
   - de modifier la vitesse du frelon (2, 3, 4, 5 m/s)
   - d'indiquer la direction prise par le frelon ( de 0 à 359°) lue sur la boussole par l'opérateur
