@@ -13,6 +13,6 @@ Les quatres chronos sont indépendants et comporte
 - 4 touches : Start/Stop, SUP, RST et DET pour détail des mesures prises avec possibilté
 - d'annuler certaine mesures
 - de modifier la vitesse du frelon (2, 3, 4, 5 m/s)
-- - d'indiquer la direction prise par le frelon ( de 0 à 359°) lue sur la boussole par l'opérateur
+  - d'indiquer la direction prise par le frelon ( de 0 à 359°) lue sur la boussole par l'opérateur
   - de géolocaliser l'emplacement des mesures
 - 3 compteurs : les secondes depuis l'appui sur Start/Stop, le nombre d'essais, le temps moyen et la distance moyenne du nid (fonction de la vitesse estimée)
