@@ -1,6 +1,5 @@
-// app.js v2
+// app.js v2 fonctionnel
 
-// Couleurs des chronos
 const CHRONO_COLORS = ["red", "blue", "green", "white"];
 
 // Stockage des mesures pour chaque chrono
@@ -22,7 +21,7 @@ function createChrono(color) {
   chronoDisplay.textContent = "0.00 s";
   container.appendChild(chronoDisplay);
 
-  // Affichage info essai, moy, dist
+  // Info essai, moyenne, distance
   const infoDiv = document.createElement("div");
   infoDiv.className = "chrono-info";
 
@@ -90,7 +89,7 @@ function createChrono(color) {
       intervalId = setInterval(() => {
         const elapsed = (Date.now() - startTime) / 1000;
         chronoDisplay.textContent = elapsed.toFixed(2) + " s";
-      }, 10); // centièmes
+      }, 10);
     } else {
       running = false;
       clearInterval(intervalId);
@@ -145,7 +144,9 @@ function createChrono(color) {
     if (mesures.length === 0) {
       alert("Aucune mesure pour " + color);
     } else {
-      alert("Mesures " + color + " :\n" + mesures.map(m => m.toFixed(2) + " s").join("\n"));
+      alert(
+        "Mesures " + color + " :\n" + mesures.map((m) => m.toFixed(2) + " s").join("\n")
+      );
     }
   });
 
@@ -155,11 +156,11 @@ function createChrono(color) {
 // Générer tous les chronos
 function initChronos() {
   const main = document.getElementById("chronos");
-  CHRONO_COLORS.forEach(color => {
+  CHRONO_COLORS.forEach((color) => {
     const chrono = createChrono(color);
     main.appendChild(chrono);
   });
 }
 
-// Initialisation
+// Initialisation au chargement
 document.addEventListener("DOMContentLoaded", initChronos);
