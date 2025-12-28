@@ -1,166 +1,141 @@
-// app.js v2 fonctionnel
 
-const CHRONO_COLORS = ["red", "blue", "green", "white"];
-
-// Stockage des mesures pour chaque chrono
-const chronoMeasures = {
-  red: [],
-  blue: [],
-  green: [],
-  white: []
-};
-
-// Fonction pour créer un chrono
-function createChrono(color) {
-  const container = document.createElement("div");
-  container.className = "chrono-container " + color;
-
-  // Affichage du chrono
-  const chronoDisplay = document.createElement("div");
-  chronoDisplay.className = "chrono-display";
-  chronoDisplay.textContent = "0.00 s";
-  container.appendChild(chronoDisplay);
-
-  // Info essai, moyenne, distance
-  const infoDiv = document.createElement("div");
-  infoDiv.className = "chrono-info";
-
-  const essaiDiv = document.createElement("div");
-  essaiDiv.className = "info-essai";
-  essaiDiv.textContent = "0 essai";
-  infoDiv.appendChild(essaiDiv);
-
-  const moyDiv = document.createElement("div");
-  moyDiv.className = "info-moy";
-  moyDiv.textContent = "0";
-  infoDiv.appendChild(moyDiv);
-
-  const distDiv = document.createElement("div");
-  distDiv.className = "info-dist";
-  distDiv.textContent = "0 m";
-  infoDiv.appendChild(distDiv);
-
-  container.appendChild(infoDiv);
-
-  // Boutons
-  const buttons = document.createElement("div");
-  buttons.className = "chrono-buttons";
-
-  // SUP
-  const supBtn = document.createElement("button");
-  supBtn.textContent = "SUP";
-  supBtn.className = "btn-sup";
-  supBtn.style.backgroundColor = "orange";
-  buttons.appendChild(supBtn);
-
-  // Start/Stop
-  const startStopBtn = document.createElement("button");
-  startStopBtn.textContent = "Start/Stop";
-  startStopBtn.className = "btn-start";
-  startStopBtn.style.backgroundColor = "green";
-  buttons.appendChild(startStopBtn);
-
-  // RST
-  const rstBtn = document.createElement("button");
-  rstBtn.textContent = "RST";
-  rstBtn.className = "btn-rst";
-  rstBtn.style.backgroundColor = "red";
-  buttons.appendChild(rstBtn);
-
-  // DET
-  const detBtn = document.createElement("button");
-  detBtn.textContent = "DET";
-  detBtn.className = "btn-det";
-  detBtn.style.backgroundColor = "green";
-  buttons.appendChild(detBtn);
-
-  container.appendChild(buttons);
-
-  // Chrono state
-  let running = false;
-  let startTime = 0;
-  let intervalId = null;
-
-  // Start/Stop
-  startStopBtn.addEventListener("click", () => {
-    if (!running) {
-      running = true;
-      startTime = Date.now();
-      intervalId = setInterval(() => {
-        const elapsed = (Date.now() - startTime) / 1000;
-        chronoDisplay.textContent = elapsed.toFixed(2) + " s";
-      }, 10);
-    } else {
-      running = false;
-      clearInterval(intervalId);
-      const elapsed = (Date.now() - startTime) / 1000;
-      chronoDisplay.textContent = elapsed.toFixed(2) + " s";
-
-      // Stocker la mesure
-      chronoMeasures[color].push(elapsed);
-
-      // Mettre à jour essai, moy, dist
-      const mesures = chronoMeasures[color];
-      essaiDiv.textContent = mesures.length + " essai";
-      const moyenne = mesures.reduce((a, b) => a + b, 0) / mesures.length;
-      moyDiv.textContent = moyenne.toFixed(2);
-      distDiv.textContent = Math.round(moyenne * 5) + " m";
+// Lecture de la version depuis le service worker
+fetch('service-worker.js')
+  .then(r => r.text())
+  .then(txt => {
+    const match = txt.match(/APP_VERSION\s*=\s*["']([^"']+)["']/);
+    if (match) {
+      document.getElementById('version').textContent = "version " + match[1];
     }
   });
+const chronoColors = ["red", "blue", "green", "white"];
+const chronos = [];
+window.addEventListener("DOMContentLoaded", () => {
+  const container = document.getElementById("chronos");
 
-  // SUP
-  supBtn.addEventListener("click", () => {
-    if (chronoMeasures[color].length > 0) {
-      chronoMeasures[color].pop();
-      const mesures = chronoMeasures[color];
-      essaiDiv.textContent = mesures.length + " essai";
-      if (mesures.length > 0) {
-        const moyenne = mesures.reduce((a, b) => a + b, 0) / mesures.length;
-        moyDiv.textContent = moyenne.toFixed(2);
-        distDiv.textContent = Math.round(moyenne * 5) + " m";
-      } else {
-        moyDiv.textContent = "0";
-        distDiv.textContent = "0 m";
-      }
-    }
+  chronoColors.forEach((color, i) => {
+    const c = {
+      running: false,
+      startTime: 0,
+      essais: [],
+      color: color
+    };
+    chronos.push(c);
+
+    const div = document.createElement("div");
+    div.className = `chrono ${color}`;
+    div.id = `chrono-${i}`;
+    
+    div.innerHTML = `
+      <span class="time" id="t${i}">0.00 s</span>
+      <div class="info">
+        <span class="count" id="n${i}">0 ess.</span>
+        <span class="avg" id="m${i}">moy.: 0.00 s</span>
+        <span class="dist" id="d${i}">dist.: 0 m</span>
+      </div>
+      <div class="buttons">
+        <button class="undo">SUP</button>
+        <button class="start">Start / Stop</button>
+        <button class="reset">RST</button>
+      </div>
+
+    `;
+
+
+
+    container.appendChild(div);
+
+    div.querySelector(".start").addEventListener("click", () => startStop(i));
+    div.querySelector(".undo").addEventListener("click", () => sup(i));
+    div.querySelector(".reset").addEventListener("click", () => rst(i));
   });
+});
 
-  // RST
-  rstBtn.addEventListener("click", () => {
-    chronoMeasures[color] = [];
-    chronoDisplay.textContent = "0.00 s";
-    essaiDiv.textContent = "0 essai";
-    moyDiv.textContent = "0";
-    distDiv.textContent = "0 m";
-    if (running) {
-      running = false;
-      clearInterval(intervalId);
-    }
-  });
+// ==========================
+// START / STOP
+// ==========================
+function startStop(i) {
+  const c = chronos[i];
+  const now = Date.now();
 
-  // DET
-  detBtn.addEventListener("click", () => {
-    const mesures = chronoMeasures[color];
-    if (mesures.length === 0) {
-      alert("Aucune mesure pour " + color);
-    } else {
-      alert(
-        "Mesures " + color + " :\n" + mesures.map((m) => m.toFixed(2) + " s").join("\n")
-      );
-    }
-  });
+  if (!c.running) {
+    c.startTime = now;
+    c.running = true;
+  } else {
+    const elapsedSec = (now - c.startTime) / 1000;
+    c.essais.push(elapsedSec);
+    c.running = false;
 
-  return container;
+    document.getElementById(`t${i}`).textContent = elapsedSec.toFixed(2) + " s";
+    updateStats(i);
+  }
 }
 
-// Générer tous les chronos
-function initChronos() {
-  const main = document.getElementById("chronos");
-  CHRONO_COLORS.forEach((color) => {
-    const chrono = createChrono(color);
-    main.appendChild(chrono);
+// ==========================
+// Supprimer dernier essai
+// ==========================
+function sup(i) {
+  const c = chronos[i];
+  if (c.essais.length > 0) {
+    c.essais.pop();
+    updateStats(i);
+  }
+}
+
+// ==========================
+// Reset complet
+// ==========================
+function rst(i) {
+  chronos[i].running = false;
+  chronos[i].startTime = 0;
+  chronos[i].essais = [];
+
+  document.getElementById(`t${i}`).textContent = "0.00 s";
+  updateStats(i);
+}
+
+// ==========================
+// Mise à jour stats avec textes
+// ==========================
+function updateStats(i) {
+  const c = chronos[i];
+  const essais = c.essais;
+
+  document.getElementById(`n${i}`).textContent = essais.length + " essai";
+
+  if (essais.length === 0) {
+    document.getElementById(`m${i}`).textContent = "moy: 0.00 s";
+    document.getElementById(`d${i}`).textContent = "dist: 0.00 m";
+    return;
+  }
+
+  const total = essais.reduce((a, b) => a + b, 0);
+  const moyenne = total / essais.length;
+  const distance = moyenne * 2;
+
+  document.getElementById(`m${i}`).textContent = "moy: " + moyenne.toFixed(2) + " s";
+  document.getElementById(`d${i}`).textContent = "dist: " + Math.round(distance) + " m";
+
+}
+
+// ==========================
+// Tick pour centièmes
+// ==========================
+function tick() {
+  const now = Date.now();
+
+  chronos.forEach((c, i) => {
+    if (c.running) {
+      const elapsedSec = (now - c.startTime) / 1000;
+      document.getElementById(`t${i}`).textContent = elapsedSec.toFixed(2) + " s";
+    }
   });
 }
 
-// Initialisation au chargement
-document.addEventListener("DOMContentLoaded", initChronos);
+setInterval(tick, 50);
+
+
+
+
+
+
