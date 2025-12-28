@@ -1,6 +1,6 @@
 {
-    "name": "Chronos",
-    "short_name": "Chronos",
+    "name": "Chronos v2",
+    "short_name": "Chronos v2",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#ffffff",
@@ -15,4 +15,5 @@
   }
 
   
+
 
