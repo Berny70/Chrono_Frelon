@@ -1,1 +1,66 @@
-wdg
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Chronos</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#ffffff">
+
+  <!-- Icône -->
+  <link rel="icon" href="./icon_4_chrono_2.png">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- Version -->
+  <script src="version.js"></script>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+  <header class="topbar">
+    <img src="./icon_4_chrono_2.png" class="top-logo" alt="logo">
+
+    <div class="top-title">
+      Chronos
+    </div>
+
+    <div class="top-right">
+      <div>B.BARROIS</div>
+      <div id="version">version </div>
+    </div>
+  </header>
+
+  <!-- CONTENEUR DES CHRONOS -->
+  <main id="chronos">
+    <!-- Les chronos seront générés par app.js -->
+  </main>
+
+  <!-- SCRIPT PRINCIPAL -->
+  <script src="app.js"></script>
+
+  <!-- AFFICHAGE VERSION -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const v = document.getElementById("version");
+      if (v && typeof APP_VERSION !== "undefined") {
+        v.textContent = "v. : " + APP_VERSION;
+      }
+    });
+  </script>
+
+  <!-- SERVICE WORKER -->
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("service-worker.js");
+    }
+  </script>
+
+</body>
+</html>
+
