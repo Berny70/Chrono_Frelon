@@ -220,8 +220,16 @@ body {
      font-weight: bold;
      cursor: pointer;
    }
+   .det-position {
+     font-size: 0.9em;
+     text-align: center;
+     margin-bottom: 10px;
+     font-style: italic;
+   }
+
 
 }
+
 
 
 
