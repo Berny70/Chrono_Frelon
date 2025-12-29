@@ -36,6 +36,7 @@ window.addEventListener("DOMContentLoaded", () => {
       <div class="buttons">
         <button class="undo">SUP</button>
         <button class="start">Start / Stop</button>
+        <button class="det">DET</button>
         <button class="reset">RST</button>
       </div>
 
@@ -48,6 +49,7 @@ window.addEventListener("DOMContentLoaded", () => {
     div.querySelector(".start").addEventListener("click", () => startStop(i));
     div.querySelector(".undo").addEventListener("click", () => sup(i));
     div.querySelector(".reset").addEventListener("click", () => rst(i));
+    div.querySelector(".det").addEventListener("click", () => det(i)); 
   });
 });
 
@@ -131,8 +133,26 @@ function tick() {
     }
   });
 }
+// ==========================
+// Détails des essais
+// ==========================
+function det(i) {
+  const essais = chronos[i].essais;
+
+  if (essais.length === 0) {
+    alert("Aucune mesure");
+    return;
+  }
+
+  const txt = essais
+    .map((t, n) => `Essai ${n + 1} : ${t.toFixed(2)} s`)
+    .join("\n");
+
+  alert(txt);
+}
 
 setInterval(tick, 50);
+
 
 
 
