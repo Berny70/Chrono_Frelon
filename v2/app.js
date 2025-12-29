@@ -14,12 +14,15 @@ window.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("chronos");
 
   chronoColors.forEach((color, i) => {
-    const c = {
-      running: false,
-      startTime: 0,
-      essais: [],
-      color: color
-    };
+  const c = {
+    running: false,
+    startTime: 0,
+    essais: [],
+    color: color,
+    vitesse: 4,        // m/s (modifiable)
+    direction: "000"   // degrés (modifiable)
+  };
+
     chronos.push(c);
 
     const div = document.createElement("div");
@@ -152,6 +155,7 @@ function det(i) {
 }
 
 setInterval(tick, 50);
+
 
 
 
