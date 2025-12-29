@@ -141,6 +141,15 @@ function tick() {
 // ==========================
 function det(i) {
   const c = chronos[i];
+  if (!c.position && navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(pos => {
+      c.position = {
+        lat: pos.coords.latitude.toFixed(5),
+        lon: pos.coords.longitude.toFixed(5)
+      };
+      render();
+    });
+  }
 
   function render() {
     overlay.innerHTML = `
@@ -152,7 +161,7 @@ function det(i) {
           </label>
           <label>
             direction =
-            <input type="text" value="${c.direction}" maxlength="3"> °
+            <input type="number" value="${c.direction}" maxlength="3"> °
           </label>
         </div>
 
@@ -208,9 +217,11 @@ function det(i) {
   render();
 }
 
+position: null
 
 
 setInterval(tick, 50);
+
 
 
 
