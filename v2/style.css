@@ -65,7 +65,9 @@ body {
 .chrono.green  { background: #d4edda; border: 2px solid #0a0; }
 .chrono.white  { background: #f0f0f0; border: 2px solid #999; }
 
-/* Temps */
+/* ================================
+   TEMPS
+================================ */
 .chrono .time {
   font-size: 2em;
   font-weight: bold;
@@ -73,7 +75,50 @@ body {
   margin-bottom: 6px;
 }
 
-/* Ligne info */
+/* ================================
+   INFO LIGNE POS / VIT / DIR
+================================ */
+.info-line {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-size: 0.9em;
+}
+
+.info-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.coords {
+  line-height: 1.2em;
+}
+
+.info-right {
+  text-align: right;
+  line-height: 1.4em;
+}
+
+.info-right input {
+  width: 42px;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* Bouton POS */
+button.pos {
+  background: #ffeb3b;
+  border: none;
+  padding: 6px 10px;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* ================================
+   STATS (essais / moy / dist)
+================================ */
 .chrono .info {
   display: flex;
   justify-content: space-between;
@@ -81,13 +126,9 @@ body {
   margin-bottom: 6px;
 }
 
-/* Boutons */
-.chrono .buttons {
-  display: flex;
-  align-items: center;
-  margin-top: 10px;
-}
-
+/* ================================
+   BOUTONS
+================================ */
 .chrono .buttons {
   display: flex;
   align-items: center;
@@ -106,7 +147,7 @@ body {
 .chrono button.undo {
   background: #ff9800;
   color: #000;
-  margin-right: auto;   /* pousse vers la gauche */
+  margin-right: auto;
 }
 
 .chrono button.start {
@@ -114,17 +155,60 @@ body {
   color: #fff;
 }
 
+.chrono button.det {
+  background: #2196f3;
+  color: #fff;
+  margin: 0 12px;
+}
+
 .chrono button.reset {
   background: #f44336;
   color: #fff;
-  margin-left: auto;    /* pousse vers la droite */
-}
-.chrono button.det {
-  background: #2196f3;   /* bleu */
-  color: #fff;
-  margin-left: 12px;
+  margin-left: auto;
 }
 
+/* ================================
+   DET OVERLAY
+================================ */
+#detOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.det-box {
+  background: #fff;
+  padding: 16px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 420px;
+}
+
+.det-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 6px 0;
+}
+
+.det-line button {
+  background: #f44336;
+  color: #fff;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Fond selon couleur chrono */
+#detOverlay.red   .det-box { background: #f8d7da; }
+#detOverlay.blue  .det-box { background: #d0e7f9; }
+#detOverlay.green .det-box { background: #d4edda; }
+#detOverlay.white .det-box { background: #f0f0f0; }
 
 /* ================================
    RESPONSIVE
@@ -151,45 +235,4 @@ body {
     font-size: 1em;
     padding: 8px 12px;
   }
-   /* ================================
-   DET OVERLAY
-================================ */
-#detOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
 }
-
-.det-box {
-  background: #fff;
-  padding: 16px;
-  border-radius: 10px;
-  width: 90%;
-  max-width: 420px;
-}
-
-.det-line {
-  display: flex;
-  justify-content: space-between;
-  margin: 6px 0;
-}
-
-/* Couleur fond selon chrono */
-#detOverlay.red   .det-box { background: #f8d7da; }
-#detOverlay.blue  .det-box { background: #d0e7f9; }
-#detOverlay.green .det-box { background: #d4edda; }
-#detOverlay.white .det-box { background: #f0f0f0; }
-
-
-
-}
-
-
-
-
-
-
