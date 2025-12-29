@@ -119,6 +119,12 @@ body {
   color: #fff;
   margin-left: auto;    /* pousse vers la droite */
 }
+.chrono button.det {
+  background: #2196f3;   /* bleu */
+  color: #fff;
+  margin-left: 12px;
+}
+
 
 /* ================================
    RESPONSIVE
@@ -146,4 +152,5 @@ body {
     padding: 8px 12px;
   }
 }
+
 
