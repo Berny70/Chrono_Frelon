@@ -1,15 +1,3 @@
-// ==========================
-// Lecture version depuis SW
-// ==========================
-fetch('service-worker.js')
-  .then(r => r.text())
-  .then(txt => {
-    const match = txt.match(/APP_VERSION\s*=\s*["']([^"']+)["']/);
-    if (match) {
-      document.getElementById('version').textContent = "version " + match[1];
-    }
-  });
-
 const chronoColors = ["red", "blue", "green", "white"];
 const chronos = [];
 let detIndex = null;
@@ -25,10 +13,9 @@ window.addEventListener("DOMContentLoaded", () => {
       running: false,
       startTime: 0,
       essais: [],
-      color: color,
+      color,
       vitesse: 4,
-      direction: 0,
-      position: null
+      direction: 0
     };
     chronos.push(c);
 
@@ -40,9 +27,9 @@ window.addEventListener("DOMContentLoaded", () => {
       <span class="time" id="t${i}">0.00 s</span>
 
       <div class="info">
-        <span class="count" id="n${i}">0 ess.</span>
-        <span class="avg" id="m${i}">moy: 0.00 s</span>
-        <span class="dist" id="d${i}">dist: 0 m</span>
+        <span id="n${i}">0 ess.</span>
+        <span id="m${i}">moy: 0.00 s</span>
+        <span id="d${i}">dist: 0 m</span>
       </div>
 
       <div class="buttons">
@@ -58,7 +45,7 @@ window.addEventListener("DOMContentLoaded", () => {
     div.querySelector(".start").onclick = () => startStop(i);
     div.querySelector(".undo").onclick = () => sup(i);
     div.querySelector(".reset").onclick = () => rst(i);
-    div.querySelector(".det").onclick = () => det(i);
+    div.querySelector(".det").onclick = () => openDET(i);
   });
 });
 
@@ -67,41 +54,28 @@ window.addEventListener("DOMContentLoaded", () => {
 // ==========================
 function startStop(i) {
   const c = chronos[i];
-  const now = Date.now();
 
   if (!c.running) {
-    c.startTime = now;
+    c.startTime = Date.now();
     c.running = true;
   } else {
-    const elapsed = (now - c.startTime) / 1000;
-    c.essais.push(elapsed);
+    const elapsed = (Date.now() - c.startTime) / 1000;
     c.running = false;
-    document.getElementById(`t${i}`).textContent = elapsed.toFixed(2) + " s";
-    updateStats(i);
-  }
-}
 
-// ==========================
-// SUP DERNIER ESSAI
-// ==========================
-function sup(i) {
-  const c = chronos[i];
-  if (c.essais.length) {
-    c.essais.pop();
-    updateStats(i);
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(pos => {
+        c.essais.push({
+          time: elapsed,
+          lat: pos.coords.latitude.toFixed(5),
+          lon: pos.coords.longitude.toFixed(5)
+        });
+        updateStats(i);
+      }, () => {
+        c.essais.push({ time: elapsed, lat: "?", lon: "?" });
+        updateStats(i);
+      });
+    }
   }
-}
-
-// ==========================
-// RESET
-// ==========================
-function rst(i) {
-  const c = chronos[i];
-  c.running = false;
-  c.startTime = 0;
-  c.essais = [];
-  document.getElementById(`t${i}`).textContent = "0.00 s";
-  updateStats(i);
 }
 
 // ==========================
@@ -111,110 +85,91 @@ function updateStats(i) {
   const c = chronos[i];
   const e = c.essais;
 
-  document.getElementById(`n${i}`).textContent = e.length + " essai";
+  document.getElementById(`n${i}`).textContent = e.length + " ess.";
 
-  if (!e.length) {
-    document.getElementById(`m${i}`).textContent = "moy: 0.00 s";
-    document.getElementById(`d${i}`).textContent = "dist: 0 m";
-    return;
-  }
+  if (!e.length) return;
 
-  const moy = e.reduce((a, b) => a + b, 0) / e.length;
+  const moy = e.reduce((a, b) => a + b.time, 0) / e.length;
   document.getElementById(`m${i}`).textContent = "moy: " + moy.toFixed(2) + " s";
-  document.getElementById(`d${i}`).textContent = "dist: " + Math.round(moy * c.vitesse / 2) + " m";
+  document.getElementById(`d${i}`).textContent =
+    "dist: " + Math.round((moy * c.vitesse) / 2) + " m";
+}
+
+// ==========================
+// SUP / RESET
+// ==========================
+function sup(i) {
+  chronos[i].essais.pop();
+  updateStats(i);
+}
+
+function rst(i) {
+  chronos[i].essais = [];
+  updateStats(i);
 }
 
 // ==========================
 // TICK
 // ==========================
 setInterval(() => {
-  const now = Date.now();
   chronos.forEach((c, i) => {
     if (c.running) {
       document.getElementById(`t${i}`).textContent =
-        ((now - c.startTime) / 1000).toFixed(2) + " s";
+        ((Date.now() - c.startTime) / 1000).toFixed(2) + " s";
     }
   });
 }, 50);
 
 // ==========================
-// DET
+// DET OVERLAY
 // ==========================
-function det(i) {
+function openDET(i) {
   detIndex = i;
   const c = chronos[i];
 
-  if (!c.position && navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(pos => {
-      c.position = {
-        lat: pos.coords.latitude.toFixed(5),
-        lon: pos.coords.longitude.toFixed(5)
-      };
-      renderDET();
-    });
-  }
+  const overlay = document.createElement("div");
+  overlay.id = "detOverlay";
+  overlay.className = c.color;
 
-  renderDET();
-}
+  overlay.innerHTML = `
+    <div class="det-box">
+      <h2>Détails ${c.color}</h2>
 
-// ==========================
-// RENDER DET
-// ==========================
-function renderDET() {
-  const c = chronos[detIndex];
-  const container = document.getElementById("chronos");
+      Vitesse :
+      <input type="number" value="${c.vitesse}" min="1" max="9">
 
-  container.innerHTML = `
-    <div class="det-view ${c.color}">
-      <div class="det-header">
-        Vitesse :
-        <input type="number" min="1" max="9" value="${c.vitesse}">
-
-        Direction :
-        <input type="number" value="${c.direction}" maxlength="3"> °
-      </div>
-
-      <div class="det-position">
-        ${c.position
-          ? `Lat : ${c.position.lat} | Lon : ${c.position.lon}`
-          : "Position en cours…"}
-      </div>
+      Direction :
+      <input type="number" value="${c.direction}" maxlength="3"> °
 
       <div class="det-list">
         ${c.essais.map((e, idx) => {
-          const t = Math.ceil(e);
+          const t = Math.ceil(e.time);
           const d = Math.round((t * c.vitesse) / 2);
           return `
-            <div class="det-line">
-              Essai ${idx + 1} : ${t} s – dist : ${d} m
+            <div>
+              Essai ${idx + 1} : ${t} s – dist ${d} m
+              <br>Lat ${e.lat} / Lon ${e.lon}
               <button onclick="delEssai(${idx})">SUPP</button>
             </div>`;
         }).join("")}
       </div>
 
-      <button class="det-close" onclick="closeDET()">Retour</button>
+      <button onclick="closeDET()">Fermer</button>
     </div>
   `;
 
-  const inputs = container.querySelectorAll("input");
-  inputs[0].oninput = e => c.vitesse = Number(e.target.value || 1);
-  inputs[1].onblur = e => {
-    c.direction = Number(e.target.value || 0);
-    renderDET();
-  };
+  document.body.appendChild(overlay);
+
+  overlay.querySelectorAll("input")[0].oninput = e => c.vitesse = +e.target.value;
+  overlay.querySelectorAll("input")[1].oninput = e => c.direction = +e.target.value;
 }
 
-// ==========================
-// SUPP ESSAI
-// ==========================
 function delEssai(idx) {
   chronos[detIndex].essais.splice(idx, 1);
-  renderDET();
+  closeDET();
+  openDET(detIndex);
 }
 
-// ==========================
-// FERMER DET
-// ==========================
 function closeDET() {
-  location.reload();
+  document.getElementById("detOverlay")?.remove();
 }
