@@ -141,68 +141,77 @@ function tick() {
 // ==========================
 function det(i) {
   const c = chronos[i];
-  const essais = c.essais;
 
-  // Création overlay
-  const overlay = document.createElement("div");
-  overlay.className = "det-overlay " + c.color;
+  function render() {
+    overlay.innerHTML = `
+      <div class="det-box">
+        <div class="det-header">
+          <label>
+            vitesse =
+            <input type="number" value="${c.vitesse}" min="1" max="9">
+          </label>
+          <label>
+            direction =
+            <input type="text" value="${c.direction}" maxlength="3"> °
+          </label>
+        </div>
 
-  // Contenu
-  let html = `
-    <div class="det-box">
-      <div class="det-header">
-        <label>
-          vitesse =
-          <input type="number" value="${c.vitesse}" min="1" max="9" maxlength="1">
-        </label>
-        <label>
-          direction =
-          <input type="text" value="${c.direction}" maxlength="3"> °
-        </label>
+        <div class="det-list">
+          ${c.essais.length === 0 ? "<p>Aucune mesure</p>" :
+            c.essais.map((t, n) => {
+              const sec = Math.ceil(t);
+              const dist = Math.round(sec * c.vitesse / 2);
+              return `
+                <div class="det-line">
+                  <span>Essai ${n + 1} : ${sec} s | dist : ${dist} m</span>
+                  <button data-i="${n}">SUPP</button>
+                </div>
+              `;
+            }).join("")
+          }
+        </div>
+
+        <button class="det-close">FERMER</button>
       </div>
-      <div class="det-list">
-  `;
+    `;
 
-  if (essais.length === 0) {
-    html += `<p>Aucune mesure</p>`;
-  } else {
-    essais.forEach((t, n) => {
-      const sec = Math.ceil(t); // arrondi supérieur
-      const dist = Math.round(sec * c.vitesse / 2);
-      html += `<p>Essai ${n + 1} : ${sec} s &nbsp; | &nbsp; dist : ${dist} m</p>`;
+    // champs vitesse / direction
+    const vInput = overlay.querySelector("input[type=number]");
+    const dInput = overlay.querySelector("input[type=text]");
+
+    vInput.oninput = () => {
+      c.vitesse = parseInt(vInput.value) || c.vitesse;
+      render();
+    };
+
+    dInput.oninput = () => {
+      c.direction = dInput.value.padStart(3, "0").slice(-3);
+      dInput.value = c.direction;
+    };
+
+    // suppression d’un essai
+    overlay.querySelectorAll(".det-line button").forEach(btn => {
+      btn.onclick = () => {
+        const idx = parseInt(btn.dataset.i);
+        c.essais.splice(idx, 1);
+        render();
+      };
     });
+
+    overlay.querySelector(".det-close").onclick = () => overlay.remove();
   }
 
-  html += `
-      </div>
-      <button class="det-close">FERMER</button>
-    </div>
-  `;
-
-  overlay.innerHTML = html;
+  const overlay = document.createElement("div");
+  overlay.className = "det-overlay " + c.color;
   document.body.appendChild(overlay);
 
-  // Gestion des champs
-  const vInput = overlay.querySelector("input[type=number]");
-  const dInput = overlay.querySelector("input[type=text]");
-
-  vInput.addEventListener("input", () => {
-    c.vitesse = parseInt(vInput.value) || c.vitesse;
-  });
-
-  dInput.addEventListener("input", () => {
-    c.direction = dInput.value.padStart(3, "0").slice(-3);
-    dInput.value = c.direction;
-  });
-
-  // Fermeture
-  overlay.querySelector(".det-close").addEventListener("click", () => {
-    overlay.remove();
-  });
+  render();
 }
 
 
+
 setInterval(tick, 50);
+
 
 
 
