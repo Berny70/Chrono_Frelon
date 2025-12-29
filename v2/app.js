@@ -1,5 +1,5 @@
 // ==========================
-// VERSION
+// VERSION (service-worker)
 // ==========================
 fetch('service-worker.js')
   .then(r => r.text())
@@ -32,7 +32,7 @@ window.addEventListener("DOMContentLoaded", () => {
       vitesse: 4,
       direction: 0,
       lat: "--",
-      lon: "--",      
+      lon: "--",
       color
     };
     chronos.push(c);
@@ -42,6 +42,25 @@ window.addEventListener("DOMContentLoaded", () => {
 
     div.innerHTML = `
       <span class="time" id="t${i}">0.00 s</span>
+
+      <div class="info-line">
+        <div class="info-left">
+          <button class="pos">POS</button>
+          <div class="coords">
+            <div id="lat${i}">Lat.: --</div>
+            <div id="lon${i}">Long.: --</div>
+          </div>
+        </div>
+
+        <div class="info-right">
+          <div>
+            Vit.: <input type="number" value="4" min="1" max="9" id="vit${i}"> m/s
+          </div>
+          <div>
+            Dir.: <input type="number" value="0" min="0" max="359" id="dir${i}"> °
+          </div>
+        </div>
+      </div>
 
       <div class="info">
         <span id="n${i}">0 essai</span>
@@ -59,10 +78,19 @@ window.addEventListener("DOMContentLoaded", () => {
 
     container.appendChild(div);
 
+    // Boutons
     div.querySelector(".start").onclick = () => startStop(i);
     div.querySelector(".undo").onclick = () => sup(i);
     div.querySelector(".reset").onclick = () => rst(i);
     div.querySelector(".det").onclick = () => openDET(i);
+    div.querySelector(".pos").onclick = () => getPos(i);
+
+    // Paramètres
+    div.querySelector(`#vit${i}`).oninput =
+      e => chronos[i].vitesse = +e.target.value;
+
+    div.querySelector(`#dir${i}`).oninput =
+      e => chronos[i].direction = +e.target.value;
   });
 });
 
@@ -71,19 +99,20 @@ window.addEventListener("DOMContentLoaded", () => {
 // ==========================
 function startStop(i) {
   const c = chronos[i];
+  const now = Date.now();
 
   if (!c.running) {
-    c.startTime = Date.now();
+    c.startTime = now;
     c.running = true;
   } else {
-    const elapsed = (Date.now() - c.startTime) / 1000;
+    const elapsed = (now - c.startTime) / 1000;
     c.running = false;
     c.essais.push(elapsed);
 
     document.getElementById(`t${i}`).textContent =
       elapsed.toFixed(2) + " s";
 
-    updateStats(i); // ✅ MAJ immédiate
+    updateStats(i);
   }
 }
 
@@ -120,7 +149,7 @@ function updateStats(i) {
 function sup(i) {
   if (chronos[i].essais.length) {
     chronos[i].essais.pop();
-    updateStats(i); // ✅ MAJ immédiate
+    updateStats(i);
   }
 }
 
@@ -129,11 +158,11 @@ function rst(i) {
   chronos[i].running = false;
   chronos[i].startTime = 0;
   document.getElementById(`t${i}`).textContent = "0.00 s";
-  updateStats(i); // ✅ MAJ immédiate
+  updateStats(i);
 }
 
 // ==========================
-// TICK
+// TICK (centièmes)
 // ==========================
 setInterval(() => {
   const now = Date.now();
@@ -146,13 +175,36 @@ setInterval(() => {
 }, 50);
 
 // ==========================
-// DET
+// POS (géoloc manuelle)
+// ==========================
+function getPos(i) {
+  if (!navigator.geolocation) {
+    alert("Géolocalisation non disponible");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(pos => {
+    chronos[i].lat = pos.coords.latitude.toFixed(5);
+    chronos[i].lon = pos.coords.longitude.toFixed(5);
+
+    document.getElementById(`lat${i}`).textContent =
+      "Lat.: " + chronos[i].lat;
+
+    document.getElementById(`lon${i}`).textContent =
+      "Long.: " + chronos[i].lon;
+  }, () => {
+    alert("Impossible d'obtenir la position");
+  });
+}
+
+// ==========================
+// DET (DÉTAILS)
 // ==========================
 function openDET(i) {
   detIndex = i;
   const c = chronos[i];
 
-  closeDET(); // évite doublons
+  closeDET();
 
   const overlay = document.createElement("div");
   overlay.id = "detOverlay";
@@ -161,18 +213,6 @@ function openDET(i) {
   overlay.innerHTML = `
     <div class="det-box">
       <h2>Détails ${c.color}</h2>
-
-      <div>
-        Vitesse :
-        <input type="number" value="${c.vitesse}" min="1" max="9">
-      </div>
-
-      <div>
-        Direction :
-        <input type="number" value="${c.direction}" maxlength="3"> °
-      </div>
-
-      <hr>
 
       ${c.essais.map((t, idx) => {
         const sec = Math.ceil(t);
@@ -190,12 +230,6 @@ function openDET(i) {
   `;
 
   document.body.appendChild(overlay);
-
-  overlay.querySelectorAll("input")[0].oninput =
-    e => c.vitesse = +e.target.value;
-
-  overlay.querySelectorAll("input")[1].oninput =
-    e => c.direction = +e.target.value;
 }
 
 function delEssai(idx) {
@@ -207,4 +241,3 @@ function delEssai(idx) {
 function closeDET() {
   document.getElementById("detOverlay")?.remove();
 }
-
