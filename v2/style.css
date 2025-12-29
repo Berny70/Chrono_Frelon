@@ -152,83 +152,42 @@ body {
     padding: 8px 12px;
   }
    /* ================================
-      DET OVERLAY
-   ================================ */
-   .det-overlay {
-     position: fixed;
-     inset: 0;
-     z-index: 1000;
-     display: flex;
-     justify-content: center;
-     align-items: center;
-   }
-   
-   .det-overlay.red   { background: #f8d7da; }
-   .det-overlay.blue  { background: #d0e7f9; }
-   .det-overlay.green { background: #d4edda; }
-   .det-overlay.white { background: #f0f0f0; }
-   
-   .det-box {
-     background: rgba(255,255,255,0.9);
-     padding: 16px;
-     border-radius: 10px;
-     width: 90%;
-     max-width: 400px;
-     font-size: 1.1em;
-   }
-   
-   .det-header {
-     display: flex;
-     justify-content: space-between;
-     margin-bottom: 12px;
-     font-weight: bold;
-   }
-   
-   .det-header input {
-     width: 50px;
-     font-size: 1em;
-     text-align: center;
-   }
-   
-   .det-list p {
-     margin: 6px 0;
-   }
-   
-   .det-close {
-     margin-top: 14px;
-     width: 100%;
-     padding: 10px;
-     font-size: 1.1em;
-     font-weight: bold;
-     background: #444;
-     color: white;
-     border: none;
-     border-radius: 6px;
-   }
-   .det-line {
-     display: flex;
-     justify-content: space-between;
-     align-items: center;
-     margin: 6px 0;
-   }
-   
-   .det-line button {
-     background: #ff9800;
-     border: none;
-     border-radius: 4px;
-     padding: 4px 8px;
-     font-weight: bold;
-     cursor: pointer;
-   }
-   .det-position {
-     font-size: 0.9em;
-     text-align: center;
-     margin-bottom: 10px;
-     font-style: italic;
-   }
+   DET OVERLAY
+================================ */
+#detOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.det-box {
+  background: #fff;
+  padding: 16px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 420px;
+}
+
+.det-line {
+  display: flex;
+  justify-content: space-between;
+  margin: 6px 0;
+}
+
+/* Couleur fond selon chrono */
+#detOverlay.red   .det-box { background: #f8d7da; }
+#detOverlay.blue  .det-box { background: #d0e7f9; }
+#detOverlay.green .det-box { background: #d4edda; }
+#detOverlay.white .det-box { background: #f0f0f0; }
+
 
 
 }
+
 
 
 
