@@ -151,6 +151,62 @@ body {
     font-size: 1em;
     padding: 8px 12px;
   }
+   /* ================================
+      DET OVERLAY
+   ================================ */
+   .det-overlay {
+     position: fixed;
+     inset: 0;
+     z-index: 1000;
+     display: flex;
+     justify-content: center;
+     align-items: center;
+   }
+   
+   .det-overlay.red   { background: #f8d7da; }
+   .det-overlay.blue  { background: #d0e7f9; }
+   .det-overlay.green { background: #d4edda; }
+   .det-overlay.white { background: #f0f0f0; }
+   
+   .det-box {
+     background: rgba(255,255,255,0.9);
+     padding: 16px;
+     border-radius: 10px;
+     width: 90%;
+     max-width: 400px;
+     font-size: 1.1em;
+   }
+   
+   .det-header {
+     display: flex;
+     justify-content: space-between;
+     margin-bottom: 12px;
+     font-weight: bold;
+   }
+   
+   .det-header input {
+     width: 50px;
+     font-size: 1em;
+     text-align: center;
+   }
+   
+   .det-list p {
+     margin: 6px 0;
+   }
+   
+   .det-close {
+     margin-top: 14px;
+     width: 100%;
+     padding: 10px;
+     font-size: 1.1em;
+     font-weight: bold;
+     background: #444;
+     color: white;
+     border: none;
+     border-radius: 6px;
+   }
+
 }
+
 
 
