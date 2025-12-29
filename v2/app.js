@@ -31,6 +31,8 @@ window.addEventListener("DOMContentLoaded", () => {
       essais: [],
       vitesse: 4,
       direction: 0,
+      lat: "--",
+      lon: "--",      
       color
     };
     chronos.push(c);
@@ -205,3 +207,4 @@ function delEssai(idx) {
 function closeDET() {
   document.getElementById("detOverlay")?.remove();
 }
+
