@@ -16,3 +16,5 @@ Les quatres chronos sont indépendants et comporte
   - d'indiquer la direction prise par le frelon ( de 0 à 359°) lue sur la boussole par l'opérateur
   - de géolocaliser l'emplacement des mesures
 - 3 compteurs : les secondes depuis l'appui sur Start/Stop, le nombre d'essais, le temps moyen et la distance moyenne du nid (fonction de la vitesse estimée)
+# Chrono_Frelon v3
+reprend la v2 et positionne les points sur une carte avec un vecteur pour localiser le nid de frelons
