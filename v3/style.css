@@ -160,8 +160,8 @@ body {
 .top-actions button {
   flex: 1;
   margin: 0 6px;
-  padding: 12px 0;
-  font-size: 1.2em;
+  padding: 6px 0;
+  font-size: 1em;
   font-weight: bold;
   border-radius: 8px;
   border: none;
