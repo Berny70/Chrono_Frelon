@@ -65,6 +65,42 @@
       navigator.serviceWorker.register("./service-worker.js");
     }
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+  
+  <script>
+  document.getElementById("btnCapt").addEventListener("click", async () => {
+    const canvas = await html2canvas(document.body, {
+      scale: 2,
+      useCORS: true
+    });
+  
+    const blob = await new Promise(resolve =>
+      canvas.toBlob(resolve, "image/png")
+    );
+  
+    const filename =
+      "Chrono_Frelon_" +
+      new Date().toISOString().replace(/[:.]/g, "-") +
+      ".png";
+  
+    if (navigator.share) {
+      try {
+        const file = new File([blob], filename, { type: "image/png" });
+        await navigator.share({
+          files: [file],
+          title: "Chrono Frelon",
+          text: "Capture d’écran"
+        });
+        return;
+      } catch (e) {}
+    }
+  
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    a.click();
+  });
+  </script>
 
 </body>
 </html>
