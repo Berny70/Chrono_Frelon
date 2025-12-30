@@ -1,0 +1,238 @@
+/* ================================
+   GLOBAL
+================================ */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f5f5f5;
+  color: #000;
+}
+
+/* ================================
+   HEADER
+================================ */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 14px;
+  background: #ffffff;
+  border-bottom: 2px solid #ccc;
+}
+
+.top-logo {
+  width: 56px;
+  height: 56px;
+}
+
+.top-title {
+  flex: 1;
+  text-align: center;
+  font-size: 2.2em;
+  font-weight: bold;
+}
+
+.top-right {
+  text-align: right;
+  font-size: 0.9em;
+  line-height: 1.4em;
+}
+
+/* ================================
+   CHRONOS
+================================ */
+#chronos {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.chrono {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  border-radius: 8px;
+}
+
+/* Couleurs pastel */
+.chrono.red    { background: #f8d7da; border: 2px solid #c00; }
+.chrono.blue   { background: #d0e7f9; border: 2px solid #0077cc; }
+.chrono.green  { background: #d4edda; border: 2px solid #0a0; }
+.chrono.white  { background: #f0f0f0; border: 2px solid #999; }
+
+/* ================================
+   TEMPS
+================================ */
+.chrono .time {
+  font-size: 2em;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 6px;
+}
+
+/* ================================
+   INFO LIGNE POS / VIT / DIR
+================================ */
+.info-line {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 6px;
+  font-size: 0.9em;
+}
+
+.info-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.coords {
+  line-height: 1.2em;
+}
+
+.info-right {
+  text-align: right;
+  line-height: 1.4em;
+}
+
+.info-right input {
+  width: 42px;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* Bouton POS */
+button.pos {
+  background: #ffeb3b;
+  border: none;
+  padding: 6px 10px;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* ================================
+   STATS (essais / moy / dist)
+================================ */
+.chrono .info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 1em;
+  margin-bottom: 6px;
+}
+
+/* ================================
+   BOUTONS
+================================ */
+.chrono .buttons {
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
+}
+
+.chrono button {
+  padding: 10px 16px;
+  font-size: 1.1em;
+  font-weight: bold;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.chrono button.undo {
+  background: #ff9800;
+  color: #000;
+  margin-right: auto;
+}
+
+.chrono button.start {
+  background: #4caf50;
+  color: #fff;
+}
+
+.chrono button.det {
+  background: #2196f3;
+  color: #fff;
+  margin: 0 12px;
+}
+
+.chrono button.reset {
+  background: #f44336;
+  color: #fff;
+  margin-left: auto;
+}
+
+/* ================================
+   DET OVERLAY
+================================ */
+#detOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.det-box {
+  background: #fff;
+  padding: 16px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 420px;
+}
+
+.det-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 6px 0;
+}
+
+.det-line button {
+  background: #f44336;
+  color: #fff;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+/* Fond selon couleur chrono */
+#detOverlay.red   .det-box { background: #f8d7da; }
+#detOverlay.blue  .det-box { background: #d0e7f9; }
+#detOverlay.green .det-box { background: #d4edda; }
+#detOverlay.white .det-box { background: #f0f0f0; }
+
+/* ================================
+   RESPONSIVE
+================================ */
+@media (max-width: 600px) {
+  .top-title {
+    font-size: 1.8em;
+  }
+
+  .top-logo {
+    width: 48px;
+    height: 48px;
+  }
+
+  .chrono .time {
+    font-size: 1.6em;
+  }
+
+  .chrono .info {
+    font-size: 0.9em;
+  }
+
+  .chrono button {
+    font-size: 1em;
+    padding: 8px 12px;
+  }
+}
