@@ -11,7 +11,7 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 // DONNÉES (mock pour l'instant)
 // ==========================
 const observations = JSON.parse(
-  localStorage.getItem("capturesChrono") || "[]"
+  localStorage.getItem("chronoObservations") || "[]"
 );
 
 // Si aucune capture, message simple
