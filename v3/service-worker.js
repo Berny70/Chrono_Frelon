@@ -1,5 +1,5 @@
-const APP_VERSION = "3.00";
-const CACHE = "chrono-pwa-v3.00";
+const APP_VERSION = "3.0";
+const CACHE = "chrono-pwa-v3.0";
 const FILES = [
   "./",
   "./index.html",
