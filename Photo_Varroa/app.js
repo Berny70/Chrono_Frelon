@@ -1,6 +1,19 @@
 import React, { useState, useRef } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
+<CameraView
+  ref={cameraRef}
+  style={styles.camera}
+  facing="back"
+  zoom={0}
+  enableTorch={false}
+  autofocus="on"
+/>
+const photo = await cameraRef.current.takePictureAsync({
+  quality: 1,
+  skipProcessing: true,
+  exif: false
+});
 
 export default function App() {
   const cameraRef = useRef(null);
