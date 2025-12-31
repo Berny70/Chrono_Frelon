@@ -1,19 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
-<CameraView
-  ref={cameraRef}
-  style={styles.camera}
-  facing="back"
-  zoom={0}
-  enableTorch={false}
-  autofocus="on"
-/>
-const photo = await cameraRef.current.takePictureAsync({
-  quality: 1,
-  skipProcessing: true,
-  exif: false
-});
 
 export default function App() {
   const cameraRef = useRef(null);
@@ -36,15 +23,16 @@ export default function App() {
   }
 
   const takePicture = async () => {
-    if (cameraRef.current) {
-      const photo = await cameraRef.current.takePictureAsync({
-        quality: 1,
-        exif: false,
-        skipProcessing: true
-      });
-      console.log(photo.uri);
-      setCount(count + 1);
-    }
+    if (!cameraRef.current) return;
+
+    const photo = await cameraRef.current.takePictureAsync({
+      quality: 1,
+      skipProcessing: true, // CRITIQUE sur Android
+      exif: false
+    });
+
+    console.log(photo.uri);
+    setCount(c => c + 1);
   };
 
   return (
@@ -53,6 +41,9 @@ export default function App() {
         ref={cameraRef}
         style={styles.camera}
         facing="back"
+        zoom={0}
+        enableTorch={false}
+        autofocus="on"
       />
 
       {/* Cadre de scan */}
