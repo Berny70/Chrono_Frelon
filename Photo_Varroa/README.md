@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/Scan_Varroa_sur_smartphone.png" alt="Varroa Scan – icône" width="200">
+  <img src="Scan_Varroa_sur_smartphone.png" alt="Varroa Scan – icône" width="200">
 </p>
 
 # Varroa Scan – Test de prise de vue par balayage
