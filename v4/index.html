@@ -25,31 +25,29 @@
   <!-- HEADER -->
   <header class="topbar">
     <img src="./icon_4_chrono_2.png" class="top-logo" alt="logo">
-  
+
     <div class="top-title">
       Pot à Mèche
     </div>
-  
+
     <div class="top-right">
       <div>B.Barrois</div>
       <div id="version">version</div>
     </div>
   </header>
-  
+
+  <!-- ACTIONS HAUT DE PAGE -->
   <div class="top-actions">
     <button id="btnCapt" class="btn-capt">Capture d’écran</button>
-  
+
     <div id="dateTime" class="date-time"></div>
-  
+
     <button id="btnLoc" class="btn-loc">Localisation du nid</button>
   </div>
 
-
-
-
   <!-- CONTENEUR DES CHRONOS -->
   <main id="chronos">
-    <!-- Les chronos seront générés par app.js -->
+    <!-- Généré par app.js -->
   </main>
 
   <!-- SCRIPT PRINCIPAL -->
@@ -65,92 +63,111 @@
     });
   </script>
 
+  <!-- DATE & HEURE -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const el = document.getElementById("dateTime");
+      if (!el) return;
+
+      function updateDateTime() {
+        const now = new Date();
+        const d = now.toLocaleDateString("fr-FR");
+        const t = now.toLocaleTimeString("fr-FR", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit"
+        });
+        el.textContent = `${d} ${t}`;
+      }
+
+      updateDateTime();
+      setInterval(updateDateTime, 1000);
+    });
+  </script>
+
   <!-- SERVICE WORKER -->
   <script>
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker.register("./service-worker.js");
     }
   </script>
+
+  <!-- LIB CAPTURE D’ÉCRAN -->
   <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-  
+
+  <!-- BOUTON CAPTURE -->
   <script>
-  document.getElementById("btnCapt").addEventListener("click", async () => {
-    const canvas = await html2canvas(document.body, {
-      scale: 2,
-      useCORS: true
-    });
-  
-    const blob = await new Promise(resolve =>
-      canvas.toBlob(resolve, "image/png")
-    );
-  
-    const filename =
-      "Chrono_Frelon_" +
-      new Date().toISOString().replace(/[:.]/g, "-") +
-      ".png";
-  
-    if (navigator.share) {
-      try {
-        const file = new File([blob], filename, { type: "image/png" });
-        await navigator.share({
-          files: [file],
-          title: "Chrono Frelon",
-          text: "Capture d’écran"
-        });
-        return;
-      } catch (e) {}
-    }
-  
-    const a = document.createElement("a");
-    a.href = URL.createObjectURL(blob);
-    a.download = filename;
-    a.click();
-  });
-  </script>
-  <script>
-  document.getElementById("btnLoc").addEventListener("click", () => {
-    window.location.href = "./map.html";
-  });
-</script>
-<script>
-  document.getElementById("btnLoc").addEventListener("click", () => {
-  
-    const observations = [];
-  
-    chronos.forEach(c => {
-      // Conditions minimales
-      if (c.lat === "--" || c.lon === "--") return;
-      if (c.essais.length === 0) return;
-  
-      // Calcul distance moyenne (même logique que l'affichage)
-      const total = c.essais.reduce((a, b) => a + b, 0);
-      const moyenne = total / c.essais.length;
-      const distance = Math.round((moyenne * c.vitesse) / 2);
-  
-      observations.push({
-        color: c.color,
-        lat: parseFloat(c.lat),
-        lon: parseFloat(c.lon),
-        direction: c.direction,
-        distance: distance,
-        vitesse: c.vitesse,
-        essais: c.essais.length,
-        timestamp: new Date().toISOString()
+    document.getElementById("btnCapt").addEventListener("click", async () => {
+      const canvas = await html2canvas(document.body, {
+        scale: 2,
+        useCORS: true
       });
+
+      const blob = await new Promise(resolve =>
+        canvas.toBlob(resolve, "image/png")
+      );
+
+      const filename =
+        "Chrono_Frelon_" +
+        new Date().toISOString().replace(/[:.]/g, "-") +
+        ".png";
+
+      if (navigator.share) {
+        try {
+          const file = new File([blob], filename, { type: "image/png" });
+          await navigator.share({
+            files: [file],
+            title: "Chrono Frelon",
+            text: "Capture d’écran"
+          });
+          return;
+        } catch (e) {}
+      }
+
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = filename;
+      a.click();
     });
-  
-    if (observations.length === 0) {
-      alert("Aucune donnée exploitable pour la localisation.");
-      return;
-    }
-  
-    localStorage.setItem(
-      "chronoObservations",
-      JSON.stringify(observations)
-    );
-  
-    window.location.href = "./map.html";
-  });
+  </script>
+
+  <!-- BOUTON LOCALISATION -->
+  <script>
+    document.getElementById("btnLoc").addEventListener("click", () => {
+      const observations = [];
+
+      chronos.forEach(c => {
+        if (c.lat === "--" || c.lon === "--") return;
+        if (c.essais.length === 0) return;
+
+        const total = c.essais.reduce((a, b) => a + b, 0);
+        const moyenne = total / c.essais.length;
+        const distance = Math.round((moyenne * c.vitesse) / 2);
+
+        observations.push({
+          color: c.color,
+          lat: parseFloat(c.lat),
+          lon: parseFloat(c.lon),
+          direction: c.direction,
+          distance: distance,
+          vitesse: c.vitesse,
+          essais: c.essais.length,
+          timestamp: new Date().toISOString()
+        });
+      });
+
+      if (observations.length === 0) {
+        alert("Aucune donnée exploitable pour la localisation.");
+        return;
+      }
+
+      localStorage.setItem(
+        "chronoObservations",
+        JSON.stringify(observations)
+      );
+
+      window.location.href = "./map.html";
+    });
   </script>
 
 </body>
