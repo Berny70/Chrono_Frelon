@@ -38,6 +38,16 @@ function moyenneCirculaire(degs) {
 }
 
 // ==========================
+// MISE À JOUR DIRECTION
+// ==========================
+function updateDirection(i) {
+  const c = chronos[i];
+  const m = moyenneCirculaire(c.directions);
+  c.direction = m;
+  document.getElementById(`dir${i}`).textContent = m + "°";
+}
+
+// ==========================
 // INIT
 // ==========================
 window.addEventListener("DOMContentLoaded", () => {
@@ -97,7 +107,10 @@ window.addEventListener("DOMContentLoaded", () => {
     div.querySelector(".compass").onclick = () => openCompass(i);
     div.querySelector(".det").onclick = () => openDET(i);
 
-    div.querySelector(`#vit${i}`).oninput = e => c.vitesse = +e.target.value;
+    div.querySelector(`#vit${i}`).oninput = e => {
+      c.vitesse = +e.target.value;
+      updateStats(i);
+    };
   });
 });
 
@@ -125,6 +138,7 @@ function startStop(i) {
 // ==========================
 function updateStats(i) {
   const c = chronos[i];
+
   if (!c.essais.length) {
     document.getElementById(`m${i}`).textContent = "0 s";
     document.getElementById(`d${i}`).textContent = "0 m";
@@ -144,15 +158,15 @@ function updateStats(i) {
 // ==========================
 function resetChrono(i) {
   const c = chronos[i];
+  c.running = false;
   c.essais = [];
   c.directions = [];
   c.direction = 0;
-  c.running = false;
 
   document.getElementById(`t${i}`).textContent = "0.00 s";
   document.getElementById(`m${i}`).textContent = "0 s";
   document.getElementById(`d${i}`).textContent = "0 m";
-  document.getElementById(`dir${i}`).textContent = "0°";
+  updateDirection(i);
 }
 
 // ==========================
@@ -215,9 +229,7 @@ function openCompass(i) {
   document.getElementById("saveDir").onclick = () => {
     if (heading !== null) {
       c.directions.push(heading);
-      const m = moyenneCirculaire(c.directions);
-      c.direction = m;
-      document.getElementById(`dir${i}`).textContent = m + "°";
+      updateDirection(i);
     }
   };
 }
@@ -272,11 +284,8 @@ function delEssai(k) {
 }
 
 function delDirection(k) {
-  const c = chronos[detIndex];
-  c.directions.splice(k, 1);
-  const m = moyenneCirculaire(c.directions);
-  c.direction = m;
-  document.getElementById(`dir${detIndex}`).textContent = m + "°";
+  chronos[detIndex].directions.splice(k, 1);
+  updateDirection(detIndex);
   openDET(detIndex);
 }
 
