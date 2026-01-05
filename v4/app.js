@@ -19,6 +19,28 @@ const chronos = [];
 let detIndex = null;
 
 // ==========================
+// MOYENNE CIRCULAIRE
+// ==========================
+function moyenneCirculaire(degs) {
+  if (!degs.length) return 0;
+
+  let sumSin = 0;
+  let sumCos = 0;
+
+  degs.forEach(d => {
+    const rad = d * Math.PI / 180;
+    sumSin += Math.sin(rad);
+    sumCos += Math.cos(rad);
+  });
+
+  const avgRad = Math.atan2(sumSin / degs.length, sumCos / degs.length);
+  let avgDeg = avgRad * 180 / Math.PI;
+  if (avgDeg < 0) avgDeg += 360;
+
+  return Math.round(avgDeg);
+}
+
+// ==========================
 // INIT
 // ==========================
 window.addEventListener("DOMContentLoaded", () => {
@@ -29,7 +51,7 @@ window.addEventListener("DOMContentLoaded", () => {
       running: false,
       startTime: 0,
       essais: [],
-      directions: [],   // ⬅️ NOUVEAU
+      directions: [],
       vitesse: 4,
       direction: 0,
       lat: "--",
@@ -153,6 +175,8 @@ function rst(i) {
   chronos[i].running = false;
   chronos[i].startTime = 0;
   document.getElementById(`t${i}`).textContent = "0.00 s";
+  document.getElementById(`dir${i}`).value = 0;
+  chronos[i].direction = 0;
   updateStats(i);
 }
 
@@ -189,27 +213,6 @@ function getPos(i) {
       "Long.: " + chronos[i].lon;
   });
 }
-
-function moyenneCirculaire(degs) {
-  if (degs.length === 0) return 0;
-
-  let sumSin = 0;
-  let sumCos = 0;
-
-  degs.forEach(d => {
-    const rad = d * Math.PI / 180;
-    sumSin += Math.sin(rad);
-    sumCos += Math.cos(rad);
-  });
-
-  const avgRad = Math.atan2(sumSin / degs.length, sumCos / degs.length);
-  let avgDeg = avgRad * 180 / Math.PI;
-
-  if (avgDeg < 0) avgDeg += 360;
-  return Math.round(avgDeg);
-}
-
-
 
 // ==========================
 // BOUSSOLE
@@ -252,10 +255,10 @@ function openCompass(i) {
   document.getElementById("saveDir").onclick = () => {
     if (heading !== null) {
       c.directions.push(heading);
-      
-      const moyenne = moyenneCirculaire(c.directions);
-      c.direction = moyenne;
-      document.getElementById(`dir${i}`).value = moyenne;
+
+      const moy = moyenneCirculaire(c.directions);
+      c.direction = moy;
+      document.getElementById(`dir${i}`).value = moy;
     }
   };
 
@@ -320,11 +323,16 @@ function delEssai(idx) {
 }
 
 function delDirection(idx) {
-  chronos[detIndex].directions.splice(idx, 1);
+  const c = chronos[detIndex];
+  c.directions.splice(idx, 1);
+
+  const moy = moyenneCirculaire(c.directions);
+  c.direction = moy;
+  document.getElementById(`dir${detIndex}`).value = moy;
+
   openDET(detIndex);
 }
 
 function closeDET() {
   document.getElementById("detOverlay")?.remove();
 }
-
