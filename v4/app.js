@@ -29,6 +29,7 @@ window.addEventListener("DOMContentLoaded", () => {
       running: false,
       startTime: 0,
       essais: [],
+      directions: [],   // ⬅️ NOUVEAU
       vitesse: 4,
       direction: 0,
       lat: "--",
@@ -45,7 +46,7 @@ window.addEventListener("DOMContentLoaded", () => {
 
       <div class="info-line">
         <div class="info-left">
-          <button class="pos">POS</button>
+          <button class="pos">Position</button>
           <div class="coords">
             <div id="lat${i}">Lat.: --</div>
             <div id="lon${i}">Long.: --</div>
@@ -69,10 +70,10 @@ window.addEventListener("DOMContentLoaded", () => {
       </div>
 
       <div class="buttons">
-        <button class="undo">SUP</button>
         <button class="start">Start / Stop</button>
-        <button class="det">DET</button>
-        <button class="reset">RST</button>
+        <button class="compass">Boussole</button>
+        <button class="det">Détail</button>
+        <button class="reset">Reset</button>
       </div>
     `;
 
@@ -80,10 +81,10 @@ window.addEventListener("DOMContentLoaded", () => {
 
     // Boutons
     div.querySelector(".start").onclick = () => startStop(i);
-    div.querySelector(".undo").onclick = () => sup(i);
     div.querySelector(".reset").onclick = () => rst(i);
     div.querySelector(".det").onclick = () => openDET(i);
     div.querySelector(".pos").onclick = () => getPos(i);
+    div.querySelector(".compass").onclick = () => openCompass(i);
 
     // Paramètres
     div.querySelector(`#vit${i}`).oninput =
@@ -144,17 +145,11 @@ function updateStats(i) {
 }
 
 // ==========================
-// SUP / RESET
+// RESET
 // ==========================
-function sup(i) {
-  if (chronos[i].essais.length) {
-    chronos[i].essais.pop();
-    updateStats(i);
-  }
-}
-
 function rst(i) {
   chronos[i].essais = [];
+  chronos[i].directions = [];
   chronos[i].running = false;
   chronos[i].startTime = 0;
   document.getElementById(`t${i}`).textContent = "0.00 s";
@@ -162,7 +157,7 @@ function rst(i) {
 }
 
 // ==========================
-// TICK (centièmes)
+// TICK
 // ==========================
 setInterval(() => {
   const now = Date.now();
@@ -175,7 +170,7 @@ setInterval(() => {
 }, 50);
 
 // ==========================
-// POS (géoloc manuelle)
+// POSITION
 // ==========================
 function getPos(i) {
   if (!navigator.geolocation) {
@@ -192,18 +187,70 @@ function getPos(i) {
 
     document.getElementById(`lon${i}`).textContent =
       "Long.: " + chronos[i].lon;
-  }, () => {
-    alert("Impossible d'obtenir la position");
   });
 }
 
 // ==========================
-// DET (DÉTAILS)
+// BOUSSOLE
+// ==========================
+function openCompass(i) {
+  const c = chronos[i];
+
+  if (
+    typeof DeviceOrientationEvent !== "undefined" &&
+    typeof DeviceOrientationEvent.requestPermission === "function"
+  ) {
+    DeviceOrientationEvent.requestPermission();
+  }
+
+  let heading = null;
+
+  const overlay = document.createElement("div");
+  overlay.id = "compassOverlay";
+
+  overlay.innerHTML = `
+    <div class="compass-box">
+      <h2>Boussole ${c.color}</h2>
+      <div id="headingValue">---</div>
+      <button id="saveDir">Capturer direction</button><br><br>
+      <button onclick="closeCompass()">Fermer</button>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  function onOrient(e) {
+    if (e.alpha !== null) {
+      heading = Math.round(360 - e.alpha);
+      document.getElementById("headingValue").textContent = heading + "°";
+    }
+  }
+
+  window.addEventListener("deviceorientationabsolute", onOrient);
+
+  document.getElementById("saveDir").onclick = () => {
+    if (heading !== null) {
+      c.directions.push(heading);
+      c.direction = heading;
+      document.getElementById(`dir${i}`).value = heading;
+    }
+  };
+
+  overlay.onremove = () => {
+    window.removeEventListener("deviceorientationabsolute", onOrient);
+  };
+}
+
+function closeCompass() {
+  document.getElementById("compassOverlay")?.remove();
+}
+
+// ==========================
+// DÉTAIL
 // ==========================
 function openDET(i) {
   detIndex = i;
   const c = chronos[i];
-
   closeDET();
 
   const overlay = document.createElement("div");
@@ -219,10 +266,21 @@ function openDET(i) {
         const dist = Math.round((sec * c.vitesse) / 2);
         return `
           <div class="det-line">
-            Essai ${idx + 1} : ${sec} s – dist ${dist} m
-            <button onclick="delEssai(${idx})">SUPP</button>
+            Essai ${idx + 1} : ${sec} s – ${dist} m
+            <button onclick="delEssai(${idx})">Supprimer</button>
           </div>`;
       }).join("")}
+
+      <hr>
+      <h3>Directions</h3>
+      ${c.directions.length === 0 ? "<i>Aucune</i>" :
+        c.directions.map((d, idx) => `
+          <div class="det-line">
+            ${d}°
+            <button onclick="delDirection(${idx})">Supprimer</button>
+          </div>
+        `).join("")
+      }
 
       <br>
       <button onclick="closeDET()">Fermer</button>
@@ -235,6 +293,11 @@ function openDET(i) {
 function delEssai(idx) {
   chronos[detIndex].essais.splice(idx, 1);
   updateStats(detIndex);
+  openDET(detIndex);
+}
+
+function delDirection(idx) {
+  chronos[detIndex].directions.splice(idx, 1);
   openDET(detIndex);
 }
 
