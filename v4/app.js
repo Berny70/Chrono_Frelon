@@ -90,7 +90,7 @@ window.addEventListener("DOMContentLoaded", () => {
       
         <div class="info-center">
           <b>Dir.:</b>
-          <input type="number" id="dir${i}" value="0" min="0" max="359"> °
+          <span id="dir${i}">0°</span>
         </div>
       
         <div class="info-right">
@@ -117,7 +117,6 @@ window.addEventListener("DOMContentLoaded", () => {
     div.querySelector(".det").onclick = () => openDET(i);
 
     div.querySelector(`#vit${i}`).oninput = e => c.vitesse = +e.target.value;
-    div.querySelector(`#dir${i}`).oninput = e => c.direction = +e.target.value;
   });
 });
 
@@ -147,10 +146,8 @@ function updateStats(i) {
   const c = chronos[i];
   const essais = c.essais;
 
-  document.getElementById(`n${i}`).textContent = essais.length + " essai";
-
   if (!essais.length) {
-    document.getElementById(`m${i}`).textContent = "0.00 s";
+    document.getElementById(`m${i}`).textContent = "0 s";
     document.getElementById(`d${i}`).textContent = "0 m";
     return;
   }
@@ -159,7 +156,7 @@ function updateStats(i) {
   const moy = total / essais.length;
   const dist = (moy * c.vitesse) / 2;
 
-  document.getElementById(`m${i}`).textContent = moy.toFixed(2) + " s";
+  document.getElementById(`m${i}`).textContent = moy.toFixed(0) + " s";
   document.getElementById(`d${i}`).textContent = Math.round(dist) + " m";
 }
 
@@ -173,7 +170,7 @@ function resetChrono(i) {
   c.direction = 0;
   c.running = false;
   document.getElementById(`t${i}`).textContent = "0.00 s";
-  document.getElementById(`dir${i}`).value = 0;
+  document.getElementById(`dir${i}`).textContent = m + "°";
   updateStats(i);
 }
 
@@ -305,4 +302,5 @@ function delDirection(k) {
 function closeDET() {
   document.getElementById("detOverlay")?.remove();
 }
+
 
