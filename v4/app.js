@@ -303,23 +303,29 @@ function closeDET() {
   document.getElementById("detOverlay")?.remove();
 }
 <script>
-function updateDateTime() {
-  const now = new Date();
-
-  const d = now.toLocaleDateString("fr-FR");
-  const t = now.toLocaleTimeString("fr-FR", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit"
-  });
-
+document.addEventListener("DOMContentLoaded", () => {
   const el = document.getElementById("dateTime");
-  if (el) el.textContent = `${d} ${t}`;
-}
+  if (!el) return;
 
-updateDateTime();
-setInterval(updateDateTime, 1000);
+  function updateDateTime() {
+    const now = new Date();
+
+    const d = now.toLocaleDateString("fr-FR");
+    const t = now.toLocaleTimeString("fr-FR", {
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit"
+    });
+
+    el.textContent = `${d} ${t}`;
+  }
+
+  updateDateTime();
+  setInterval(updateDateTime, 1000);
+});
 </script>
+
+
 
 
 
