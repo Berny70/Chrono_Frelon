@@ -302,5 +302,24 @@ function delDirection(k) {
 function closeDET() {
   document.getElementById("detOverlay")?.remove();
 }
+<script>
+function updateDateTime() {
+  const now = new Date();
+
+  const d = now.toLocaleDateString("fr-FR");
+  const t = now.toLocaleTimeString("fr-FR", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit"
+  });
+
+  const el = document.getElementById("dateTime");
+  if (el) el.textContent = `${d} ${t}`;
+}
+
+updateDateTime();
+setInterval(updateDateTime, 1000);
+</script>
+
 
 
