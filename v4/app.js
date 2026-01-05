@@ -190,6 +190,27 @@ function getPos(i) {
   });
 }
 
+function moyenneCirculaire(degs) {
+  if (degs.length === 0) return 0;
+
+  let sumSin = 0;
+  let sumCos = 0;
+
+  degs.forEach(d => {
+    const rad = d * Math.PI / 180;
+    sumSin += Math.sin(rad);
+    sumCos += Math.cos(rad);
+  });
+
+  const avgRad = Math.atan2(sumSin / degs.length, sumCos / degs.length);
+  let avgDeg = avgRad * 180 / Math.PI;
+
+  if (avgDeg < 0) avgDeg += 360;
+  return Math.round(avgDeg);
+}
+
+
+
 // ==========================
 // BOUSSOLE
 // ==========================
@@ -231,8 +252,10 @@ function openCompass(i) {
   document.getElementById("saveDir").onclick = () => {
     if (heading !== null) {
       c.directions.push(heading);
-      c.direction = heading;
-      document.getElementById(`dir${i}`).value = heading;
+      
+      const moyenne = moyenneCirculaire(c.directions);
+      c.direction = moyenne;
+      document.getElementById(`dir${i}`).value = moyenne;
     }
   };
 
@@ -304,3 +327,4 @@ function delDirection(idx) {
 function closeDET() {
   document.getElementById("detOverlay")?.remove();
 }
+
