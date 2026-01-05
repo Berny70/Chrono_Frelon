@@ -275,4 +275,15 @@ button {
   background: #8bc34a;
   font-weight: bold;
 }
+/* ================================
+   DATE & HEURE
+================================ */
+.date-time {
+  font-weight: bold;
+  font-size: 0.95em;
+  text-align: center;
+  flex: 1;
+}
+
+
 
