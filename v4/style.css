@@ -300,5 +300,34 @@ button.pos {
   background: #9e9e9e;
   color: #000;
 }
+/* ================================
+   BOUSSOLE
+================================ */
+#compassOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.compass-box {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  width: 80%;
+  max-width: 320px;
+}
+
+#headingValue {
+  font-size: 3em;
+  font-weight: bold;
+  margin: 20px 0;
+}
+
+
 
 
