@@ -68,24 +68,36 @@ window.addEventListener("DOMContentLoaded", () => {
         <span class="time" id="t${i}">0.00 s</span>
         <button class="reset">Reset</button>
       </div>
-
+      
       <div class="row row-info">
-        <div class="info-block"><b>Lat.:</b> <span id="lat${i}">--</span></div>
-        <div class="info-block"><b>T.moy:</b> <span id="m${i}">0.00 s</span></div>
-        <div class="info-block">
+        <div class="info-left">
+          <b>Lat.:</b> <span id="lat${i}">--</span>
+        </div>
+      
+        <div class="info-center">
+          <b>T.moy:</b> <span id="m${i}">0.00 s</span>
+        </div>
+      
+        <div class="info-right">
           <b>Vit.:</b>
           <input type="number" id="vit${i}" value="4" min="1" max="9"> m/s
         </div>
       </div>
-
       <div class="row row-info">
-        <div class="info-block"><b>Long.:</b> <span id="lon${i}">--</span></div>
-        <div class="info-block">
+        <div class="info-left">
+          <b>Long.:</b> <span id="lon${i}">--</span>
+        </div>
+      
+        <div class="info-center">
           <b>Dir.:</b>
           <input type="number" id="dir${i}" value="0" min="0" max="359"> °
         </div>
-        <div class="info-block"><b>Dist.:</b> <span id="d${i}">0 m</span></div>
+      
+        <div class="info-right">
+          <b>Dist.:</b> <span id="d${i}">0 m</span>
+        </div>
       </div>
+
 
       <div class="row row-actions">
         <button class="pos">Position</button>
@@ -93,9 +105,7 @@ window.addEventListener("DOMContentLoaded", () => {
         <button class="det">Détail</button>
       </div>
 
-      <div class="info">
-        <span id="n${i}">0 essai</span>
-      </div>
+
     `;
 
     container.appendChild(div);
@@ -295,3 +305,4 @@ function delDirection(k) {
 function closeDET() {
   document.getElementById("detOverlay")?.remove();
 }
+
