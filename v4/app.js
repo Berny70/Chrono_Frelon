@@ -1,13 +1,13 @@
 // ==========================
 // VERSION (service-worker)
 // ==========================
-fetch('service-worker.js')
+fetch("service-worker.js")
   .then(r => r.text())
   .then(txt => {
     const match = txt.match(/APP_VERSION\s*=\s*["']([^"']+)["']/);
     if (match) {
-      const v = document.getElementById('version');
-      if (v) v.textContent = "version " + match[1];
+      const v = document.getElementById("version");
+      if (v) v.textContent = "v. : " + match[1];
     }
   });
 
@@ -24,16 +24,14 @@ let detIndex = null;
 function moyenneCirculaire(degs) {
   if (!degs.length) return 0;
 
-  let sumSin = 0;
-  let sumCos = 0;
-
+  let sin = 0, cos = 0;
   degs.forEach(d => {
     const r = d * Math.PI / 180;
-    sumSin += Math.sin(r);
-    sumCos += Math.cos(r);
+    sin += Math.sin(r);
+    cos += Math.cos(r);
   });
 
-  let a = Math.atan2(sumSin / degs.length, sumCos / degs.length);
+  let a = Math.atan2(sin / degs.length, cos / degs.length);
   let deg = a * 180 / Math.PI;
   if (deg < 0) deg += 360;
   return Math.round(deg);
@@ -68,44 +66,27 @@ window.addEventListener("DOMContentLoaded", () => {
         <span class="time" id="t${i}">0.00 s</span>
         <button class="reset">Reset</button>
       </div>
-      
+
       <div class="row row-info">
-        <div class="info-left">
-          <b>Lat.:</b> <span id="lat${i}">--</span>
-        </div>
-      
-        <div class="info-center">
-          <b>T.moy:</b> <span id="m${i}">0.00 s</span>
-        </div>
-      
+        <div class="info-left"><b>Lat.:</b> <span id="lat${i}">--</span></div>
+        <div class="info-center"><b>T.moy:</b> <span id="m${i}">0 s</span></div>
         <div class="info-right">
           <b>Vit.:</b>
           <input type="number" id="vit${i}" value="4" min="1" max="9"> m/s
         </div>
       </div>
-      <div class="row row-info">
-        <div class="info-left">
-          <b>Long.:</b> <span id="lon${i}">--</span>
-        </div>
-      
-        <div class="info-center">
-          <b>Dir.:</b>
-          <span id="dir${i}">0°</span>
-        </div>
-      
-        <div class="info-right">
-          <b>Dist.:</b> <span id="d${i}">0 m</span>
-        </div>
-      </div>
 
+      <div class="row row-info">
+        <div class="info-left"><b>Long.:</b> <span id="lon${i}">--</span></div>
+        <div class="info-center"><b>Dir.:</b> <span id="dir${i}">0°</span></div>
+        <div class="info-right"><b>Dist.:</b> <span id="d${i}">0 m</span></div>
+      </div>
 
       <div class="row row-actions">
         <button class="pos">Position</button>
         <button class="compass">Boussole</button>
         <button class="det">Détail</button>
       </div>
-
-
     `;
 
     container.appendChild(div);
@@ -144,16 +125,14 @@ function startStop(i) {
 // ==========================
 function updateStats(i) {
   const c = chronos[i];
-  const essais = c.essais;
-
-  if (!essais.length) {
+  if (!c.essais.length) {
     document.getElementById(`m${i}`).textContent = "0 s";
     document.getElementById(`d${i}`).textContent = "0 m";
     return;
   }
 
-  const total = essais.reduce((a, b) => a + b, 0);
-  const moy = total / essais.length;
+  const total = c.essais.reduce((a, b) => a + b, 0);
+  const moy = total / c.essais.length;
   const dist = (moy * c.vitesse) / 2;
 
   document.getElementById(`m${i}`).textContent = moy.toFixed(0) + " s";
@@ -169,9 +148,11 @@ function resetChrono(i) {
   c.directions = [];
   c.direction = 0;
   c.running = false;
+
   document.getElementById(`t${i}`).textContent = "0.00 s";
-  document.getElementById(`dir${i}`).textContent = m + "°";
-  updateStats(i);
+  document.getElementById(`m${i}`).textContent = "0 s";
+  document.getElementById(`d${i}`).textContent = "0 m";
+  document.getElementById(`dir${i}`).textContent = "0°";
 }
 
 // ==========================
@@ -206,7 +187,7 @@ function openCompass(i) {
   const c = chronos[i];
   let heading = null;
 
-  if (DeviceOrientationEvent?.requestPermission) {
+  if (window.DeviceOrientationEvent?.requestPermission) {
     DeviceOrientationEvent.requestPermission();
   }
 
@@ -236,7 +217,7 @@ function openCompass(i) {
       c.directions.push(heading);
       const m = moyenneCirculaire(c.directions);
       c.direction = m;
-      document.getElementById(`dir${i}`).value = m;
+      document.getElementById(`dir${i}`).textContent = m + "°";
     }
   };
 }
@@ -295,16 +276,10 @@ function delDirection(k) {
   c.directions.splice(k, 1);
   const m = moyenneCirculaire(c.directions);
   c.direction = m;
-  document.getElementById(`dir${detIndex}`).value = m;
+  document.getElementById(`dir${detIndex}`).textContent = m + "°";
   openDET(detIndex);
 }
 
 function closeDET() {
   document.getElementById("detOverlay")?.remove();
 }
-
-
-
-
-
-
