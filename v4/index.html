@@ -173,6 +173,103 @@
       window.location.href = "./map.html";
     });
   </script>
+<script>
+document.getElementById("btnHelp").addEventListener("click", () => {
+  const overlay = document.createElement("div");
+  overlay.id = "helpOverlay";
+
+  overlay.innerHTML = `
+    <div class="help-box">
+      <h2>Aide – Application « Pot à Mèche »</h2>
+
+      <h3>1️⃣ Installation de l’application</h3>
+
+      <h4>📱 Android</h4>
+      <ol>
+        <li>Ouvrez <b>Google Chrome</b></li>
+        <li>Allez sur :
+          <br><b>https://berny70.github.io/Chrono_Frelon/</b>
+        </li>
+        <li>Appuyez sur le menu <b>⋮</b></li>
+        <li>Sélectionnez <b>« Installer l’application »</b></li>
+      </ol>
+
+      <h4>🍎 iPhone (iOS)</h4>
+      <ol>
+        <li>Ouvrez <b>Safari</b> (obligatoire)</li>
+        <li>Allez sur :
+          <br><b>https://berny70.github.io/Chrono_Frelon/</b>
+        </li>
+        <li>Appuyez sur <b>Partager</b> (⬆︎)</li>
+        <li>Choisissez <b>« Sur l’écran d’accueil »</b></li>
+      </ol>
+
+      <hr>
+
+      <h3>2️⃣ Utilisation des chronos</h3>
+
+      <p>
+        L’application comporte <b>4 chronos indépendants</b>,
+        chacun correspondant à une <b>station d’observation</b>.
+      </p>
+
+      <h4>🟢 Mise en place d’une station</h4>
+      <ul>
+        <li>Placez le pot à mèche</li>
+        <li>Appuyez sur <b>« Position »</b> pour enregistrer la localisation</li>
+      </ul>
+
+      <h4>⏱️ Mesure du temps</h4>
+      <ul>
+        <li>Marquez un frelon (stylo à reine)</li>
+        <li>Appuyez sur <b>Start / Stop</b> à son départ</li>
+        <li>Appuyez à nouveau à son retour</li>
+        <li>Répétez plusieurs fois</li>
+      </ul>
+
+      <h4>🧭 Mesure de la direction</h4>
+      <ul>
+        <li>Appuyez sur <b>« Boussole »</b></li>
+        <li>Pointez le téléphone dans la direction du frelon</li>
+        <li>Validez avec <b>« Capturer direction »</b></li>
+        <li>La direction affichée est une <b>moyenne cyclique</b></li>
+      </ul>
+
+      <h4>🔎 Vérification</h4>
+      <ul>
+        <li><b>Détail</b> : liste des temps et directions</li>
+        <li>Suppression possible des valeurs aberrantes</li>
+        <li><b>Reset</b> : remise à zéro d’une station</li>
+      </ul>
+
+      <h4>🗺️ Localisation du nid</h4>
+      <ul>
+        <li>Bouton <b>« Localisation du nid »</b> en haut à droite</li>
+        <li>Affiche les stations et les vecteurs direction / distance</li>
+      </ul>
+
+      <h4>📸 Sauvegarde</h4>
+      <ul>
+        <li><b>Capture d’écran</b> : image avec date et heure</li>
+      </ul>
+
+      <p style="margin-top:10px;">
+        ✔️ Application gratuite<br>
+        ✔️ Sans publicité – sans compte<br>
+        ✔️ Fonctionne hors connexion
+      </p>
+
+      <button onclick="closeHelp()">Fermer</button>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+});
+
+function closeHelp() {
+  document.getElementById("helpOverlay")?.remove();
+}
+</script>
 
 </body>
 </html>
