@@ -347,6 +347,30 @@ button {
   color: #fff;
   font-weight: bold;
 }
+/* ================================
+   OVERLAY HELP
+================================ */
+#helpOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20000; /* PLUS HAUT que tout le reste */
+}
+
+.help-box {
+  background: #ffffff;
+  padding: 18px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 420px;
+  max-height: 85vh;
+  overflow-y: auto;
+  font-size: 0.95em;
+}
+
 
 
 
