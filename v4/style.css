@@ -42,6 +42,26 @@ body {
   line-height: 1.3em;
   min-width: 90px;
 }
+/* ================================
+   HEADER - GAUCHE
+================================ */
+.top-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-help {
+  background: #03a9f4;
+  color: #fff;
+  font-weight: bold;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85em;
+}
+
 
 /* ================================
    CHRONOS
@@ -284,6 +304,7 @@ button {
   text-align: center;
   flex: 1;
 }
+
 
 
 
