@@ -305,8 +305,8 @@ button {
   flex: 1;
 }
 /* **************
-/* HELP
-/* *************
+HELP
+ ************* */
 #helpOverlay {
   position: fixed;
   inset: 0;
@@ -370,6 +370,7 @@ button {
   overflow-y: auto;
   font-size: 0.95em;
 }
+
 
 
 
