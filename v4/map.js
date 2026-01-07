@@ -1,33 +1,88 @@
 // ==========================
-// INITIALISATION CARTE
-// ==========================
-const map = L.map("map").setView([46.5, 2.5], 6); // France par défaut
-
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  attribution: "© OpenStreetMap"
-}).addTo(map);
-
-// ==========================
-// DONNÉES (mock pour l'instant)
+// DONNÉES
 // ==========================
 const observations = JSON.parse(
   localStorage.getItem("chronoObservations") || "[]"
 );
 
-// Si aucune capture, message simple
+// ==========================
+// INITIALISATION CARTE
+// ==========================
+const map = L.map("map");
+
+// Fond de carte
+L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  attribution: "© OpenStreetMap"
+}).addTo(map);
+
+// ==========================
+// GESTION ZOOM / CENTRAGE
+// ==========================
+const points = observations
+  .filter(o => o.lat && o.lon)
+  .map(o => [o.lat, o.lon]);
+
+const savedView = localStorage.getItem("mapView");
+
+if (savedView) {
+  // 🔁 Restaurer le dernier zoom utilisateur
+  const { center, zoom } = JSON.parse(savedView);
+  map.setView(center, zoom);
+
+} else if (points.length === 1) {
+  // 📍 Une seule station → zoom terrain
+  map.setView(points[0], 16);
+
+} else if (points.length > 1) {
+  // 📍📍 Plusieurs stations → tout afficher
+  const bounds = L.latLngBounds(points);
+  map.fitBounds(bounds, { padding: [30, 30] });
+
+} else {
+  // 🌍 Fallback (France)
+  map.setView([46.5, 2.5], 6);
+}
+
+// Sauvegarde du zoom et du centre si l’utilisateur bouge la carte
+map.on("moveend", () => {
+  const center = map.getCenter();
+  const zoom = map.getZoom();
+
+  localStorage.setItem(
+    "mapView",
+    JSON.stringify({
+      center: [center.lat, center.lng],
+      zoom
+    })
+  );
+});
+
+// ==========================
+// MESSAGE SI AUCUNE DONNÉE
+// ==========================
 if (observations.length === 0) {
-  alert("Aucune capture disponible.\nUtilise 'Capture d’écran' avant.");
+  alert(
+    "Aucune donnée exploitable pour la localisation.\n\n" +
+    "Pour utiliser la carte, veuillez au minimum :\n" +
+    "• saisir une position\n" +
+    "• et capturer une direction avec la boussole."
+  );
 }
 
 // ==========================
 // AFFICHAGE POINTS + VECTEURS
 // ==========================
 observations.forEach(obs => {
-  if (!obs.lat || !obs.lon || !obs.distance || !obs.direction) return;
+  if (
+    obs.lat === "--" ||
+    obs.lon === "--" ||
+    !obs.distance ||
+    obs.direction === 0
+  ) return;
 
   const start = [obs.lat, obs.lon];
 
-  // Marqueur point d’observation
+  // Point d’observation
   const marker = L.circleMarker(start, {
     radius: 6,
     color: obs.color,
@@ -41,7 +96,7 @@ observations.forEach(obs => {
      Dir: ${obs.direction}°`
   );
 
-  // Calcul du point d’arrivée du vecteur
+  // Calcul du point d’arrivée
   const dest = destinationPoint(
     obs.lat,
     obs.lon,
@@ -49,7 +104,7 @@ observations.forEach(obs => {
     obs.distance
   );
 
-  // Vecteur
+  // Vecteur directionnel
   L.polyline([start, [dest.lat, dest.lon]], {
     color: obs.color,
     weight: 3
