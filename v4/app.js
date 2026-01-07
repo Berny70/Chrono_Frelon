@@ -16,6 +16,8 @@ fetch("service-worker.js")
 // ==========================
 const chronoColors = ["red", "blue", "green", "white"];
 const chronos = [];
+const DEFAULT_VITESSE = 4;
+
 let detIndex = null;
 
 // ==========================
@@ -158,16 +160,27 @@ function updateStats(i) {
 // ==========================
 function resetChrono(i) {
   const c = chronos[i];
+
+  // Données internes
   c.running = false;
+  c.startTime = 0;
   c.essais = [];
   c.directions = [];
   c.direction = 0;
+  c.vitesse = DEFAULT_VITESSE;
+  c.lat = "--";
+  c.lon = "--";
 
+  // Affichage
   document.getElementById(`t${i}`).textContent = "0.00 s";
   document.getElementById(`m${i}`).textContent = "0 s";
   document.getElementById(`d${i}`).textContent = "0 m";
-  updateDirection(i);
+  document.getElementById(`dir${i}`).textContent = "0°";
+  document.getElementById(`lat${i}`).textContent = "--";
+  document.getElementById(`lon${i}`).textContent = "--";
+  document.getElementById(`vit${i}`).value = DEFAULT_VITESSE;
 }
+
 
 // ==========================
 // TICK
@@ -292,3 +305,4 @@ function delDirection(k) {
 function closeDET() {
   document.getElementById("detOverlay")?.remove();
 }
+
