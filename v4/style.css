@@ -372,27 +372,34 @@ HELP
 }
 
 /* ================================
-   HAUT DROIT : CONTACT + AUTEUR
+   HAUT DROIT : AUTEUR / VERSION / CONTACT
 ================================ */
-.top-right-line {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 6px;
+.top-right {
+  text-align: right;
 }
 
 .author {
   font-weight: bold;
+  font-size: 0.9em;
+}
+
+/* Ligne enveloppe + version */
+.top-right-sub {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  font-size: 0.85em;
 }
 
 /* Bouton enveloppe */
 #btnMail {
   background: none;
   border: none;
-  font-size: 1.3em;
+  font-size: 1.2em;
   cursor: pointer;
-  line-height: 1;
   padding: 0;
+  line-height: 1;
 }
 
 #btnMail:hover {
