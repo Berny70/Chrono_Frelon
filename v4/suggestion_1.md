@@ -2,6 +2,7 @@ autre idée en plus : intégrer un lien vers un Google Form dans un bouton de l'
 ou Ajoutez un simple bouton "Nous contacter / Suggérer une idée" qui pointe vers un formulaire web bien conçu. 
 Cela évite d'alourdir l'application tout en montrant que vous êtes à l'écoute.
 
+Google Form https://forms.gle/GnQEQhTsgyHjiPLz6
 
 Excellente idée — et très saine pour un projet comme Pot à Mèche 👍
 Tu touches exactement le bon équilibre : écoute des utilisateurs sans alourdir l’application.
