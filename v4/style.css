@@ -372,20 +372,33 @@ HELP
 }
 
 /* ================================
-   BOUTON CONTACT (ENVELOPPE)
+   HAUT DROIT : CONTACT + AUTEUR
 ================================ */
+.top-right-line {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.author {
+  font-weight: bold;
+}
+
+/* Bouton enveloppe */
 #btnMail {
   background: none;
   border: none;
-  font-size: 1.4em;
+  font-size: 1.3em;
   cursor: pointer;
-  margin-right: 6px;
   line-height: 1;
+  padding: 0;
 }
 
 #btnMail:hover {
   opacity: 0.7;
 }
+
 
 
 
