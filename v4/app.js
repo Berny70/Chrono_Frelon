@@ -20,6 +20,11 @@ const DEFAULT_VITESSE = 4;
 
 let detIndex = null;
 
+// 🔵 Variables globales boussole (IMPORTANT)
+let currentCompassIndex = null;
+let currentHeading = null;
+let compassActive = false;
+
 // ==========================
 // MOYENNE CIRCULAIRE
 // ==========================
@@ -61,7 +66,7 @@ window.addEventListener("DOMContentLoaded", () => {
       startTime: 0,
       essais: [],
       directions: [],
-      vitesse: 4,
+      vitesse: DEFAULT_VITESSE,
       direction: 0,
       lat: "--",
       lon: "--",
@@ -80,18 +85,18 @@ window.addEventListener("DOMContentLoaded", () => {
       </div>
 
       <div class="row row-info">
-        <div class="info-left"><b>Lat.:</b> <span id="lat${i}">--</span></div>
-        <div class="info-center"><b>T.moy:</b> <span id="m${i}">0 s</span></div>
-        <div class="info-right">
+        <div><b>Lat.:</b> <span id="lat${i}">--</span></div>
+        <div><b>T.moy:</b> <span id="m${i}">0 s</span></div>
+        <div>
           <b>Vit.:</b>
-          <input type="number" id="vit${i}" value="4" min="1" max="9"> m/s
+          <input type="number" id="vit${i}" value="${DEFAULT_VITESSE}" min="1" max="9"> m/s
         </div>
       </div>
 
       <div class="row row-info">
-        <div class="info-left"><b>Long.:</b> <span id="lon${i}">--</span></div>
-        <div class="info-center"><b>Dir.:</b> <span id="dir${i}">0°</span></div>
-        <div class="info-right"><b>Dist.:</b> <span id="d${i}">0 m</span></div>
+        <div><b>Long.:</b> <span id="lon${i}">--</span></div>
+        <div><b>Dir.:</b> <span id="dir${i}">0°</span></div>
+        <div><b>Dist.:</b> <span id="d${i}">0 m</span></div>
       </div>
 
       <div class="row row-actions">
@@ -161,7 +166,6 @@ function updateStats(i) {
 function resetChrono(i) {
   const c = chronos[i];
 
-  // Données internes
   c.running = false;
   c.startTime = 0;
   c.essais = [];
@@ -171,7 +175,6 @@ function resetChrono(i) {
   c.lat = "--";
   c.lon = "--";
 
-  // Affichage
   document.getElementById(`t${i}`).textContent = "0.00 s";
   document.getElementById(`m${i}`).textContent = "0 s";
   document.getElementById(`d${i}`).textContent = "0 m";
@@ -180,7 +183,6 @@ function resetChrono(i) {
   document.getElementById(`lon${i}`).textContent = "--";
   document.getElementById(`vit${i}`).value = DEFAULT_VITESSE;
 }
-
 
 // ==========================
 // TICK
@@ -208,44 +210,56 @@ function getPos(i) {
 }
 
 // ==========================
-// BOUSSOLE
+// BOUSSOLE (overlay)
 // ==========================
 function openCompass(i) {
-  const c = chronos[i];
-  let heading = null;
+  currentCompassIndex = i;
+  currentHeading = null;
+  compassActive = false;
 
   const overlay = document.createElement("div");
   overlay.id = "compassOverlay";
   overlay.innerHTML = `
     <div class="compass-box">
-      <h2>Boussole ${c.color}</h2>
+      <h2>Boussole ${chronos[i].color}</h2>
       <div id="headingValue">---</div>
 
-      <button id="enableCompass">Activer la boussole</button><br><br>
-      <button id="saveDir">Capturer direction</button><br><br>
-      <button id="closeCompassBtn">Fermer</button>
+      <button data-action="enable">Activer la boussole</button><br><br>
+      <button data-action="save">Capturer direction</button><br><br>
+      <button data-action="close">Fermer</button>
     </div>
   `;
   document.body.appendChild(overlay);
+}
 
-  const headingEl = document.getElementById("headingValue");
-
-  function onOrientation(e) {
-    if (e.webkitCompassHeading !== undefined) {
-      // 🍎 iOS
-      heading = Math.round(e.webkitCompassHeading);
-    } else if (e.alpha !== null) {
-      // 🤖 Android
-      heading = Math.round(360 - e.alpha);
-    }
-
-    if (heading !== null) {
-      headingEl.textContent = heading + "°";
-    }
+// ==========================
+// ORIENTATION HANDLER
+// ==========================
+function onOrientation(e) {
+  if (e.webkitCompassHeading !== undefined) {
+    currentHeading = Math.round(e.webkitCompassHeading);
+  } else if (e.alpha !== null) {
+    currentHeading = Math.round(360 - e.alpha);
   }
 
-  // ✅ Activer la boussole (clic utilisateur requis sur iOS)
-  document.getElementById("enableCompass").onclick = async () => {
+  const el = document.getElementById("headingValue");
+  if (el && currentHeading !== null) {
+    el.textContent = currentHeading + "°";
+  }
+}
+
+// ==========================
+// DÉLÉGATION ÉVÉNEMENTS (clé iOS)
+// ==========================
+document.addEventListener("click", async e => {
+  const btn = e.target.closest("button");
+  if (!btn) return;
+
+  const action = btn.dataset.action;
+  if (!action) return;
+
+  // ACTIVER
+  if (action === "enable" && !compassActive) {
     if (
       typeof DeviceOrientationEvent !== "undefined" &&
       typeof DeviceOrientationEvent.requestPermission === "function"
@@ -258,20 +272,74 @@ function openCompass(i) {
     }
 
     window.addEventListener("deviceorientation", onOrientation);
-  };
+    compassActive = true;
+  }
 
-  // ✅ Sauvegarde direction
-  document.getElementById("saveDir").onclick = () => {
-    if (heading !== null) {
-      c.directions.push(heading);
-      updateDirection(i);
-    }
-  };
+  // SAUVEGARDER
+  if (action === "save" && currentHeading !== null) {
+    chronos[currentCompassIndex].directions.push(currentHeading);
+    updateDirection(currentCompassIndex);
+  }
 
-  // ✅ Fermeture propre
-  document.getElementById("closeCompassBtn").onclick = () => {
+  // FERMER
+  if (action === "close") {
     window.removeEventListener("deviceorientation", onOrientation);
-    overlay.remove();
-  };
+    compassActive = false;
+    document.getElementById("compassOverlay")?.remove();
+  }
+});
+
+// ==========================
+// DÉTAIL
+// ==========================
+function openDET(i) {
+  detIndex = i;
+  const c = chronos[i];
+  closeDET();
+
+  const overlay = document.createElement("div");
+  overlay.id = "detOverlay";
+  overlay.className = c.color;
+
+  overlay.innerHTML = `
+    <div class="det-box">
+      <h2>Détail ${c.color}</h2>
+
+      ${c.essais.map((t, k) => `
+        <div class="det-line">
+          Essai ${k + 1} : ${Math.ceil(t)} s
+          <button onclick="delEssai(${k})">Supprimer</button>
+        </div>
+      `).join("")}
+
+      <hr>
+      <h3>Directions</h3>
+      ${c.directions.map((d, k) => `
+        <div class="det-line">
+          ${d}°
+          <button onclick="delDirection(${k})">Supprimer</button>
+        </div>
+      `).join("")}
+
+      <br>
+      <button onclick="closeDET()">Fermer</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
 }
 
+function delEssai(k) {
+  chronos[detIndex].essais.splice(k, 1);
+  updateStats(detIndex);
+  openDET(detIndex);
+}
+
+function delDirection(k) {
+  chronos[detIndex].directions.splice(k, 1);
+  updateDirection(detIndex);
+  openDET(detIndex);
+}
+
+function closeDET() {
+  document.getElementById("detOverlay")?.remove();
+}
