@@ -405,6 +405,29 @@ HELP
 #btnMail:hover {
   opacity: 0.7;
 }
+/* ================================
+   AIDE : CONTACT / SUGGESTIONS
+================================ */
+.help-contact {
+  text-align: center;
+  margin-top: 12px;
+}
+
+#btnFeedbackHelp {
+  background: #2196f3;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 1em;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#btnFeedbackHelp:hover {
+  opacity: 0.85;
+}
+
 
 
 
