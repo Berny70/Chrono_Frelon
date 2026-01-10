@@ -223,7 +223,7 @@ function openCompass(i) {
 
       <button id="enableCompass">Activer la boussole</button><br><br>
       <button id="saveDir">Capturer direction</button><br><br>
-      <button onclick="closeCompass()">Fermer</button>
+      <button id="closeCompassBtn">Fermer</button>
     </div>
   `;
   document.body.appendChild(overlay);
@@ -232,10 +232,10 @@ function openCompass(i) {
 
   function onOrientation(e) {
     if (e.webkitCompassHeading !== undefined) {
-      // ✅ iOS
+      // 🍎 iOS
       heading = Math.round(e.webkitCompassHeading);
     } else if (e.alpha !== null) {
-      // ✅ Android
+      // 🤖 Android
       heading = Math.round(360 - e.alpha);
     }
 
@@ -244,12 +244,12 @@ function openCompass(i) {
     }
   }
 
+  // ✅ Activer la boussole (clic utilisateur requis sur iOS)
   document.getElementById("enableCompass").onclick = async () => {
     if (
       typeof DeviceOrientationEvent !== "undefined" &&
       typeof DeviceOrientationEvent.requestPermission === "function"
     ) {
-      // 🍎 iOS
       const res = await DeviceOrientationEvent.requestPermission();
       if (res !== "granted") {
         alert("Autorisation boussole refusée");
@@ -260,12 +260,17 @@ function openCompass(i) {
     window.addEventListener("deviceorientation", onOrientation);
   };
 
+  // ✅ Sauvegarde direction
   document.getElementById("saveDir").onclick = () => {
     if (heading !== null) {
       c.directions.push(heading);
       updateDirection(i);
     }
   };
+
+  // ✅ Fermeture propre
+  document.getElementById("closeCompassBtn").onclick = () => {
+    window.removeEventListener("deviceorientation", onOrientation);
+    overlay.remove();
+  };
 }
-
-
