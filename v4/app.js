@@ -274,3 +274,4 @@ function openCompass(i) {
     overlay.remove();
   };
 }
+
