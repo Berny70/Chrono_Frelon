@@ -371,6 +371,22 @@ HELP
   font-size: 0.95em;
 }
 
+/* ================================
+   BOUTON CONTACT (ENVELOPPE)
+================================ */
+#btnMail {
+  background: none;
+  border: none;
+  font-size: 1.4em;
+  cursor: pointer;
+  margin-right: 6px;
+  line-height: 1;
+}
+
+#btnMail:hover {
+  opacity: 0.7;
+}
+
 
 
 
