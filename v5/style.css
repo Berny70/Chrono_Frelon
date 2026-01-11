@@ -1,0 +1,438 @@
+/* ================================
+   GLOBAL
+================================ */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, Helvetica, sans-serif;
+  background: #f5f5f5;
+  color: #000;
+}
+
+/* ================================
+   HEADER
+================================ */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: #ffffff;
+  border-bottom: 2px solid #ccc;
+}
+
+.top-logo {
+  width: 36px;
+  height: 36px;
+}
+
+.top-title {
+  flex: 1;
+  text-align: center;
+  font-size: 1.8em;
+  font-weight: bold;
+}
+
+.top-right {
+  text-align: right;
+  font-size: 0.85em;
+  line-height: 1.3em;
+  min-width: 90px;
+}
+/* ================================
+   HEADER - GAUCHE
+================================ */
+.top-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-help {
+  background: #03a9f4;
+  color: #fff;
+  font-weight: bold;
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85em;
+}
+
+
+/* ================================
+   CHRONOS
+================================ */
+#chronos {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.chrono {
+  padding: 12px;
+  border-radius: 8px;
+}
+
+/* Couleurs pastel */
+.chrono.red {
+  background: #f8d7da;
+  border: 2px solid #c00;
+}
+.chrono.blue {
+  background: #d0e7f9;
+  border: 2px solid #0077cc;
+}
+.chrono.green {
+  background: #d4edda;
+  border: 2px solid #0a0;
+}
+.chrono.white {
+  background: #f0f0f0;
+  border: 2px solid #999;
+}
+
+/* ================================
+   LAYOUT DES LIGNES
+================================ */
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 6px 0;
+}
+
+/* Ligne principale */
+.row-main .time {
+  font-size: 2em;
+  font-weight: bold;
+  flex: 1;
+  text-align: center;
+}
+
+/* Lignes infos */
+.row-info {
+  font-size: 0.9em;
+}
+
+.info-block {
+  flex: 1;
+  text-align: center;
+}
+
+.row-info input {
+  width: 60px;
+  text-align: center;
+}
+
+/* Ligne actions */
+.row-actions {
+  margin-top: 8px;
+}
+
+.row-actions button {
+  flex: 1;
+  margin: 0 4px;
+}
+
+/* ================================
+   BOUTONS
+================================ */
+button {
+  padding: 8px 12px;
+  font-size: 0.95em;
+  font-weight: bold;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.start {
+  background: #4caf50;
+  color: #fff;
+}
+
+.reset {
+  background: #f44336;
+  color: #fff;
+}
+
+.pos {
+  background: #ffc107;
+  color: #000;
+}
+
+.compass {
+  background: #2196f3;
+  color: #fff;
+}
+
+.det {
+  background: #9e9e9e;
+  color: #000;
+}
+
+/* ================================
+   STATS DISCRÈTES
+================================ */
+.info {
+  text-align: center;
+  font-size: 0.85em;
+  margin-top: 4px;
+}
+
+/* ================================
+   OVERLAY DÉTAIL
+================================ */
+#detOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.det-box {
+  background: #fff;
+  padding: 16px;
+  border-radius: 10px;
+  width: 90%;
+  max-width: 420px;
+}
+
+.det-line {
+  display: flex;
+  justify-content: space-between;
+  margin: 6px 0;
+}
+
+/* Couleur du détail selon chrono */
+#detOverlay.red .det-box {
+  background: #f8d7da;
+}
+#detOverlay.blue .det-box {
+  background: #d0e7f9;
+}
+#detOverlay.green .det-box {
+  background: #d4edda;
+}
+#detOverlay.white .det-box {
+  background: #f0f0f0;
+}
+
+/* ================================
+   OVERLAY BOUSSOLE
+================================ */
+#compassOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.compass-box {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  text-align: center;
+  width: 80%;
+  max-width: 320px;
+}
+
+#headingValue {
+  font-size: 3em;
+  font-weight: bold;
+  margin: 20px 0;
+}
+
+/* ================================
+   RESPONSIVE
+================================ */
+@media (max-width: 600px) {
+  .top-title {
+    font-size: 1.6em;
+  }
+
+  .top-logo {
+    width: 32px;
+    height: 32px;
+  }
+
+  .row-main .time {
+    font-size: 1.6em;
+  }
+
+  button {
+    font-size: 0.9em;
+    padding: 6px 10px;
+  }
+}
+/* ================================
+   ACTIONS HAUT DE PAGE
+================================ */
+.top-actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 12px;
+  gap: 10px;
+}
+
+.btn-capt {
+  background: #ffeb3b;
+  font-weight: bold;
+}
+
+.btn-loc {
+  background: #8bc34a;
+  font-weight: bold;
+}
+/* ================================
+   DATE & HEURE
+================================ */
+.date-time {
+  font-weight: bold;
+  font-size: 0.95em;
+  text-align: center;
+  flex: 1;
+}
+/* **************
+HELP
+ ************* */
+#helpOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 11000;
+}
+
+.help-box {
+  background: #fff;
+  padding: 18px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 420px;
+  font-size: 0.95em;
+}
+
+.help-box h2 {
+  margin-top: 0;
+  text-align: center;
+}
+
+.help-box h3 {
+  margin-top: 12px;
+}
+
+.help-box ol,
+.help-box ul {
+  padding-left: 18px;
+}
+
+.help-box button {
+  margin-top: 12px;
+  width: 100%;
+  background: #4caf50;
+  color: #fff;
+  font-weight: bold;
+}
+/* ================================
+   OVERLAY HELP
+================================ */
+#helpOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20000; /* PLUS HAUT que tout le reste */
+}
+
+.help-box {
+  background: #ffffff;
+  padding: 18px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 420px;
+  max-height: 85vh;
+  overflow-y: auto;
+  font-size: 0.95em;
+}
+
+/* ================================
+   HAUT DROIT : AUTEUR / VERSION / CONTACT
+================================ */
+.top-right {
+  text-align: right;
+}
+
+.author {
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+/* Ligne enveloppe + version */
+.top-right-sub {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  font-size: 0.85em;
+}
+
+/* Bouton enveloppe */
+#btnMail {
+  background: none;
+  border: none;
+  font-size: 1.2em;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+#btnMail:hover {
+  opacity: 0.7;
+}
+/* ================================
+   AIDE : CONTACT / SUGGESTIONS
+================================ */
+.help-contact {
+  text-align: center;
+  margin-top: 12px;
+}
+
+#btnFeedbackHelp {
+  background: #2196f3;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 1em;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+#btnFeedbackHelp:hover {
+  opacity: 0.85;
+}
+
+
+
+
+
+
+
+
+
