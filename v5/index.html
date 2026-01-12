@@ -140,44 +140,41 @@
     });
   </script>
 
-  <!-- BOUTON LOCALISATION -->
-  <script>
-    document.getElementById("btnLoc").addEventListener("click", () => {
-      const observations = [];
+ <!-- BOUTON LOCALISATION -->
+<script>
+document.getElementById("btnLoc").addEventListener("click", () => {
+  const observations = [];
 
-      chronos.forEach(c => {
-        if (c.lat === "--" || c.lon === "--") return;
-        if (c.essais.length === 0) return;
+  chronos.forEach(c => {
+    if (c.lat === "--" || c.lon === "--") return;
+    if (c.essais.length === 0) return;
 
-        const total = c.essais.reduce((a, b) => a + b, 0);
-        const moyenne = total / c.essais.length;
-        const distance = Math.round((moyenne * c.vitesse) / 2);
+    const total = c.essais.reduce((a, b) => a + b, 0);
+    const moyenne = total / c.essais.length;
+    const distance = Math.round((moyenne * c.vitesse) / 2);
 
-        observations.push({
-          color: c.color,
-          lat: parseFloat(c.lat),
-          lon: parseFloat(c.lon),
-          direction: c.direction,
-          distance: distance,
-          vitesse: c.vitesse,
-          essais: c.essais.length,
-          timestamp: new Date().toISOString()
-        });
-      });
-
-      if (observations.length === 0) {
-        alert("Aucune donnée exploitable pour la localisation.");
-        return;
-      }
-
-      localStorage.setItem(
-        "chronoObservations",
-        JSON.stringify(observations)
-      );
-
-      window.location.href = "./map.html";
+    observations.push({
+      color: c.color,
+      lat: parseFloat(c.lat),
+      lon: parseFloat(c.lon),
+      direction: c.direction,
+      distance: distance,
+      vitesse: c.vitesse,
+      essais: c.essais.length,
+      timestamp: new Date().toISOString()
     });
-  </script>
+  });
+
+  if (observations.length === 0) {
+    alert("Aucune donnée exploitable pour la localisation.");
+    return;
+  }
+
+  // ✅ UN SEUL APPEL
+  openLocChoice(observations);
+});
+</script>
+
 <script>
 document.addEventListener("DOMContentLoaded", () => {
 
