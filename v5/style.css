@@ -428,6 +428,35 @@ HELP
   opacity: 0.85;
 }
 
+/* ================================
+   POP-UP CHOIX LOCALISATION
+================================ */
+#locChoiceOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 12000;
+}
+
+.loc-choice-box {
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 360px;
+  text-align: center;
+}
+
+.loc-choice-box button {
+  width: 100%;
+  margin: 6px 0;
+  padding: 10px;
+  font-weight: bold;
+}
+
 
 
 
