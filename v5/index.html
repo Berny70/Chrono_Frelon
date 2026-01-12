@@ -282,6 +282,51 @@ document.getElementById("btnMail")?.addEventListener("click", () => {
   );
 });
 </script>
+<script>
+function openLocChoice(observations) {
+
+  const overlay = document.createElement("div");
+  overlay.id = "locChoiceOverlay";
+  overlay.innerHTML = `
+    <div class="loc-choice-box">
+      <h2>Localisation du nid</h2>
+      <p>Que souhaitez-vous afficher ?</p>
+
+      <button id="locLocal">📍 Carte locale</button>
+      <button id="locShared">🌐 Carte partagée</button>
+
+      <br><br>
+      <button id="locCancel">Annuler</button>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  // 📍 Carte locale
+  document.getElementById("locLocal").onclick = () => {
+    localStorage.setItem(
+      "chronoObservations",
+      JSON.stringify(observations)
+    );
+    closeLocChoice();
+    window.location.href = "./map.html";
+  };
+
+  // 🌐 Carte partagée
+  document.getElementById("locShared").onclick = () => {
+    savePendingObservations(observations);
+    sendPendingObservations();
+    closeLocChoice();
+    window.location.href = "https://tonserveur.ovh/map.html";
+  };
+
+  document.getElementById("locCancel").onclick = closeLocChoice;
+}
+
+function closeLocChoice() {
+  document.getElementById("locChoiceOverlay")?.remove();
+}
+</script>
 
 
 
