@@ -311,6 +311,14 @@ function openLocChoice(observations) {
 
   // 🌐 Carte partagée
   document.getElementById("locShared").onclick = () => {
+      const url = "https://potameche.fngta.fr/app.html";
+
+  if (!confirm(
+    "La carte partagée va s’ouvrir dans votre navigateur.\n\n" +
+    url
+  )) {
+    return;
+  }
     savePendingObservations(observations);
     sendPendingObservations();
     closeLocChoice();
