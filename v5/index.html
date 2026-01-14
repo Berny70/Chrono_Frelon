@@ -314,7 +314,12 @@ function openLocChoice(observations) {
     savePendingObservations(observations);
     sendPendingObservations();
     closeLocChoice();
-    window.location.href = "https://potameche.fngta.fr/app.html"; 
+    window.open(
+  "https://potameche.fngta.fr/app.html",
+  "_blank",
+  "noopener,noreferrer"
+);
+
   };
 
   document.getElementById("locCancel").onclick = closeLocChoice;
