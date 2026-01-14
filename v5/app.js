@@ -343,3 +343,24 @@ function delDirection(k) {
 function closeDET() {
   document.getElementById("detOverlay")?.remove();
 }
+document.addEventListener("DOMContentLoaded", () => {
+  const raw = localStorage.getItem("potameche_pending_observations");
+  if (!raw) return;
+
+  try {
+    const observations = JSON.parse(raw);
+    console.log("Observations reçues :", observations);
+
+    // 👉 ICI : intégrer les données dans ton app
+    // ex : addObservations(observations);
+    // ex : affichage carte, tracés, etc.
+
+    // 🔥 Nettoyage après lecture
+    localStorage.removeItem("potameche_pending_observations");
+
+  } catch (e) {
+    console.error("Erreur lecture observations", e);
+  }
+});
+
+
