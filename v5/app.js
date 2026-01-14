@@ -344,23 +344,67 @@ function closeDET() {
   document.getElementById("detOverlay")?.remove();
 }
 document.addEventListener("DOMContentLoaded", () => {
+
   const raw = localStorage.getItem("potameche_pending_observations");
   if (!raw) return;
 
+  let observations;
+
   try {
-    const observations = JSON.parse(raw);
-    console.log("Observations reçues :", observations);
-
-    // 👉 ICI : intégrer les données dans ton app
-    // ex : addObservations(observations);
-    // ex : affichage carte, tracés, etc.
-
-    // 🔥 Nettoyage après lecture
-    localStorage.removeItem("potameche_pending_observations");
-
+    observations = JSON.parse(raw);
   } catch (e) {
-    console.error("Erreur lecture observations", e);
+    console.error("Pot à Mèche – JSON invalide", e);
+    return;
   }
+
+  if (!Array.isArray(observations) || observations.length === 0) {
+    console.warn("Pot à Mèche – aucune observation valide");
+    localStorage.removeItem("potameche_pending_observations");
+    return;
+  }
+
+  console.log("Pot à Mèche – observations reçues :", observations);
+
+  // 🔎 Intégration observation par observation
+  observations.forEach((o, index) => {
+
+    if (
+      typeof o.lat !== "number" ||
+      typeof o.lon !== "number" ||
+      typeof o.direction !== "number" ||
+      typeof o.distance !== "number"
+    ) {
+      console.warn(`Observation ${index} invalide`, o);
+      return;
+    }
+
+    // 🎯 POINT D’ENTRÉE POT À MÈCHE
+    // 👉 adapte ici vers ton moteur existant
+
+    addObservation({
+      lat: o.lat,
+      lon: o.lon,
+      direction: o.direction,
+      distance: o.distance,
+      color: o.color || "black",
+      vitesse: o.vitesse || 0,
+      essais: o.essais || 0,
+      timestamp: o.timestamp || null
+    });
+
+  });
+
+  // 🧹 Nettoyage après intégration
+  localStorage.removeItem("potameche_pending_observations");
+
 });
+function addObservation(o) {
+  console.log("Ajout observation Pot à Mèche :", o);
+
+  // exemples :
+  // addMarker(o.lat, o.lon, o.color);
+  // drawRay(o.lat, o.lon, o.direction, o.distance);
+  // updateMap();
+}
 
 
