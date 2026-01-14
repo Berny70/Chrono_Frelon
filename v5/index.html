@@ -291,7 +291,7 @@ function openLocChoice(observations) {
 
       <button id="locLocal">📍 Carte locale</button>
 
-      <!-- 🌐 LIEN EXTERNE FIABLE POUR PWA -->
+      <!-- 🌐 Carte partagée (ouverture navigateur) -->
       <a
         id="locShared"
         href="https://potameche.fngta.fr/app.html"
@@ -314,7 +314,7 @@ function openLocChoice(observations) {
 
   document.body.appendChild(overlay);
 
-  // 📍 Carte locale (navigation interne autorisée)
+  // 📍 Carte locale (navigation interne)
   document.getElementById("locLocal").onclick = () => {
     localStorage.setItem(
       "chronoObservations",
@@ -325,13 +325,15 @@ function openLocChoice(observations) {
   };
 
   // 🌐 Carte partagée
-  // ⚠️ On sauvegarde AVANT l’ouverture du lien
+  // ✅ stockage LOCAL avant ouverture externe
   document.getElementById("locShared").addEventListener("click", () => {
-    savePendingObservations(observations);
-    sendPendingObservations();
+    localStorage.setItem(
+      "potameche_pending_observations",
+      JSON.stringify(observations)
+    );
     closeLocChoice();
-    // ❌ PAS de window.open ici
-    // ✅ le navigateur gère le lien naturellement
+    // ⚠️ PAS de window.open ici
+    // le lien <a> gère l’ouverture
   });
 
   document.getElementById("locCancel").onclick = closeLocChoice;
@@ -341,6 +343,7 @@ function closeLocChoice() {
   document.getElementById("locChoiceOverlay")?.remove();
 }
 </script>
+
 
 
 
