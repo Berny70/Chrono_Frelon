@@ -278,30 +278,29 @@ document.addEventListener("click", async e => {
   const action = btn.dataset.action;
   if (!action) return;
 
-// ACTIVER
-if (action === "enable" && !compassActive) {
+  // ACTIVER
+  if (action === "enable" && !compassActive) {
 
-  // Permission iOS obligatoire
-  if (
-    typeof DeviceOrientationEvent !== "undefined" &&
-    typeof DeviceOrientationEvent.requestPermission === "function"
-  ) {
-    const res = await DeviceOrientationEvent.requestPermission();
-    if (res !== "granted") {
-      alert("Autorisation boussole refusée");
-      return;
+    // Permission iOS obligatoire
+    if (
+      typeof DeviceOrientationEvent !== "undefined" &&
+      typeof DeviceOrientationEvent.requestPermission === "function"
+    ) {
+      const res = await DeviceOrientationEvent.requestPermission();
+      if (res !== "granted") {
+        alert("Autorisation boussole refusée");
+        return;
+      }
     }
+
+    lastHeading = null;
+    currentHeading = null;
+
+    window.addEventListener("deviceorientationabsolute", onOrientation, true);
+    window.addEventListener("deviceorientation", onOrientation, true);
+
+    compassActive = true;
   }
-
-  lastHeading = null;
-  currentHeading = null;
-
-  window.addEventListener("deviceorientationabsolute", onOrientation, true);
-  window.addEventListener("deviceorientation", onOrientation, true);
-
-  compassActive = true;
-}
-
 
   // SAUVEGARDER
   if (action === "save") {
@@ -310,7 +309,11 @@ if (action === "enable" && !compassActive) {
       return;
     }
 
-// FERMER
+    chronos[currentCompassIndex].directions.push(currentHeading);
+    updateDirection(currentCompassIndex);
+  }
+
+  // FERMER
   if (action === "close") {
     window.removeEventListener("deviceorientation", onOrientation, true);
     window.removeEventListener("deviceorientationabsolute", onOrientation, true);
@@ -318,8 +321,8 @@ if (action === "enable" && !compassActive) {
     lastHeading = null;
     document.getElementById("compassOverlay")?.remove();
   }
-
 });
+
 
 // ==========================
 // DÉTAIL
@@ -375,4 +378,5 @@ function delDirection(k) {
 function closeDET() {
   document.getElementById("detOverlay")?.remove();
 }
+
 
