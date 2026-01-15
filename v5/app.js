@@ -20,10 +20,13 @@ const DEFAULT_VITESSE = 4;
 
 let detIndex = null;
 
-// 🔵 Variables globales boussole (IMPORTANT)
+// ==========================
+// BOUSSOLE – variables globales
+// ==========================
 let currentCompassIndex = null;
 let currentHeading = null;
 let compassActive = false;
+let lastHeading = null;
 
 // ==========================
 // MOYENNE CIRCULAIRE
@@ -233,23 +236,40 @@ function openCompass(i) {
 }
 
 // ==========================
-// ORIENTATION HANDLER
+// ORIENTATION HANDLER (CORRIGÉ)
 // ==========================
 function onOrientation(e) {
+  if (!compassActive) return;
+
+  let heading = null;
+
+  // iOS
   if (e.webkitCompassHeading !== undefined) {
-    currentHeading = Math.round(e.webkitCompassHeading);
-  } else if (e.alpha !== null) {
-    currentHeading = Math.round(360 - e.alpha);
+    if (e.webkitCompassAccuracy < 0) return;
+    heading = e.webkitCompassHeading;
+  }
+  // Android
+  else if (e.absolute === true && e.alpha !== null) {
+    heading = (360 - e.alpha) % 360;
   }
 
-  const el = document.getElementById("headingValue");
-  if (el && currentHeading !== null) {
-    el.textContent = currentHeading + "°";
+  if (heading === null || isNaN(heading)) return;
+
+  if (lastHeading !== null) {
+    let delta = Math.abs(heading - lastHeading);
+    if (delta > 180) delta = 360 - delta;
+    if (delta > 25) return;
   }
+
+  lastHeading = heading;
+  currentHeading = Math.round(heading);
+
+  const el = document.getElementById("headingValue");
+  if (el) el.textContent = currentHeading + "°";
 }
 
 // ==========================
-// DÉLÉGATION ÉVÉNEMENTS (clé iOS)
+// DÉLÉGATION ÉVÉNEMENTS (iOS / Android)
 // ==========================
 document.addEventListener("click", async e => {
   const btn = e.target.closest("button");
@@ -271,20 +291,31 @@ document.addEventListener("click", async e => {
       }
     }
 
-    window.addEventListener("deviceorientation", onOrientation);
+    lastHeading = null;
+    currentHeading = null;
+
+    window.addEventListener("deviceorientationabsolute", onOrientation, true);
+    window.addEventListener("deviceorientation", onOrientation, true);
+
     compassActive = true;
   }
 
   // SAUVEGARDER
-  if (action === "save" && currentHeading !== null) {
+  if (action === "save") {
+    if (currentHeading === null) {
+      alert("Boussole non prête");
+      return;
+    }
     chronos[currentCompassIndex].directions.push(currentHeading);
     updateDirection(currentCompassIndex);
   }
 
   // FERMER
   if (action === "close") {
-    window.removeEventListener("deviceorientation", onOrientation);
+    window.removeEventListener("deviceorientation", onOrientation, true);
+    window.removeEventListener("deviceorientationabsolute", onOrientation, true);
     compassActive = false;
+    lastHeading = null;
     document.getElementById("compassOverlay")?.remove();
   }
 });
@@ -343,13 +374,16 @@ function delDirection(k) {
 function closeDET() {
   document.getElementById("detOverlay")?.remove();
 }
+
+// ==========================
+// INTÉGRATION POT À MÈCHE
+// ==========================
 document.addEventListener("DOMContentLoaded", () => {
 
   const raw = localStorage.getItem("potameche_pending_observations");
   if (!raw) return;
 
   let observations;
-
   try {
     observations = JSON.parse(raw);
   } catch (e) {
@@ -358,53 +392,24 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (!Array.isArray(observations) || observations.length === 0) {
-    console.warn("Pot à Mèche – aucune observation valide");
     localStorage.removeItem("potameche_pending_observations");
     return;
   }
 
-  console.log("Pot à Mèche – observations reçues :", observations);
-
-  // 🔎 Intégration observation par observation
-  observations.forEach((o, index) => {
-
+  observations.forEach(o => {
     if (
       typeof o.lat !== "number" ||
       typeof o.lon !== "number" ||
       typeof o.direction !== "number" ||
       typeof o.distance !== "number"
-    ) {
-      console.warn(`Observation ${index} invalide`, o);
-      return;
-    }
+    ) return;
 
-    // 🎯 POINT D’ENTRÉE POT À MÈCHE
-    // 👉 adapte ici vers ton moteur existant
-
-    addObservation({
-      lat: o.lat,
-      lon: o.lon,
-      direction: o.direction,
-      distance: o.distance,
-      color: o.color || "black",
-      vitesse: o.vitesse || 0,
-      essais: o.essais || 0,
-      timestamp: o.timestamp || null
-    });
-
+    addObservation(o);
   });
 
-  // 🧹 Nettoyage après intégration
   localStorage.removeItem("potameche_pending_observations");
-
 });
+
 function addObservation(o) {
   console.log("Ajout observation Pot à Mèche :", o);
-
-  // exemples :
-  // addMarker(o.lat, o.lon, o.color);
-  // drawRay(o.lat, o.lon, o.direction, o.distance);
-  // updateMap();
 }
-
-
