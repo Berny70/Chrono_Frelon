@@ -233,19 +233,39 @@ function openCompass(i) {
 }
 
 // ==========================
-// ORIENTATION HANDLER
+// ORIENTATION HANDLER (UNIFIÉ)
 // ==========================
+let lastHeading = null;
+
 function onOrientation(e) {
+  if (!compassActive) return;
+
+  let heading = null;
+
+  // iOS Safari
   if (e.webkitCompassHeading !== undefined) {
-    currentHeading = Math.round(e.webkitCompassHeading);
-  } else if (e.alpha !== null) {
-    currentHeading = Math.round(360 - e.alpha);
+    if (e.webkitCompassAccuracy < 0) return; // donnée invalide
+    heading = e.webkitCompassHeading;
+  }
+  // Android / autres
+  else if (e.absolute === true && e.alpha !== null) {
+    heading = (360 - e.alpha) % 360;
   }
 
-  const el = document.getElementById("headingValue");
-  if (el && currentHeading !== null) {
-    el.textContent = currentHeading + "°";
+  if (heading === null || isNaN(heading)) return;
+
+  // Filtrage des sauts aberrants
+  if (lastHeading !== null) {
+    let delta = Math.abs(heading - lastHeading);
+    if (delta > 180) delta = 360 - delta;
+    if (delta > 25) return;
   }
+
+  lastHeading = heading;
+  currentHeading = Math.round(heading);
+
+  const el = document.getElementById("headingValue");
+  if (el) el.textContent = currentHeading + "°";
 }
 
 // ==========================
@@ -258,35 +278,47 @@ document.addEventListener("click", async e => {
   const action = btn.dataset.action;
   if (!action) return;
 
-  // ACTIVER
-  if (action === "enable" && !compassActive) {
-    if (
-      typeof DeviceOrientationEvent !== "undefined" &&
-      typeof DeviceOrientationEvent.requestPermission === "function"
-    ) {
-      const res = await DeviceOrientationEvent.requestPermission();
-      if (res !== "granted") {
-        alert("Autorisation boussole refusée");
-        return;
-      }
-    }
+// ACTIVER
+if (action === "enable" && !compassActive) {
 
-    window.addEventListener("deviceorientation", onOrientation);
-    compassActive = true;
+  // Permission iOS obligatoire
+  if (
+    typeof DeviceOrientationEvent !== "undefined" &&
+    typeof DeviceOrientationEvent.requestPermission === "function"
+  ) {
+    const res = await DeviceOrientationEvent.requestPermission();
+    if (res !== "granted") {
+      alert("Autorisation boussole refusée");
+      return;
+    }
   }
+
+  lastHeading = null;
+  currentHeading = null;
+
+  window.addEventListener("deviceorientationabsolute", onOrientation, true);
+  window.addEventListener("deviceorientation", onOrientation, true);
+
+  compassActive = true;
+}
+
 
   // SAUVEGARDER
-  if (action === "save" && currentHeading !== null) {
-    chronos[currentCompassIndex].directions.push(currentHeading);
-    updateDirection(currentCompassIndex);
-  }
+  if (action === "save") {
+    if (currentHeading === null) {
+      alert("Boussole non prête");
+      return;
+    }
 
-  // FERMER
+// FERMER
   if (action === "close") {
-    window.removeEventListener("deviceorientation", onOrientation);
+    window.removeEventListener("deviceorientation", onOrientation, true);
+    window.removeEventListener("deviceorientationabsolute", onOrientation, true);
     compassActive = false;
+    lastHeading = null;
     document.getElementById("compassOverlay")?.remove();
   }
+
 });
 
 // ==========================
@@ -343,3 +375,4 @@ function delDirection(k) {
 function closeDET() {
   document.getElementById("detOverlay")?.remove();
 }
+
