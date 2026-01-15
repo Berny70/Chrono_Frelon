@@ -20,10 +20,11 @@ const DEFAULT_VITESSE = 4;
 
 let detIndex = null;
 
-// 🔵 Variables globales boussole (IMPORTANT)
+// 🔵 Variables globales boussole
 let currentCompassIndex = null;
 let currentHeading = null;
 let compassActive = false;
+let lastHeading = null;
 
 // ==========================
 // MOYENNE CIRCULAIRE
@@ -235,8 +236,6 @@ function openCompass(i) {
 // ==========================
 // ORIENTATION HANDLER (UNIFIÉ)
 // ==========================
-let lastHeading = null;
-
 function onOrientation(e) {
   if (!compassActive) return;
 
@@ -244,17 +243,16 @@ function onOrientation(e) {
 
   // iOS Safari
   if (e.webkitCompassHeading !== undefined) {
-    if (e.webkitCompassAccuracy < 0) return; // donnée invalide
+    if (e.webkitCompassAccuracy < 0) return;
     heading = e.webkitCompassHeading;
   }
-  // Android / autres
+  // Android
   else if (e.absolute === true && e.alpha !== null) {
     heading = (360 - e.alpha) % 360;
   }
 
   if (heading === null || isNaN(heading)) return;
 
-  // Filtrage des sauts aberrants
   if (lastHeading !== null) {
     let delta = Math.abs(heading - lastHeading);
     if (delta > 180) delta = 360 - delta;
@@ -269,7 +267,7 @@ function onOrientation(e) {
 }
 
 // ==========================
-// DÉLÉGATION ÉVÉNEMENTS (clé iOS)
+// DÉLÉGATION ÉVÉNEMENTS
 // ==========================
 document.addEventListener("click", async e => {
   const btn = e.target.closest("button");
@@ -280,8 +278,6 @@ document.addEventListener("click", async e => {
 
   // ACTIVER
   if (action === "enable" && !compassActive) {
-
-    // Permission iOS obligatoire
     if (
       typeof DeviceOrientationEvent !== "undefined" &&
       typeof DeviceOrientationEvent.requestPermission === "function"
@@ -308,7 +304,6 @@ document.addEventListener("click", async e => {
       alert("Boussole non prête");
       return;
     }
-
     chronos[currentCompassIndex].directions.push(currentHeading);
     updateDirection(currentCompassIndex);
   }
@@ -322,7 +317,6 @@ document.addEventListener("click", async e => {
     document.getElementById("compassOverlay")?.remove();
   }
 });
-
 
 // ==========================
 // DÉTAIL
@@ -378,5 +372,3 @@ function delDirection(k) {
 function closeDET() {
   document.getElementById("detOverlay")?.remove();
 }
-
-
