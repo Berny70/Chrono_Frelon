@@ -329,7 +329,9 @@ document.addEventListener("click", async e => {
   }
 
   if (action === "close") {
-    window.removeEventListener("deviceorientation", onOrientation, true);
+    window.addEventListener("deviceorientationabsolute", onOrientation, true);
+    window.addEventListener("deviceorientation", onOrientation, true);
+
     compassActive = false;
     lastHeading = null;
     document.getElementById("compassOverlay")?.remove();
@@ -381,4 +383,5 @@ function delDirection(k) {
 function closeDET() {
   document.getElementById("detOverlay")?.remove();
 }
+
 
