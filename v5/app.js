@@ -19,14 +19,6 @@ const chronos = [];
 const DEFAULT_VITESSE = 4;
 
 let detIndex = null;
-// adresse du site récepteur 
-const DATA_BASE_URL =
-"https://compteurdevarroas.jodaille.fr/carte_partagee/data/";
-// ==========================
-// ANNÉE COURANTE (smartphone)
-// ==========================
-const CURRENT_YEAR = new Date().getFullYear();
-console.log("Année courante :", CURRENT_YEAR);
 
 // ==========================
 // BOUSSOLE – variables globales
@@ -69,13 +61,14 @@ function updateDirection(i) {
 // INIT
 // ==========================
 window.addEventListener("DOMContentLoaded", () => {
-  const container = document.getElementById("chronos");
-  // Initialisation de la carte annuelle
-  if (document.getElementById("map")) {
-    initMap();
-  }
 
+  const container = document.getElementById("chronos");
+
+  // ==========================
+  // CRÉATION DES CHRONOS + DOM
+  // ==========================
   chronoColors.forEach((color, i) => {
+
     const c = {
       running: false,
       startTime: 0,
@@ -134,6 +127,37 @@ window.addEventListener("DOMContentLoaded", () => {
       updateStats(i);
     };
   });
+
+  // ==========================
+  // 🔄 RESTAURATION SESSION (ICI ET SEULEMENT ICI)
+  // ==========================
+  const saved = localStorage.getItem("chronoState");
+  if (saved) {
+    try {
+      const data = JSON.parse(saved);
+
+      data.forEach((s, i) => {
+        if (!chronos[i]) return;
+
+        chronos[i].lat = s.lat;
+        chronos[i].lon = s.lon;
+        chronos[i].essais = s.essais || [];
+        chronos[i].directions = s.directions || [];
+        chronos[i].direction = s.direction || 0;
+        chronos[i].vitesse = s.vitesse || DEFAULT_VITESSE;
+
+        document.getElementById(`lat${i}`).textContent = s.lat;
+        document.getElementById(`lon${i}`).textContent = s.lon;
+        document.getElementById(`dir${i}`).textContent = s.direction + "°";
+        document.getElementById(`vit${i}`).value = s.vitesse || DEFAULT_VITESSE;
+
+        updateStats(i);
+      });
+
+    } catch (e) {
+      console.warn("Restauration session impossible");
+    }
+  }
 });
 
 // ==========================
@@ -176,7 +200,7 @@ function updateStats(i) {
 }
 
 // ==========================
-// RESET
+// RESET (chrono uniquement)
 // ==========================
 function resetChrono(i) {
   const c = chronos[i];
@@ -200,19 +224,6 @@ function resetChrono(i) {
 }
 
 // ==========================
-// TICK
-// ==========================
-setInterval(() => {
-  const now = Date.now();
-  chronos.forEach((c, i) => {
-    if (c.running) {
-      document.getElementById(`t${i}`).textContent =
-        ((now - c.startTime) / 1000).toFixed(2) + " s";
-    }
-  });
-}, 50);
-
-// ==========================
 // POSITION
 // ==========================
 function getPos(i) {
@@ -225,7 +236,7 @@ function getPos(i) {
 }
 
 // ==========================
-// BOUSSOLE (overlay)
+// BOUSSOLE
 // ==========================
 function openCompass(i) {
   currentCompassIndex = i;
@@ -238,9 +249,8 @@ function openCompass(i) {
     <div class="compass-box">
       <h2>Boussole ${chronos[i].color}</h2>
       <div id="headingValue">---</div>
-
-      <button data-action="enable">Activer la boussole</button><br><br>
-      <button data-action="save">Capturer direction</button><br><br>
+      <button data-action="enable">Activer</button><br><br>
+      <button data-action="save">Capturer</button><br><br>
       <button data-action="close">Fermer</button>
     </div>
   `;
@@ -248,20 +258,16 @@ function openCompass(i) {
 }
 
 // ==========================
-// ORIENTATION HANDLER (CORRIGÉ)
+// ORIENTATION
 // ==========================
 function onOrientation(e) {
   if (!compassActive) return;
 
   let heading = null;
 
-  // iOS
   if (e.webkitCompassHeading !== undefined) {
-    if (e.webkitCompassAccuracy < 0) return;
     heading = e.webkitCompassHeading;
-  }
-  // Android
-  else if (e.absolute === true && e.alpha !== null) {
+  } else if (e.alpha !== null) {
     heading = (360 - e.alpha) % 360;
   }
 
@@ -281,7 +287,7 @@ function onOrientation(e) {
 }
 
 // ==========================
-// DÉLÉGATION ÉVÉNEMENTS (iOS / Android)
+// DÉLÉGATION BOUTONS BOUSSOLE
 // ==========================
 document.addEventListener("click", async e => {
   const btn = e.target.closest("button");
@@ -290,42 +296,24 @@ document.addEventListener("click", async e => {
   const action = btn.dataset.action;
   if (!action) return;
 
-  // ACTIVER
   if (action === "enable" && !compassActive) {
-    if (
-      typeof DeviceOrientationEvent !== "undefined" &&
-      typeof DeviceOrientationEvent.requestPermission === "function"
-    ) {
+    if (DeviceOrientationEvent?.requestPermission) {
       const res = await DeviceOrientationEvent.requestPermission();
-      if (res !== "granted") {
-        alert("Autorisation boussole refusée");
-        return;
-      }
+      if (res !== "granted") return;
     }
 
     lastHeading = null;
-    currentHeading = null;
-
-    window.addEventListener("deviceorientationabsolute", onOrientation, true);
     window.addEventListener("deviceorientation", onOrientation, true);
-
     compassActive = true;
   }
 
-  // SAUVEGARDER
-  if (action === "save") {
-    if (currentHeading === null) {
-      alert("Boussole non prête");
-      return;
-    }
+  if (action === "save" && currentHeading !== null) {
     chronos[currentCompassIndex].directions.push(currentHeading);
     updateDirection(currentCompassIndex);
   }
 
-  // FERMER
   if (action === "close") {
     window.removeEventListener("deviceorientation", onOrientation, true);
-    window.removeEventListener("deviceorientationabsolute", onOrientation, true);
     compassActive = false;
     lastHeading = null;
     document.getElementById("compassOverlay")?.remove();
@@ -337,9 +325,9 @@ document.addEventListener("click", async e => {
 // ==========================
 function openDET(i) {
   detIndex = i;
-  const c = chronos[i];
   closeDET();
 
+  const c = chronos[i];
   const overlay = document.createElement("div");
   overlay.id = "detOverlay";
   overlay.className = c.color;
@@ -347,25 +335,16 @@ function openDET(i) {
   overlay.innerHTML = `
     <div class="det-box">
       <h2>Détail ${c.color}</h2>
-
-      ${c.essais.map((t, k) => `
-        <div class="det-line">
-          Essai ${k + 1} : ${Math.ceil(t)} s
-          <button onclick="delEssai(${k})">Supprimer</button>
-        </div>
-      `).join("")}
-
+      ${c.essais.map((t, k) =>
+        `<div>Essai ${k+1} : ${Math.ceil(t)} s
+        <button onclick="delEssai(${k})">X</button></div>`
+      ).join("")}
       <hr>
-      <h3>Directions</h3>
-      ${c.directions.map((d, k) => `
-        <div class="det-line">
-          ${d}°
-          <button onclick="delDirection(${k})">Supprimer</button>
-        </div>
-      `).join("")}
-
-      <br>
-      <button onclick="closeDET()">Fermer</button>
+      ${c.directions.map((d, k) =>
+        `<div>${d}°
+        <button onclick="delDirection(${k})">X</button></div>`
+      ).join("")}
+      <br><button onclick="closeDET()">Fermer</button>
     </div>
   `;
   document.body.appendChild(overlay);
@@ -386,178 +365,3 @@ function delDirection(k) {
 function closeDET() {
   document.getElementById("detOverlay")?.remove();
 }
-
-// ==========================
-// INTÉGRATION POT À MÈCHE
-// ==========================
-document.addEventListener("DOMContentLoaded", () => {
-
-  const YEAR = new Date().getFullYear();
-  const raw = localStorage.getItem("potameche_pending_observations_" + YEAR);
-
-  if (!raw) return;
-
-  let observations;
-  try {
-    observations = JSON.parse(raw);
-  } catch (e) {
-    console.error("Pot à Mèche – JSON invalide", e);
-    return;
-  }
-
-  if (!Array.isArray(observations) || observations.length === 0) {
-    localStorage.removeItem("potameche_pending_observations_" + YEAR);
-    return;
-  }
-
-  observations.forEach(o => {
-    if (
-      typeof o.lat !== "number" ||
-      typeof o.lon !== "number" ||
-      typeof o.direction !== "number" ||
-      typeof o.distance !== "number"
-    ) return;
-
-    addObservation(o);
-  });
-
-  localStorage.removeItem("potameche_pending_observations");
-});
-// ==========================
-// CHARGEMENT CARTE PAR ANNÉE
-// ==========================
-let map = null;
-let geojsonLayer = null;
-
-function initMap() {
-  map = L.map("map").setView([46.5, 2.5], 6);
-
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution: "© OpenStreetMap"
-  }).addTo(map);
-
-  loadYearData(CURRENT_YEAR);
-}
-
-function loadYearData(year) {
-  fetch(`${DATA_BASE_URL}observations_${year}.geojson`)
-    .then(r => {
-      if (!r.ok) throw new Error("Pas de données pour " + year);
-      return r.json();
-    })
-    .then(data => {
-      if (geojsonLayer) map.removeLayer(geojsonLayer);
-
-      geojsonLayer = L.geoJSON(data, {
-        onEachFeature: (feature, layer) => {
-          if (feature.properties) {
-            let html = "";
-            for (const k in feature.properties) {
-              html += `<b>${k}</b> : ${feature.properties[k]}<br>`;
-            }
-            layer.bindPopup(html);
-          }
-        }
-      }).addTo(map);
-
-      if (geojsonLayer.getBounds().isValid()) {
-        map.fitBounds(geojsonLayer.getBounds());
-      }
-    })
-    .catch(err => {
-      console.warn(err.message);
-    });
-}
-
-
-
-function addObservation(o) {
-  console.log("Ajout observation Pot à Mèche :", o);
-}
-
-function envoyerVersCartePartagee(obs) {
-  fetch(
-    "https://compteurdevarroas.jodaille.fr/carte_partagee/api/add_observation.php",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        lat: obs.lat,
-        lon: obs.lon,
-        direction: obs.direction,
-        distance: obs.distance
-      })
-    }
-  )
-  .then(r => r.json())
-  .then(res => {
-    if (res.status === "ok") {
-      alert("Observation envoyée à la carte partagée");
-      window.location.href =
-        "https://compteurdevarroas.jodaille.fr/carte_partagee/";
-    } else {
-      alert("Erreur serveur");
-    }
-  })
-  .catch(err => {
-    alert("Envoi impossible");
-    console.error(err);
-  });
-}
-function buildObservation(i) {
-  const c = chronos[i];
-
-  if (
-    c.lat === "--" ||
-    c.lon === "--" ||
-    !c.direction ||
-    !document.getElementById(`d${i}`)
-  ) return null;
-
-  return {
-    lat: parseFloat(c.lat),
-    lon: parseFloat(c.lon),
-    direction: c.direction,
-    distance: parseFloat(
-      document.getElementById(`d${i}`).textContent
-    ),
-    date: new Date().toISOString().slice(0, 10)
-  };
-}
-// ==========================
-// RESTAURATION SESSION
-// ==========================
-const saved = localStorage.getItem("chronoState");
-
-if (saved) {
-  try {
-    const data = JSON.parse(saved);
-
-    data.forEach((s, i) => {
-      if (!chronos[i]) return;
-
-      chronos[i].lat = s.lat;
-      chronos[i].lon = s.lon;
-      chronos[i].essais = s.essais || [];
-      chronos[i].directions = s.directions || [];
-      chronos[i].direction = s.direction || 0;
-      chronos[i].vitesse = s.vitesse || DEFAULT_VITESSE;
-
-      // 🔄 Mise à jour interface
-      document.getElementById(`lat${i}`).textContent = s.lat;
-      document.getElementById(`lon${i}`).textContent = s.lon;
-      document.getElementById(`dir${i}`).textContent = s.direction + "°";
-      document.getElementById(`vit${i}`).value = s.vitesse || DEFAULT_VITESSE;
-      updateStats(i);
-    });
-
-  } catch (e) {
-    console.warn("Session précédente invalide");
-  }
-}
-
-
-
-
