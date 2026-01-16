@@ -389,7 +389,9 @@ function closeDET() {
 // ==========================
 document.addEventListener("DOMContentLoaded", () => {
 
-  const raw = localStorage.getItem("potameche_pending_observations");
+  const YEAR = new Date().getFullYear();
+  const raw = localStorage.getItem("potameche_pending_observations_" + YEAR);
+
   if (!raw) return;
 
   let observations;
@@ -401,7 +403,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   if (!Array.isArray(observations) || observations.length === 0) {
-    localStorage.removeItem("potameche_pending_observations");
+    localStorage.removeItem("potameche_pending_observations_" + YEAR);
     return;
   }
 
@@ -466,5 +468,6 @@ function loadYearData(year) {
 function addObservation(o) {
   console.log("Ajout observation Pot à Mèche :", o);
 }
+
 
 
