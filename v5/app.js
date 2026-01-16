@@ -285,6 +285,22 @@ function onOrientation(e) {
   const el = document.getElementById("headingValue");
   if (el) el.textContent = currentHeading + "°";
 }
+// ==========================
+// TICK – RAFRAÎCHISSEMENT CHRONOS
+// ==========================
+setInterval(() => {
+  const now = Date.now();
+
+  chronos.forEach((c, i) => {
+    if (c.running) {
+      const el = document.getElementById(`t${i}`);
+      if (el) {
+        el.textContent =
+          ((now - c.startTime) / 1000).toFixed(2) + " s";
+      }
+    }
+  });
+}, 50);
 
 // ==========================
 // DÉLÉGATION BOUTONS BOUSSOLE
@@ -365,3 +381,4 @@ function delDirection(k) {
 function closeDET() {
   document.getElementById("detOverlay")?.remove();
 }
+
