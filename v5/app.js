@@ -432,12 +432,13 @@ function initMap() {
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: "© OpenStreetMap"
   }).addTo(map);
-
+  const DATA_BASE_URL =
+  "https://compteurdevarroas.jodaille.fr/carte_partagee/data/";
   loadYearData(CURRENT_YEAR);
 }
 
 function loadYearData(year) {
-  fetch(`data/${year}.geojson`)
+  fetch(`${DATA_BASE_URL}observations_${year}.geojson`)
     .then(r => {
       if (!r.ok) throw new Error("Pas de données pour " + year);
       return r.json();
@@ -457,7 +458,9 @@ function loadYearData(year) {
         }
       }).addTo(map);
 
-      map.fitBounds(geojsonLayer.getBounds());
+      if (geojsonLayer.getBounds().isValid()) {
+        map.fitBounds(geojsonLayer.getBounds());
+      }
     })
     .catch(err => {
       console.warn(err.message);
@@ -465,9 +468,11 @@ function loadYearData(year) {
 }
 
 
+
 function addObservation(o) {
   console.log("Ajout observation Pot à Mèche :", o);
 }
+
 
 
 
