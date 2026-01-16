@@ -473,6 +473,38 @@ function addObservation(o) {
   console.log("Ajout observation Pot à Mèche :", o);
 }
 
+function envoyerVersCartePartagee(obs) {
+  fetch(
+    "https://compteurdevarroas.jodaille.fr/carte_partagee/api/add_observation.php",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        lat: obs.lat,
+        lon: obs.lon,
+        direction: obs.direction,
+        distance: obs.distance
+      })
+    }
+  )
+  .then(r => r.json())
+  .then(res => {
+    if (res.status === "ok") {
+      alert("Observation envoyée à la carte partagée");
+      window.location.href =
+        "https://compteurdevarroas.jodaille.fr/carte_partagee/";
+    } else {
+      alert("Erreur serveur");
+    }
+  })
+  .catch(err => {
+    alert("Envoi impossible");
+    console.error(err);
+  });
+}
+
 
 
 
