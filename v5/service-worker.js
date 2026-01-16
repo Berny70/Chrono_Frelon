@@ -1,5 +1,5 @@
-const APP_VERSION = "5.9";
-const CACHE = "chrono-pwa-v5.9";
+const APP_VERSION = "5.0";
+const CACHE = "chrono-pwa-v5.0";
 
 const FILES = [
   "./",
@@ -54,6 +54,7 @@ self.addEventListener("message", event => {
     event.source.postMessage({ version: APP_VERSION });
   }
 });
+
 
 
 
