@@ -22,319 +22,166 @@
 
 <body>
 
-  <!-- HEADER -->
+<!-- HEADER -->
 <header class="topbar">
   <div class="top-left">
     <img src="./icon_4_chrono_2.png" class="top-logo" alt="logo">
     <button id="btnHelp" class="btn-help">Aide</button>
   </div>
 
-  <div class="top-title">
-    Pot à Mèche
-  </div>
+  <div class="top-title">Pot à Mèche</div>
 
   <div class="top-right">
-    <div class="author">B.Barrois</div>
-  
+    <div class="author">B. Barrois</div>
     <div class="top-right-sub">
       <button id="btnMail" title="Nous contacter / Suggestions">✉️</button>
       <span id="version">version</span>
     </div>
   </div>
-
-
 </header>
 
-  <!-- ACTIONS HAUT DE PAGE -->
-  <div class="top-actions">
-    <button id="btnCapt" class="btn-capt">Capture d’écran</button>
+<!-- ACTIONS -->
+<div class="top-actions">
+  <button id="btnCapt" class="btn-capt">Capture d’écran</button>
+  <div id="dateTime" class="date-time"></div>
+  <button id="btnLoc" class="btn-loc">Localisation du nid</button>
+</div>
 
-    <div id="dateTime" class="date-time"></div>
+<!-- CHRONOS -->
+<main id="chronos"></main>
 
-    <button id="btnLoc" class="btn-loc">Localisation du nid</button>
-  </div>
+<!-- SCRIPT PRINCIPAL -->
+<script src="./app.js"></script>
 
-  <!-- CONTENEUR DES CHRONOS -->
-  <main id="chronos">
-    <!-- Généré par app.js -->
-  </main>
-
-  <!-- SCRIPT PRINCIPAL -->
-  <script src="./app.js"></script>
-
-  <!-- AFFICHAGE VERSION -->
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const v = document.getElementById("version");
-      if (v && typeof APP_VERSION !== "undefined") {
-        v.textContent = "v. : " + APP_VERSION;
-      }
-    });
-  </script>
-
-  <!-- DATE & HEURE -->
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      const el = document.getElementById("dateTime");
-      if (!el) return;
-
-      function updateDateTime() {
-        const now = new Date();
-        const d = now.toLocaleDateString("fr-FR");
-        const t = now.toLocaleTimeString("fr-FR", {
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit"
-        });
-        el.textContent = `${d} ${t}`;
-      }
-
-      updateDateTime();
-      setInterval(updateDateTime, 1000);
-    });
-  </script>
-
-  <!-- SERVICE WORKER -->
-  <script>
-    if ("serviceWorker" in navigator) {
-      navigator.serviceWorker.register("./service-worker.js");
-    }
-  </script>
-
-  <!-- LIB CAPTURE D’ÉCRAN -->
-  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-
-  <!-- BOUTON CAPTURE -->
-  <script>
-    document.getElementById("btnCapt").addEventListener("click", async () => {
-      const canvas = await html2canvas(document.body, {
-        scale: 2,
-        useCORS: true
-      });
-
-      const blob = await new Promise(resolve =>
-        canvas.toBlob(resolve, "image/png")
-      );
-
-      const filename =
-        "Chrono_Frelon_" +
-        new Date().toISOString().replace(/[:.]/g, "-") +
-        ".png";
-
-      if (navigator.share) {
-        try {
-          const file = new File([blob], filename, { type: "image/png" });
-          await navigator.share({
-            files: [file],
-            title: "Chrono Frelon",
-            text: "Capture d’écran"
-          });
-          return;
-        } catch (e) {}
-      }
-
-      const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob);
-      a.download = filename;
-      a.click();
-    });
-  </script>
-
- <!-- BOUTON LOCALISATION -->
+<!-- VERSION -->
 <script>
-document.getElementById("btnLoc").addEventListener("click", () => {
+document.addEventListener("DOMContentLoaded", () => {
+  const v = document.getElementById("version");
+  if (v && typeof APP_VERSION !== "undefined") {
+    v.textContent = "v. : " + APP_VERSION;
+  }
+});
+</script>
+
+<!-- DATE / HEURE -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const el = document.getElementById("dateTime");
+  if (!el) return;
+
+  function update() {
+    const n = new Date();
+    el.textContent =
+      n.toLocaleDateString("fr-FR") + " " +
+      n.toLocaleTimeString("fr-FR", { hour:"2-digit", minute:"2-digit", second:"2-digit" });
+  }
+  update();
+  setInterval(update, 1000);
+});
+</script>
+
+<!-- SERVICE WORKER -->
+<script>
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("./service-worker.js");
+}
+</script>
+
+<!-- CAPTURE -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+document.getElementById("btnCapt").onclick = async () => {
+  const canvas = await html2canvas(document.body, { scale:2, useCORS:true });
+  const blob = await new Promise(r => canvas.toBlob(r,"image/png"));
+  const name = "Chrono_Frelon_" + new Date().toISOString().replace(/[:.]/g,"-") + ".png";
+
+  if (navigator.share) {
+    try {
+      await navigator.share({ files:[new File([blob],name)], title:"Chrono Frelon" });
+      return;
+    } catch(e){}
+  }
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = name;
+  a.click();
+};
+</script>
+
+<!-- LOCALISATION DU NID -->
+<script>
+document.getElementById("btnLoc").onclick = () => {
   const observations = [];
 
   chronos.forEach(c => {
     if (c.lat === "--" || c.lon === "--") return;
-    if (c.essais.length === 0) return;
+    if (!c.essais.length) return;
 
-    const total = c.essais.reduce((a, b) => a + b, 0);
-    const moyenne = total / c.essais.length;
-    const distance = Math.round((moyenne * c.vitesse) / 2);
+    const moy = c.essais.reduce((a,b)=>a+b,0)/c.essais.length;
+    const dist = Math.round((moy * c.vitesse) / 2);
 
     observations.push({
-      color: c.color,
-      lat: parseFloat(c.lat),
-      lon: parseFloat(c.lon),
+      lat: +c.lat,
+      lon: +c.lon,
       direction: c.direction,
-      distance: distance,
-      vitesse: c.vitesse,
-      essais: c.essais.length,
-      timestamp: new Date().toISOString()
+      distance: dist
     });
   });
 
-  if (observations.length === 0) {
-    alert("Aucune donnée exploitable pour la localisation.");
+  if (!observations.length) {
+    alert("Aucune donnée exploitable.");
     return;
   }
-
-  // ✅ UN SEUL APPEL
   openLocChoice(observations);
-});
-</script>
-
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-
-  const btn = document.getElementById("btnHelp");
-  if (!btn) return;
-
-  btn.addEventListener("click", () => {
-    const overlay = document.createElement("div");
-    overlay.id = "helpOverlay";
-
-    overlay.innerHTML = `
-      <div class="help-box">
-        <h2>Aide – Application « Pot à Mèche »</h2>
-
-        <h3>1️⃣ Installation de l’application</h3>
-
-        <h4>📱 Android</h4>
-        <ol>
-          <li>Ouvrez <b>Google Chrome</b></li>
-          <li>Allez sur :
-            <br><b>https://berny70.github.io/Chrono_Frelon/</b>
-          </li>
-          <li>Appuyez sur le menu <b>⋮</b></li>
-          <li>Sélectionnez <b>« Installer l’application »</b></li>
-        </ol>
-
-        <h4>🍎 iPhone (iOS)</h4>
-        <ol>
-          <li>Ouvrez <b>Safari</b></li>
-          <li>Allez sur :
-            <br><b>https://berny70.github.io/Chrono_Frelon/</b>
-          </li>
-          <li>Appuyez sur <b>Partager</b> (⬆︎)</li>
-          <li>Choisissez <b>« Sur l’écran d’accueil »</b></li>
-        </ol>
-
-        <hr>
-
-        <h3>2️⃣ Utilisation des chronos</h3>
-
-        <ul>
-          <li>Chaque couleur correspond à une <b>station</b></li>
-          <li><b>Position</b> : relève la localisation</li>
-          <li><b>Start / Stop</b> : mesure le temps</li>
-          <li><b>Boussole</b> : capture la direction</li>
-          <li><b>Détail</b> : supprime les valeurs aberrantes</li>
-        </ul>
-
-        <p style="margin-top:10px;">
-          ✔️ Application gratuite<br>
-          ✔️ Sans publicité – sans compte<br>
-          ✔️ Fonctionne hors connexion
-        </p>
-        <h3>3️⃣ Contact, bug et suggestions</h3>
-
-        <p>
-          Une question, un bug ou une idée pour améliorer l’application ?
-        </p>
-        
-        <ul>
-          <li>Signaler un dysfonctionnement ou un crash</li>
-          <li>Proposer une amélioration</li>
-          <li>Poser une question</li>
-        </ul>
-        
-        <p>
-          Aucun compte n’est requis et aucune donnée personnelle n’est obligatoire.
-        </p>
-        
-        <div class="help-contact">
-          <button id="btnFeedbackHelp" title="Nous contacter / Suggestions">
-            ✉️ Nous contacter / Suggestions
-          </button>
-        </div>
-
-
-        <button id="closeHelp">Fermer</button>
-      </div>
-    `;
-
-    document.body.appendChild(overlay);
-
-    document.getElementById("closeHelp").onclick = () => {
-      document.getElementById("helpOverlay")?.remove();
-    };
-  });
-  document.getElementById("btnFeedbackHelp").onclick = () => {
-  window.open(
-    "https://forms.gle/e3WaFsaBvvMpk9mx8",
-    "_blank"
-  );
 };
-
-});
 </script>
 
-<script>
-document.getElementById("btnMail")?.addEventListener("click", () => {
-  window.open(
-    "https://forms.gle/e3WaFsaBvvMpk9mx8",
-    "_blank"
-  );
-});
-</script>
+<!-- CHOIX LOCAL / PARTAGÉ -->
 <script>
 function openLocChoice(observations) {
-
   const overlay = document.createElement("div");
   overlay.id = "locChoiceOverlay";
   overlay.innerHTML = `
     <div class="loc-choice-box">
       <h2>Localisation du nid</h2>
-      <p>Que souhaitez-vous afficher ?</p>
 
       <button id="locLocal">📍 Carte locale</button>
 
-      <!-- 🌐 Carte partagée (ouverture navigateur) -->
-      <a
-        id="locShared"
-        href="https://berny70.github.io/Chrono_Frelon/map.html"
-        target="_blank"
-        rel="noopener"
-        class="btn-link"
-      >
-        🌐 Carte partagée
-      </a>
+      <button id="locShared">🌐 Carte partagée</button>
 
       <p class="link-info">
-        S’ouvrira dans le navigateur :<br>
-        <b>https://berny70.github.io/Chrono_Frelon/</b>
+        <b>https://compteurdevarroas.jodaille.fr/carte_partagee/</b>
       </p>
 
       <br>
       <button id="locCancel">Annuler</button>
     </div>
   `;
-
   document.body.appendChild(overlay);
 
-  // 📍 Carte locale (navigation interne)
   document.getElementById("locLocal").onclick = () => {
-    localStorage.setItem(
-      "chronoObservations",
-      JSON.stringify(observations)
-    );
+    localStorage.setItem("chronoObservations", JSON.stringify(observations));
     closeLocChoice();
     window.location.href = "./map.html";
   };
 
-  // 🌐 Carte partagée
-  // ✅ stockage LOCAL avant ouverture externe
-  document.getElementById("locShared").addEventListener("click", () => {
-    localStorage.setItem(
-      "potameche_pending_observations",
-      JSON.stringify(observations)
-    );
+  document.getElementById("locShared").onclick = async () => {
+    for (const o of observations) {
+      await fetch(
+        "https://compteurdevarroas.jodaille.fr/carte_partagee/api/add_observation.php",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(o)
+        }
+      );
+    }
     closeLocChoice();
-    // ⚠️ PAS de window.open ici
-    // le lien <a> gère l’ouverture
-  });
+    window.open(
+      "https://compteurdevarroas.jodaille.fr/carte_partagee/",
+      "_blank"
+    );
+  };
 
   document.getElementById("locCancel").onclick = closeLocChoice;
 }
@@ -344,9 +191,12 @@ function closeLocChoice() {
 }
 </script>
 
-
-
-
+<!-- CONTACT -->
+<script>
+document.getElementById("btnMail")?.addEventListener("click", () => {
+  window.open("https://forms.gle/e3WaFsaBvvMpk9mx8","_blank");
+});
+</script>
 
 </body>
 </html>
