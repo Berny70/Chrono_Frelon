@@ -526,6 +526,38 @@ function buildObservation(i) {
     date: new Date().toISOString().slice(0, 10)
   };
 }
+// ==========================
+// RESTAURATION ÉTAT CHRONOS
+// ==========================
+const saved = localStorage.getItem("chronoState");
+
+if (saved) {
+  try {
+    const data = JSON.parse(saved);
+
+    data.forEach((s, i) => {
+      if (!chronos[i]) return;
+
+      chronos[i].lat = s.lat;
+      chronos[i].lon = s.lon;
+      chronos[i].essais = s.essais || [];
+      chronos[i].directions = s.directions || [];
+      chronos[i].direction = s.direction || 0;
+      chronos[i].vitesse = s.vitesse || DEFAULT_VITESSE;
+
+      // 🔄 Rafraîchissement UI
+      document.getElementById(`lat${i}`).textContent = s.lat;
+      document.getElementById(`lon${i}`).textContent = s.lon;
+      document.getElementById(`dir${i}`).textContent = s.direction + "°";
+      document.getElementById(`vit${i}`).value = s.vitesse || DEFAULT_VITESSE;
+      updateStats(i);
+    });
+
+  } catch (e) {
+    console.warn("État chronos invalide, ignoré");
+  }
+}
+
 
 
 
