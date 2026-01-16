@@ -1,8 +1,10 @@
 // ==========================
 // DONNÉES
 // ==========================
+const YEAR = new Date().getFullYear();
+
 const observations = JSON.parse(
-  localStorage.getItem("chronoObservations") || "[]"
+  localStorage.getItem("potameche_observations_" + YEAR) || "[]"
 );
 
 // ==========================
@@ -67,6 +69,23 @@ if (observations.length === 0) {
     "• saisir une position\n" +
     "• et capturer une direction avec la boussole."
   );
+}
+// ==========================
+// FUSION DES OBSERVATIONS
+// ==========================
+const incoming = JSON.parse(
+  localStorage.getItem("potameche_pending_observations_" + YEAR) || "[]"
+);
+
+if (incoming.length) {
+  observations.push(...incoming);
+
+  localStorage.setItem(
+    "potameche_observations_" + YEAR,
+    JSON.stringify(observations)
+  );
+
+  localStorage.removeItem("potameche_pending_observations_" + YEAR);
 }
 
 // ==========================
