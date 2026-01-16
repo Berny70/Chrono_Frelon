@@ -67,6 +67,10 @@ function updateDirection(i) {
 // ==========================
 window.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("chronos");
+  // Initialisation de la carte annuelle
+  if (document.getElementById("map")) {
+    initMap();
+  }
 
   chronoColors.forEach((color, i) => {
     const c = {
@@ -462,4 +466,5 @@ function loadYearData(year) {
 function addObservation(o) {
   console.log("Ajout observation Pot à Mèche :", o);
 }
+
 
