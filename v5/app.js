@@ -19,6 +19,9 @@ const chronos = [];
 const DEFAULT_VITESSE = 4;
 
 let detIndex = null;
+// adresse du site récepteur 
+const DATA_BASE_URL =
+"https://compteurdevarroas.jodaille.fr/carte_partagee/data/";
 // ==========================
 // ANNÉE COURANTE (smartphone)
 // ==========================
@@ -432,8 +435,7 @@ function initMap() {
   L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
     attribution: "© OpenStreetMap"
   }).addTo(map);
-  const DATA_BASE_URL =
-  "https://compteurdevarroas.jodaille.fr/carte_partagee/data/";
+
   loadYearData(CURRENT_YEAR);
 }
 
@@ -504,6 +506,27 @@ function envoyerVersCartePartagee(obs) {
     console.error(err);
   });
 }
+function buildObservation(i) {
+  const c = chronos[i];
+
+  if (
+    c.lat === "--" ||
+    c.lon === "--" ||
+    !c.direction ||
+    !document.getElementById(`d${i}`)
+  ) return null;
+
+  return {
+    lat: parseFloat(c.lat),
+    lon: parseFloat(c.lon),
+    direction: c.direction,
+    distance: parseFloat(
+      document.getElementById(`d${i}`).textContent
+    ),
+    date: new Date().toISOString().slice(0, 10)
+  };
+}
+
 
 
 
