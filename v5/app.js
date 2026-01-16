@@ -19,6 +19,11 @@ const chronos = [];
 const DEFAULT_VITESSE = 4;
 
 let detIndex = null;
+// ==========================
+// ANNÉE COURANTE (smartphone)
+// ==========================
+const CURRENT_YEAR = new Date().getFullYear();
+console.log("Année courante :", CURRENT_YEAR);
 
 // ==========================
 // BOUSSOLE – variables globales
@@ -409,7 +414,52 @@ document.addEventListener("DOMContentLoaded", () => {
 
   localStorage.removeItem("potameche_pending_observations");
 });
+// ==========================
+// CHARGEMENT CARTE PAR ANNÉE
+// ==========================
+let map = null;
+let geojsonLayer = null;
+
+function initMap() {
+  map = L.map("map").setView([46.5, 2.5], 6);
+
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    attribution: "© OpenStreetMap"
+  }).addTo(map);
+
+  loadYearData(CURRENT_YEAR);
+}
+
+function loadYearData(year) {
+  fetch(`data/${year}.geojson`)
+    .then(r => {
+      if (!r.ok) throw new Error("Pas de données pour " + year);
+      return r.json();
+    })
+    .then(data => {
+      if (geojsonLayer) map.removeLayer(geojsonLayer);
+
+      geojsonLayer = L.geoJSON(data, {
+        onEachFeature: (feature, layer) => {
+          if (feature.properties) {
+            let html = "";
+            for (const k in feature.properties) {
+              html += `<b>${k}</b> : ${feature.properties[k]}<br>`;
+            }
+            layer.bindPopup(html);
+          }
+        }
+      }).addTo(map);
+
+      map.fitBounds(geojsonLayer.getBounds());
+    })
+    .catch(err => {
+      console.warn(err.message);
+    });
+}
+
 
 function addObservation(o) {
   console.log("Ajout observation Pot à Mèche :", o);
 }
+
