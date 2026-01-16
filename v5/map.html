@@ -22,19 +22,29 @@
       width: 100vw;
     }
 
-    .btn-back {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      z-index: 1000;
-      background: white;
-      border: 1px solid #ccc;
-      padding: 6px 10px;
-      border-radius: 6px;
-      font-size: 14px;
-      cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-    }
+      .btn-back {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        z-index: 1000;
+      
+        background: #ffffff;
+        color: #000;
+        border: none;
+        padding: 10px 14px;
+        border-radius: 10px;
+      
+        font-size: 15px;
+        font-weight: bold;
+        cursor: pointer;
+      
+        box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+      }
+      
+      .btn-back:active {
+        transform: scale(0.96);
+      }
+
 
     .legend {
       position: absolute;
@@ -52,7 +62,10 @@
 <body>
 
 <!-- Bouton retour -->
-<button id="btnBack" class="btn-back">⬅ Retour</button>
+<button id="btnBack" class="btn-back">
+  ⬅ Retour aux chronos
+</button>
+
 
 <!-- Carte -->
 <div id="map"></div>
