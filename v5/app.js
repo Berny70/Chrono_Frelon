@@ -527,7 +527,7 @@ function buildObservation(i) {
   };
 }
 // ==========================
-// RESTAURATION ÉTAT CHRONOS
+// RESTAURATION SESSION
 // ==========================
 const saved = localStorage.getItem("chronoState");
 
@@ -545,7 +545,7 @@ if (saved) {
       chronos[i].direction = s.direction || 0;
       chronos[i].vitesse = s.vitesse || DEFAULT_VITESSE;
 
-      // 🔄 Rafraîchissement UI
+      // 🔄 Mise à jour interface
       document.getElementById(`lat${i}`).textContent = s.lat;
       document.getElementById(`lon${i}`).textContent = s.lon;
       document.getElementById(`dir${i}`).textContent = s.direction + "°";
@@ -554,11 +554,9 @@ if (saved) {
     });
 
   } catch (e) {
-    console.warn("État chronos invalide, ignoré");
+    console.warn("Session précédente invalide");
   }
 }
-
-
 
 
 
