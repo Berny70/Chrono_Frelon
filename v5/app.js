@@ -265,13 +265,18 @@ function onOrientation(e) {
 
   let heading = null;
 
-  if (e.webkitCompassHeading !== undefined) {
+  // 🍎 iOS PRIORITAIRE
+  if (typeof e.webkitCompassHeading === "number") {
+    if (e.webkitCompassAccuracy < 0) return;
     heading = e.webkitCompassHeading;
-  } else if (e.alpha !== null) {
+  }
+  // 🤖 Android
+  else if (e.absolute === true && e.alpha !== null) {
     heading = (360 - e.alpha) % 360;
   }
 
   if (heading === null || isNaN(heading)) return;
+
 
   if (lastHeading !== null) {
     let delta = Math.abs(heading - lastHeading);
@@ -383,5 +388,6 @@ function delDirection(k) {
 function closeDET() {
   document.getElementById("detOverlay")?.remove();
 }
+
 
 
