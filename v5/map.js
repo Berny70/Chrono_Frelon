@@ -1,10 +1,11 @@
 // ==========================
-// DONNÉES
+// CARTE LOCALE – POT À MÈCHE
+// Source UNIQUE : localStorage (smartphone)
 // ==========================
-const YEAR = new Date().getFullYear();
 
+// 🔒 SOURCE UNIQUE DES DONNÉES
 const observations = JSON.parse(
-  localStorage.getItem("potameche_observations_" + YEAR) || "[]"
+  localStorage.getItem("chronoObservations") || "[]"
 );
 
 // ==========================
@@ -18,104 +19,68 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 }).addTo(map);
 
 // ==========================
-// GESTION ZOOM / CENTRAGE
+// AUCUNE DONNÉE → MESSAGE
+// ==========================
+if (!Array.isArray(observations) || observations.length === 0) {
+  alert(
+    "Aucune donnée exploitable pour la localisation.\n\n" +
+    "Pour afficher la carte locale, veuillez au minimum :\n" +
+    "• relever une position\n" +
+    "• mesurer un temps\n" +
+    "• capturer une direction"
+  );
+
+  // Vue par défaut (France)
+  map.setView([46.5, 2.5], 6);
+  throw new Error("Carte locale : aucune observation");
+}
+
+// ==========================
+// CENTRAGE / ZOOM
 // ==========================
 const points = observations
-  .filter(o => o.lat && o.lon)
+  .filter(o => typeof o.lat === "number" && typeof o.lon === "number")
   .map(o => [o.lat, o.lon]);
 
-const savedView = localStorage.getItem("mapView");
-
-if (savedView) {
-  // 🔁 Restaurer le dernier zoom utilisateur
-  const { center, zoom } = JSON.parse(savedView);
-  map.setView(center, zoom);
-
-} else if (points.length === 1) {
-  // 📍 Une seule station → zoom terrain
+if (points.length === 1) {
   map.setView(points[0], 16);
-
 } else if (points.length > 1) {
-  // 📍📍 Plusieurs stations → tout afficher
-  const bounds = L.latLngBounds(points);
-  map.fitBounds(bounds, { padding: [30, 30] });
-
+  map.fitBounds(points, { padding: [30, 30] });
 } else {
-  // 🌍 Fallback (France)
   map.setView([46.5, 2.5], 6);
 }
 
-// Sauvegarde du zoom et du centre si l’utilisateur bouge la carte
-map.on("moveend", () => {
-  const center = map.getCenter();
-  const zoom = map.getZoom();
-
-  localStorage.setItem(
-    "mapView",
-    JSON.stringify({
-      center: [center.lat, center.lng],
-      zoom
-    })
-  );
-});
-
 // ==========================
-// MESSAGE SI AUCUNE DONNÉE
-// ==========================
-if (observations.length === 0) {
-  alert(
-    "Aucune donnée exploitable pour la localisation.\n\n" +
-    "Pour utiliser la carte, veuillez au minimum :\n" +
-    "• saisir une position\n" +
-    "• et capturer une direction avec la boussole."
-  );
-}
-// ==========================
-// FUSION DES OBSERVATIONS
-// ==========================
-const incoming = JSON.parse(
-  localStorage.getItem("potameche_pending_observations_" + YEAR) || "[]"
-);
-
-if (incoming.length) {
-  observations.push(...incoming);
-
-  localStorage.setItem(
-    "potameche_observations_" + YEAR,
-    JSON.stringify(observations)
-  );
-
-  localStorage.removeItem("potameche_pending_observations_" + YEAR);
-}
-
-// ==========================
-// AFFICHAGE POINTS + VECTEURS
+// AFFICHAGE OBSERVATIONS
 // ==========================
 observations.forEach(obs => {
+
+  // 🔍 Validation stricte
   if (
-    obs.lat === "--" ||
-    obs.lon === "--" ||
-    !obs.distance ||
-    obs.direction === 0
+    typeof obs.lat !== "number" ||
+    typeof obs.lon !== "number" ||
+    typeof obs.direction !== "number" ||
+    typeof obs.distance !== "number" ||
+    obs.distance <= 0
   ) return;
 
   const start = [obs.lat, obs.lon];
 
-  // Point d’observation
+  // 📍 Point d’observation
   const marker = L.circleMarker(start, {
     radius: 6,
-    color: obs.color,
-    fillColor: obs.color,
+    color: "red",
+    fillColor: "red",
     fillOpacity: 1
   }).addTo(map);
 
   marker.bindPopup(
-    `<b>${obs.color}</b><br>
-     Dist: ${obs.distance} m<br>
-     Dir: ${obs.direction}°`
+    `<b>Observation locale</b><br>
+     Direction : ${obs.direction}°<br>
+     Distance : ${obs.distance} m`
   );
 
-  // Calcul du point d’arrivée
+  // ➡️ Calcul du point d’arrivée
   const dest = destinationPoint(
     obs.lat,
     obs.lon,
@@ -123,32 +88,35 @@ observations.forEach(obs => {
     obs.distance
   );
 
-  // Vecteur directionnel
-  L.polyline([start, [dest.lat, dest.lon]], {
-    color: obs.color,
-    weight: 3
-  }).addTo(map);
+  // ➡️ Vecteur directionnel
+  L.polyline(
+    [start, [dest.lat, dest.lon]],
+    {
+      color: "red",
+      weight: 3
+    }
+  ).addTo(map);
 });
 
 // ==========================
-// FONCTION GÉO
+// GÉOMÉTRIE – DESTINATION
 // ==========================
 function destinationPoint(lat, lon, bearing, distance) {
-  const R = 6371000;
-  const δ = distance / R;
-  const θ = bearing * Math.PI / 180;
+  const R = 6371000; // rayon Terre (m)
+  const d = distance / R;
+  const b = bearing * Math.PI / 180;
 
   const φ1 = lat * Math.PI / 180;
   const λ1 = lon * Math.PI / 180;
 
   const φ2 = Math.asin(
-    Math.sin(φ1) * Math.cos(δ) +
-    Math.cos(φ1) * Math.sin(δ) * Math.cos(θ)
+    Math.sin(φ1) * Math.cos(d) +
+    Math.cos(φ1) * Math.sin(d) * Math.cos(b)
   );
 
   const λ2 = λ1 + Math.atan2(
-    Math.sin(θ) * Math.sin(δ) * Math.cos(φ1),
-    Math.cos(δ) - Math.sin(φ1) * Math.sin(φ2)
+    Math.sin(b) * Math.sin(d) * Math.cos(φ1),
+    Math.cos(d) - Math.sin(φ1) * Math.sin(φ2)
   );
 
   return {
