@@ -159,11 +159,18 @@ function openLocChoice(observations) {
   `;
   document.body.appendChild(overlay);
 
-  document.getElementById("locLocal").onclick = () => {
-    localStorage.setItem("chronoObservations", JSON.stringify(observations));
-    closeLocChoice();
-    window.location.href = "./map.html";
-  };
+document.getElementById("locLocal").onclick = () => {
+
+  // ✅ SAUVEGARDE DE L’ÉTAT DES CHRONOS
+  localStorage.setItem("chronoState", JSON.stringify(chronos));
+
+  // Données pour la carte locale
+  localStorage.setItem("chronoObservations", JSON.stringify(observations));
+
+  closeLocChoice();
+  window.location.href = "./map.html";
+};
+
 
   document.getElementById("locShared").onclick = async () => {
     for (const o of observations) {
