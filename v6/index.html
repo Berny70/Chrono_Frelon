@@ -13,7 +13,7 @@
   <!-- Icône -->
   <link rel="icon" href="./icon_4_chrono_2.png">
 
-  <!-- Styles -->
+  <!-- Style V4 conservé -->
   <link rel="stylesheet" href="./style.css">
 </head>
 
@@ -28,9 +28,7 @@
     <button id="btnHelp" class="btn-help">Aide</button>
   </div>
 
-  <div class="top-title">
-    Pot à Mèche
-  </div>
+  <div class="top-title">Pot à Mèche</div>
 
   <div class="top-right">
     <div>B. Barrois</div>
@@ -39,19 +37,19 @@
 </header>
 
 <!-- ==========================
-     ACTIONS HAUT DE PAGE
+     ACTIONS
 ========================== -->
 <div class="top-actions">
   <button id="btnCapt" class="btn-capt">Capture d’écran</button>
-  <div id="dateTime" class="date-time"></div>
+  <div id="dateTime"></div>
   <button id="btnLoc" class="btn-loc">Localisation du nid</button>
 </div>
 
 <!-- ==========================
-     CONTENEUR DES CHRONOS
+     CHRONOS
 ========================== -->
 <main id="chronos">
-  <!-- Généré dynamiquement par ui.js -->
+  <!-- Généré par ui.js -->
 </main>
 
 <!-- ==========================
@@ -60,9 +58,9 @@
 <script src="./version.js"></script>
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-    const v = document.getElementById("version");
-    if (v && typeof APP_VERSION !== "undefined") {
-      v.textContent = "v. : " + APP_VERSION;
+    if (typeof APP_VERSION !== "undefined") {
+      document.getElementById("version").textContent =
+        "v. : " + APP_VERSION;
     }
   });
 </script>
@@ -75,19 +73,19 @@
     const el = document.getElementById("dateTime");
     if (!el) return;
 
-    function updateDateTime() {
-      const now = new Date();
+    function update() {
+      const n = new Date();
       el.textContent =
-        now.toLocaleDateString("fr-FR") + " " +
-        now.toLocaleTimeString("fr-FR", {
+        n.toLocaleDateString("fr-FR") + " " +
+        n.toLocaleTimeString("fr-FR", {
           hour: "2-digit",
           minute: "2-digit",
           second: "2-digit"
         });
     }
 
-    updateDateTime();
-    setInterval(updateDateTime, 1000);
+    update();
+    setInterval(update, 1000);
   });
 </script>
 
@@ -96,71 +94,48 @@
 ========================== -->
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script>
-  document.getElementById("btnCapt").addEventListener("click", async () => {
-    const canvas = await html2canvas(document.body, {
-      scale: 2,
-      useCORS: true
-    });
+  document.getElementById("btnCapt").onclick = async () => {
+    const canvas = await html2canvas(document.body, { scale: 2 });
+    const blob = await new Promise(r => canvas.toBlob(r,"image/png"));
 
-    const blob = await new Promise(resolve =>
-      canvas.toBlob(resolve, "image/png")
-    );
-
-    const filename =
+    const name =
       "Chrono_Frelon_" +
-      new Date().toISOString().replace(/[:.]/g, "-") +
+      new Date().toISOString().replace(/[:.]/g,"-") +
       ".png";
-
-    if (navigator.share) {
-      try {
-        const file = new File([blob], filename, { type: "image/png" });
-        await navigator.share({
-          files: [file],
-          title: "Chrono Frelon"
-        });
-        return;
-      } catch (e) {}
-    }
 
     const a = document.createElement("a");
     a.href = URL.createObjectURL(blob);
-    a.download = filename;
+    a.download = name;
     a.click();
-  });
+  };
 </script>
 
 <!-- ==========================
-     AIDE (UI uniquement)
+     AIDE (UI seule)
 ========================== -->
 <script>
-document.getElementById("btnHelp").addEventListener("click", () => {
-  const overlay = document.createElement("div");
-  overlay.id = "helpOverlay";
-  overlay.innerHTML = `
+document.getElementById("btnHelp").onclick = () => {
+  const o = document.createElement("div");
+  o.id = "helpOverlay";
+  o.innerHTML = `
     <div class="help-box">
-      <h2>Aide – Application « Pot à Mèche »</h2>
-
+      <h2>Aide – Pot à Mèche</h2>
       <ul>
-        <li>Chaque couleur correspond à une station</li>
-        <li>Start / Stop : mesure le temps</li>
-        <li>Position : relève la localisation</li>
-        <li>Boussole : capture la direction</li>
-        <li>Détail : supprime les valeurs aberrantes</li>
+        <li>Chaque couleur = une station</li>
+        <li>Start / Stop : mesure du temps</li>
+        <li>Position : GPS</li>
+        <li>Boussole : direction</li>
+        <li>Détail : nettoyage des valeurs</li>
       </ul>
-
-      <button id="closeHelp">Fermer</button>
+      <button onclick="this.closest('#helpOverlay').remove()">Fermer</button>
     </div>
   `;
-  document.body.appendChild(overlay);
-
-  document.getElementById("closeHelp").onclick = () => {
-    overlay.remove();
-  };
-});
+  document.body.appendChild(o);
+};
 </script>
 
 <!-- ==========================
-     APP V6
+     APP V6 (MODULE)
 ========================== -->
 <script type="module" src="./app.js"></script>
 
