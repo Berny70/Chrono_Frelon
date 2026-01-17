@@ -441,6 +441,8 @@ function openDET(i) {
 }
 
 window.closeDET = closeDET;
+window.__chronos = chronos;
+
 
 
 
