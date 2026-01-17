@@ -252,8 +252,7 @@ function openCompass(i) {
   const c = chronos[i];
 
   let heading = null;
-  let warmup = 0;
-  const WARMUP_COUNT = 10;
+  let firstValid = false;   // verrou anti-bug 274°
 
   const overlay = document.createElement("div");
   overlay.id = "compassOverlay";
@@ -261,9 +260,7 @@ function openCompass(i) {
     <div class="compass-box">
       <h2>Boussole ${c.color}</h2>
 
-      <div id="headingValue">…</div>
-
-      <button id="btnInitCompass">Initialisation</button><br><br>
+      <div id="headingValue">—</div>
 
       <button id="saveDir">Capturer direction</button><br><br>
 
@@ -273,29 +270,37 @@ function openCompass(i) {
   document.body.appendChild(overlay);
 
   function orient(e) {
-    if (e.alpha == null) return;
+    let h = null;
 
-    // phase d'initialisation capteur (bug connu)
-    if (warmup < WARMUP_COUNT) {
-      warmup++;
-      document.getElementById("headingValue").textContent = "…";
+    // ✅ iOS (valeur fiable)
+    if (typeof e.webkitCompassHeading === "number") {
+      h = e.webkitCompassHeading;
+    }
+    // ⚠️ Android fallback
+    else if (e.alpha != null) {
+      h = 360 - e.alpha;
+    } else {
       return;
     }
 
-    heading = Math.round(360 - e.alpha);
+    h = Math.round(h);
+
+    // ❌ ignorer la première valeur (bug connu navigateur)
+    if (!firstValid) {
+      firstValid = true;
+      document.getElementById("headingValue").textContent = "—";
+      return;
+    }
+
+    heading = h;
     document.getElementById("headingValue").textContent = heading + "°";
   }
 
+  // écoute double pour compatibilité maximale
+  window.addEventListener("deviceorientationabsolute", orient);
   window.addEventListener("deviceorientation", orient);
 
-  // 🔄 bouton INITIALISATION (relance warm-up)
-  document.getElementById("btnInitCompass").onclick = () => {
-    warmup = 0;
-    heading = null;
-    document.getElementById("headingValue").textContent = "…";
-  };
-
-  // 📌 capture direction
+  // capture direction
   document.getElementById("saveDir").onclick = () => {
     if (heading !== null) {
       c.directions.push(heading);
@@ -303,13 +308,13 @@ function openCompass(i) {
     }
   };
 
-  // ❌ fermeture popup
+  // fermeture
   document.getElementById("closeCompass").onclick = () => {
+    window.removeEventListener("deviceorientationabsolute", orient);
     window.removeEventListener("deviceorientation", orient);
     overlay.remove();
   };
 }
-
 
 function openDET(i) {
   detIndex = i;
@@ -384,6 +389,7 @@ function openDET(i) {
 }
 
 window.closeDET = closeDET;
+
 
 
 
