@@ -128,11 +128,12 @@ export function updateChronoTime(state) {
     const el = document.getElementById(`t${i}`);
     if (!el) return;
 
-    if (c.running && typeof c.currentTime === "number") {
+    if (typeof c.currentTime === "number") {
       el.textContent = c.currentTime.toFixed(2) + " s";
     }
   });
 }
+
 
 /**
  * Mise à jour moyenne & distance
