@@ -141,8 +141,9 @@ window.addEventListener("DOMContentLoaded", () => {
     };
 
     div.querySelector(".det").onclick = () => openDET(i);
+    
     document.getElementById("btnLoc").onclick = () => {
-      window.open("map.html", "_blank");
+      location.href = "map.html";
     };
 
     div.querySelector(`#vit${i}`).oninput = e => {
@@ -439,6 +440,7 @@ function openDET(i) {
 }
 
 window.closeDET = closeDET;
+
 
 
 
