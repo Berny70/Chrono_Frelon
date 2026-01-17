@@ -455,19 +455,31 @@ HELP
 
 #btnBackMap {
   position: fixed;
-  top: 10px;
-  right: 10px;
-  z-index: 1000;
+  top: 12px;
+  right: 12px;
+  z-index: 2000;           /* au-dessus de Leaflet */
 
-  padding: 8px 12px;
-  font-size: 14px;
-  border-radius: 8px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+
+  background: #d32f2f;     /* rouge */
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+
   border: none;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.4);
 
-  background: #ffffff;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
   cursor: pointer;
+  touch-action: manipulation;
 }
+
+#btnBackMap:active {
+  transform: scale(0.95);
+}
+
+
 
 
 
