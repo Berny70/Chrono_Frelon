@@ -14,6 +14,8 @@ import {
 import { getPosition } from "./gps.js";
 import { openCompass } from "./compass.js";
 
+console.log("ui.js V6 LOADED");
+
 /**
  * Initialisation de l’interface
  */
