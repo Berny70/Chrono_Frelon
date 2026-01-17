@@ -82,8 +82,17 @@ export function initUI(state) {
     };
     div.querySelector(".compass").onclick = () => {
       openCompass(state, i);
+    
+      // ⏱️ surveille la fermeture pour rafraîchir l’affichage
+      const observer = new MutationObserver(() => {
+        if (!document.getElementById("compassOverlay")) {
+          updateDirectionUI(state, i);
+          observer.disconnect();
+        }
+      });
+    
+      observer.observe(document.body, { childList: true });
     };
-
   });
 }
 
@@ -122,4 +131,18 @@ export function updateGPS(state, i) {
   document.getElementById(`lon${i}`).textContent =
     c.lon !== null ? c.lon : "--";
 }
+div.querySelector(".compass").onclick = () => {
+  openCompass(state, i);
+
+  // ⏱️ surveille la fermeture pour rafraîchir l’affichage
+  const observer = new MutationObserver(() => {
+    if (!document.getElementById("compassOverlay")) {
+      updateDirectionUI(state, i);
+      observer.disconnect();
+    }
+  });
+
+  observer.observe(document.body, { childList: true });
+};
+
 
