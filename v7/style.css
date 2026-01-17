@@ -428,6 +428,31 @@ HELP
   opacity: 0.85;
 }
 
+#locOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+}
+
+.loc-box {
+  background: white;
+  padding: 20px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 420px;
+  text-align: center;
+}
+
+.loc-box button {
+  width: 100%;
+  padding: 12px;
+  font-size: 15px;
+}
+
 
 
 
