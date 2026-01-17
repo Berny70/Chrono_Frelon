@@ -67,8 +67,7 @@ export function initUI(state) {
       updateChronoStats(state, i);
     };
     div.querySelector(".pos").onclick = () => {
-      getPosition(state, i);
-      updateGPS(state, i);
+      getPosition(state, i, () => updateGPS(state, i));
     };
   });
 }
