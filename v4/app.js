@@ -39,8 +39,8 @@ function saveObservations() {
     if (
       c.lat === "--" ||
       c.lon === "--" ||
-      !c.essais.length ||
-      !c.direction
+        !c.essais.length ||
+      c.direction == null
     ) return null;
 
     const total = c.essais.reduce((a, b) => a + b, 0);
@@ -49,7 +49,7 @@ function saveObservations() {
     return {
       lat: parseFloat(c.lat),
       lon: parseFloat(c.lon),
-      direction: c.direction,
+      direction: c.direction,   // 0° est VALIDE
       distance: Math.round(moy * c.vitesse),
       color: c.color
     };
@@ -57,6 +57,7 @@ function saveObservations() {
 
   localStorage.setItem("chronoObservations", JSON.stringify(obs));
 }
+
 
 // ==========================
 // MISE À JOUR DIRECTION
@@ -440,6 +441,7 @@ function openDET(i) {
 }
 
 window.closeDET = closeDET;
+
 
 
 
