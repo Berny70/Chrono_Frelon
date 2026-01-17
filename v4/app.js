@@ -255,75 +255,61 @@ function openCompass(i) {
   let warmup = 0;
   const WARMUP_COUNT = 10;
 
-  function startCompass() {
-    const overlay = document.createElement("div");
-    overlay.id = "compassOverlay";
-    overlay.innerHTML = `
-      <div class="compass-box">
-        <h2>Boussole ${c.color}</h2>
+  const overlay = document.createElement("div");
+  overlay.id = "compassOverlay";
+  overlay.innerHTML = `
+    <div class="compass-box">
+      <h2>Boussole ${c.color}</h2>
 
-        <div id="headingValue">…</div>
+      <div id="headingValue">…</div>
 
-        <button id="btnInitCompass">Initialisation</button><br><br>
+      <button id="btnInitCompass">Initialisation</button><br><br>
 
-        <button id="saveDir">Capturer direction</button><br><br>
+      <button id="saveDir">Capturer direction</button><br><br>
 
-        <button id="closeCompass">Fermer</button>
-      </div>
-    `;
-    document.body.appendChild(overlay);
+      <button id="closeCompass">Fermer</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
 
-    function orient(e) {
-      if (e.alpha == null) return;
+  function orient(e) {
+    if (e.alpha == null) return;
 
-      // phase d'initialisation capteur
-      if (warmup < WARMUP_COUNT) {
-        warmup++;
-        document.getElementById("headingValue").textContent = "…";
-        return;
-      }
-
-      heading = Math.round(360 - e.alpha);
-      document.getElementById("headingValue").textContent = heading + "°";
+    // phase d'initialisation capteur (bug connu)
+    if (warmup < WARMUP_COUNT) {
+      warmup++;
+      document.getElementById("headingValue").textContent = "…";
+      return;
     }
 
-    window.addEventListener("deviceorientation", orient);
-
-    // 🔄 bouton INITIALISATION
-    document.getElementById("btnInitCompass").onclick = () => {
-      warmup = 0;          // relance la phase de chauffe
-      heading = null;
-      document.getElementById("headingValue").textContent = "…";
-    };
-
-    // capture direction (inchangée)
-    document.getElementById("saveDir").onclick = () => {
-      if (heading !== null) {
-        c.directions.push(heading);
-        updateDirection(i);
-      }
-    };
-
-    // fermeture popup
-    document.getElementById("closeCompass").onclick = () => {
-      window.removeEventListener("deviceorientation", orient);
-      overlay.remove();
-    };
+    heading = Math.round(360 - e.alpha);
+    document.getElementById("headingValue").textContent = heading + "°";
   }
 
-  // gestion permission iOS
-  if (
-    typeof DeviceOrientationEvent !== "undefined" &&
-    typeof DeviceOrientationEvent.requestPermission === "function"
-  ) {
-    DeviceOrientationEvent.requestPermission().then(state => {
-      if (state === "granted") startCompass();
-      else alert("Autorisation boussole refusée");
-    });
-  } else {
-    startCompass();
-  }
+  window.addEventListener("deviceorientation", orient);
+
+  // 🔄 bouton INITIALISATION (relance warm-up)
+  document.getElementById("btnInitCompass").onclick = () => {
+    warmup = 0;
+    heading = null;
+    document.getElementById("headingValue").textContent = "…";
+  };
+
+  // 📌 capture direction
+  document.getElementById("saveDir").onclick = () => {
+    if (heading !== null) {
+      c.directions.push(heading);
+      updateDirection(i);
+    }
+  };
+
+  // ❌ fermeture popup
+  document.getElementById("closeCompass").onclick = () => {
+    window.removeEventListener("deviceorientation", orient);
+    overlay.remove();
+  };
 }
+
 
 function openDET(i) {
   detIndex = i;
@@ -398,6 +384,7 @@ function openDET(i) {
 }
 
 window.closeDET = closeDET;
+
 
 
 
