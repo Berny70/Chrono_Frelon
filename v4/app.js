@@ -248,6 +248,7 @@ function closeDET() {
 // ==========================
 // BOUSSOLE
 // ==========================
+
 function openCompass(i) {
   const c = chronos[i];
 
@@ -398,6 +399,7 @@ function openDET(i) {
 }
 
 window.closeDET = closeDET;
+
 
 
 
