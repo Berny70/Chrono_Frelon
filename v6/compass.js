@@ -7,29 +7,31 @@ let currentIndex = null;
 let currentHeading = null;
 let lastHeading = null;
 let active = false;
+let appState = null;
 
 /**
  * Ouvre l’overlay boussole
- */
-export function openCompass(state, index) {
-  currentIndex = index;
-  currentHeading = null;
-  lastHeading = null;
-  active = false;
-
-  const overlay = document.createElement("div");
-  overlay.id = "compassOverlay";
-  overlay.innerHTML = `
-    <div class="compass-box">
-      <h2>Boussole ${state.chronos[index].color}</h2>
-      <div id="headingValue">---</div>
-      <button data-action="enable">Activer</button><br><br>
-      <button data-action="save">Capturer</button><br><br>
-      <button data-action="close">Fermer</button>
-    </div>
-  `;
-  document.body.appendChild(overlay);
-}
+     */
+    export function openCompass(state, index) {
+      appState = state;              // ✅ mémorisation explicite
+      currentIndex = index;
+      currentHeading = null;
+      lastHeading = null;
+      active = false;
+    
+      const overlay = document.createElement("div");
+      overlay.id = "compassOverlay";
+      overlay.innerHTML = `
+        <div class="compass-box">
+          <h2>Boussole ${state.chronos[index].color}</h2>
+          <div id="headingValue">---</div>
+          <button data-action="enable">Activer</button><br><br>
+          <button data-action="save">Capturer</button><br><br>
+          <button data-action="close">Fermer</button>
+        </div>
+      `;
+      document.body.appendChild(overlay);
+    }
 
 /**
  * Gestion orientation appareil
@@ -126,6 +128,6 @@ document.addEventListener("click", e => {
   if (!action) return;
 
   if (action === "enable") enableCompass();
-  if (action === "save") saveDirection(window.__APP_STATE__);
+  if (action === "save") saveDirection();
   if (action === "close") closeCompass();
 });
