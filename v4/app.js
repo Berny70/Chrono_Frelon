@@ -235,12 +235,12 @@ function closeDET() {
 // ==========================
 // BOUSSOLE
 // ==========================
-
 function openCompass(i) {
   const c = chronos[i];
+
   let heading = null;
-  let initialized = false;
-  let listenerActive = false;
+  let warmup = 0;
+  const WARMUP_COUNT = 10;
 
   function startCompass() {
     const overlay = document.createElement("div");
@@ -249,11 +249,11 @@ function openCompass(i) {
       <div class="compass-box">
         <h2>Boussole ${c.color}</h2>
 
-        <div id="headingValue">—</div>
+        <div id="headingValue">…</div>
 
         <button id="btnInitCompass">Initialiser</button><br><br>
 
-        <button id="saveDir" disabled>Capturer direction</button><br><br>
+        <button id="saveDir">Capturer direction</button><br><br>
 
         <button id="closeCompass">Fermer</button>
       </div>
@@ -261,8 +261,14 @@ function openCompass(i) {
     document.body.appendChild(overlay);
 
     function orient(e) {
-      if (!listenerActive) return;
       if (e.alpha == null) return;
+
+      // phase d'initialisation capteur
+      if (warmup < WARMUP_COUNT) {
+        warmup++;
+        document.getElementById("headingValue").textContent = "…";
+        return;
+      }
 
       heading = Math.round(360 - e.alpha);
       document.getElementById("headingValue").textContent = heading + "°";
@@ -270,31 +276,29 @@ function openCompass(i) {
 
     window.addEventListener("deviceorientation", orient);
 
-    // Initialisation manuelle
+    // 🔄 bouton d'initialisation
     document.getElementById("btnInitCompass").onclick = () => {
+      warmup = 0;
       heading = null;
-      initialized = true;
-      listenerActive = true;
-      document.getElementById("headingValue").textContent = "0°";
-      document.getElementById("saveDir").disabled = false;
+      document.getElementById("headingValue").textContent = "…";
     };
 
-    // Capture direction
+    // capture direction
     document.getElementById("saveDir").onclick = () => {
-      if (initialized && heading !== null) {
+      if (heading !== null) {
         c.directions.push(heading);
         updateDirection(i);
       }
     };
 
-    // Fermeture
+    // fermeture
     document.getElementById("closeCompass").onclick = () => {
       window.removeEventListener("deviceorientation", orient);
       overlay.remove();
     };
   }
 
-  // Gestion permission iOS
+  // gestion permission iOS
   if (
     typeof DeviceOrientationEvent !== "undefined" &&
     typeof DeviceOrientationEvent.requestPermission === "function"
@@ -381,6 +385,7 @@ function openDET(i) {
 }
 
 window.closeDET = closeDET;
+
 
 
 
