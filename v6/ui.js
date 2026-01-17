@@ -51,13 +51,15 @@ export function initUI(state) {
     // ==========================
     // BOUTONS
     // ==========================
-
     div.querySelector(".start").onclick = () => {
-      const wasRunning = state.chronos[i].running;
-      toggleChrono(state, i);
+      const c = state.chronos[i];
     
-      // Si on vient de STOP → mise à jour stats
-      if (wasRunning) {
+      if (!c.running) {
+        // START
+        toggleChrono(state, i);
+      } else {
+        // STOP
+        toggleChrono(state, i);
         updateChronoStats(state, i);
       }
     };
