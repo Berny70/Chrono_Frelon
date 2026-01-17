@@ -20,12 +20,6 @@ const DEFAULT_VITESSE = 4;
 
 let detIndex = null;
 
-// 🔵 Variables globales boussole
-let currentCompassIndex = null;
-let currentHeading = null;
-let compassActive = false;
-let lastHeading = null;
-
 // ==========================
 // MOYENNE CIRCULAIRE
 // ==========================
@@ -67,7 +61,7 @@ window.addEventListener("DOMContentLoaded", () => {
       startTime: 0,
       essais: [],
       directions: [],
-      vitesse: DEFAULT_VITESSE,
+      vitesse: 4,
       direction: 0,
       lat: "--",
       lon: "--",
@@ -86,18 +80,18 @@ window.addEventListener("DOMContentLoaded", () => {
       </div>
 
       <div class="row row-info">
-        <div><b>Lat.:</b> <span id="lat${i}">--</span></div>
-        <div><b>T.moy:</b> <span id="m${i}">0 s</span></div>
-        <div>
+        <div class="info-left"><b>Lat.:</b> <span id="lat${i}">--</span></div>
+        <div class="info-center"><b>T.moy:</b> <span id="m${i}">0 s</span></div>
+        <div class="info-right">
           <b>Vit.:</b>
-          <input type="number" id="vit${i}" value="${DEFAULT_VITESSE}" min="1" max="9"> m/s
+          <input type="number" id="vit${i}" value="4" min="1" max="9"> m/s
         </div>
       </div>
 
       <div class="row row-info">
-        <div><b>Long.:</b> <span id="lon${i}">--</span></div>
-        <div><b>Dir.:</b> <span id="dir${i}">0°</span></div>
-        <div><b>Dist.:</b> <span id="d${i}">0 m</span></div>
+        <div class="info-left"><b>Long.:</b> <span id="lon${i}">--</span></div>
+        <div class="info-center"><b>Dir.:</b> <span id="dir${i}">0°</span></div>
+        <div class="info-right"><b>Dist.:</b> <span id="d${i}">0 m</span></div>
       </div>
 
       <div class="row row-actions">
@@ -167,6 +161,7 @@ function updateStats(i) {
 function resetChrono(i) {
   const c = chronos[i];
 
+  // Données internes
   c.running = false;
   c.startTime = 0;
   c.essais = [];
@@ -176,6 +171,7 @@ function resetChrono(i) {
   c.lat = "--";
   c.lon = "--";
 
+  // Affichage
   document.getElementById(`t${i}`).textContent = "0.00 s";
   document.getElementById(`m${i}`).textContent = "0 s";
   document.getElementById(`d${i}`).textContent = "0 m";
@@ -184,6 +180,7 @@ function resetChrono(i) {
   document.getElementById(`lon${i}`).textContent = "--";
   document.getElementById(`vit${i}`).value = DEFAULT_VITESSE;
 }
+
 
 // ==========================
 // TICK
@@ -211,112 +208,48 @@ function getPos(i) {
 }
 
 // ==========================
-// BOUSSOLE (overlay)
+// BOUSSOLE
 // ==========================
 function openCompass(i) {
-  currentCompassIndex = i;
-  currentHeading = null;
-  compassActive = false;
+  const c = chronos[i];
+  let heading = null;
+
+  if (window.DeviceOrientationEvent?.requestPermission) {
+    DeviceOrientationEvent.requestPermission();
+  }
 
   const overlay = document.createElement("div");
   overlay.id = "compassOverlay";
   overlay.innerHTML = `
     <div class="compass-box">
-      <h2>Boussole ${chronos[i].color}</h2>
+      <h2>Boussole ${c.color}</h2>
       <div id="headingValue">---</div>
-
-      <button data-action="enable">Activer la boussole</button><br><br>
-      <button data-action="save">Capturer direction</button><br><br>
-      <button data-action="close">Fermer</button>
+      <button id="saveDir">Capturer direction</button><br><br>
+      <button onclick="closeCompass()">Fermer</button>
     </div>
   `;
   document.body.appendChild(overlay);
+
+  function orient(e) {
+    if (e.alpha !== null) {
+      heading = Math.round(360 - e.alpha);
+      document.getElementById("headingValue").textContent = heading + "°";
+    }
+  }
+
+  window.addEventListener("deviceorientationabsolute", orient);
+
+  document.getElementById("saveDir").onclick = () => {
+    if (heading !== null) {
+      c.directions.push(heading);
+      updateDirection(i);
+    }
+  };
 }
 
-// ==========================
-// ORIENTATION HANDLER (UNIFIÉ)
-// ==========================
-function onOrientation(e) {
-  if (!compassActive) return;
-
-  let heading = null;
-
-  // iOS Safari
-  if (e.webkitCompassHeading !== undefined) {
-    if (e.webkitCompassAccuracy < 0) return;
-    heading = e.webkitCompassHeading;
-  }
-  // Android
-  else if (e.absolute === true && e.alpha !== null) {
-    heading = (360 - e.alpha) % 360;
-  }
-
-  if (heading === null || isNaN(heading)) return;
-
-  if (lastHeading !== null) {
-    let delta = Math.abs(heading - lastHeading);
-    if (delta > 180) delta = 360 - delta;
-    if (delta > 25) return;
-  }
-
-  lastHeading = heading;
-  currentHeading = Math.round(heading);
-
-  const el = document.getElementById("headingValue");
-  if (el) el.textContent = currentHeading + "°";
+function closeCompass() {
+  document.getElementById("compassOverlay")?.remove();
 }
-
-// ==========================
-// DÉLÉGATION ÉVÉNEMENTS
-// ==========================
-document.addEventListener("click", async e => {
-  const btn = e.target.closest("button");
-  if (!btn) return;
-
-  const action = btn.dataset.action;
-  if (!action) return;
-
-  // ACTIVER
-  if (action === "enable" && !compassActive) {
-    if (
-      typeof DeviceOrientationEvent !== "undefined" &&
-      typeof DeviceOrientationEvent.requestPermission === "function"
-    ) {
-      const res = await DeviceOrientationEvent.requestPermission();
-      if (res !== "granted") {
-        alert("Autorisation boussole refusée");
-        return;
-      }
-    }
-
-    lastHeading = null;
-    currentHeading = null;
-
-    window.addEventListener("deviceorientationabsolute", onOrientation, true);
-    window.addEventListener("deviceorientation", onOrientation, true);
-
-    compassActive = true;
-  }
-
-  // SAUVEGARDER
-  if (action === "save") {
-    if (currentHeading === null) {
-      alert("Boussole non prête");
-      return;
-    }
-    chronos[currentCompassIndex].directions.push(currentHeading);
-    updateDirection(currentCompassIndex);
-  }
-
-  // FERMER
-  if (action === "close") {
-    window.removeEventListener("deviceorientation", onOrientation, true);
-    window.removeEventListener("deviceorientationabsolute", onOrientation, true);
-    compassActive = false;
-    lastHeading = null;
-    document.getElementById("compassOverlay")?.remove();
-  }
-});
 
 // ==========================
 // DÉTAIL
@@ -372,3 +305,4 @@ function delDirection(k) {
 function closeDET() {
   document.getElementById("detOverlay")?.remove();
 }
+
