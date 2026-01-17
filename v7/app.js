@@ -146,9 +146,9 @@ window.addEventListener("DOMContentLoaded", () => {
     div.querySelector(".det").onclick = () => openDET(i);
     
     document.getElementById("btnLoc").onclick = () => {
-      location.href = "map.html";
+      openLocationMenu();
     };
-
+    
     div.querySelector(`#vit${i}`).oninput = e => {
       c.vitesse = +e.target.value;
       updateStats(i);
@@ -444,6 +444,7 @@ function openDET(i) {
 
 window.closeDET = closeDET;
 window.__chronos = chronos;
+
 
 
 
