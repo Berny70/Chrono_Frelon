@@ -537,6 +537,42 @@ function openLocationMenu() {
   }
 }
 
+function buildGeoJSONObservations() {
+  const features = chronos.map(c => {
+    if (
+      c.lat === "--" ||
+      c.lon === "--" ||
+      !c.essais.length ||
+      c.direction == null
+    ) return null;
+
+    const total = c.essais.reduce((a, b) => a + b, 0);
+    const moy = total / c.essais.length;
+
+    return {
+      type: "Feature",
+      geometry: {
+        type: "Point",
+        coordinates: [
+          parseFloat(c.lon),
+          parseFloat(c.lat)
+        ]
+      },
+      properties: {
+        timestamp: new Date().toISOString(),
+        direction: c.direction,
+        distance: Math.round(moy * c.vitesse),
+        source: "chrono-pot-a-meche",
+        cle: "1978-07-04-1"
+      }
+    };
+  }).filter(Boolean);
+
+  return {
+    type: "FeatureCollection",
+    features
+  };
+}
 
 
 
@@ -551,6 +587,7 @@ function isCompassAvailable() {
 // ++++++++++++++++++++++++++++++++
 // a supprimer : test sur PC
 // +++++++++++++++++++++++++++++++++
+
 
 
 
