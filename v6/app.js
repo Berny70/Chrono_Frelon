@@ -13,12 +13,13 @@ import { tickChronos } from "./chronos.js";
 function initApp() {
   console.log("Chrono Frelon – V6 démarrage");
 
-  // 🔑 EXPOSITION EXPLICITE DE L’ÉTAT POUR LA BOUSSOLE
+  // 🔑 exposition explicite de l’état (debug + boussole)
   window.__APP_STATE__ = state;
 
+  // 🔥 construction de l’interface
   initUI(state);
 
-  // Tick global (rafraîchissement des chronos)
+  // ⏱️ tick global (rafraîchissement des chronos)
   setInterval(() => {
     tickChronos(state);
     updateChronoTime(state);
@@ -29,4 +30,3 @@ function initApp() {
 // DÉMARRAGE
 // ==========================
 window.addEventListener("DOMContentLoaded", initApp);
-
