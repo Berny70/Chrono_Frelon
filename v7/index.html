@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>4 Chronos pour Pot à Mèche</title>
+
+  <!-- PWA -->
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#ffffff">
+
+  <!-- Icône -->
+  <link rel="icon" href="./icon_4_chrono_2.png">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+
+<!-- ==========================
+     HEADER
+========================== -->
+<header class="topbar">
+  <div class="top-left">
+    <img src="./icon_4_chrono_2.png" class="top-logo" alt="logo">
+    <button id="btnHelp" class="btn-help">Aide</button>
+  </div>
+
+  <div class="top-title">
+    Pot à Mèche
+  </div>
+
+  <div class="top-right">
+    <div>B. Barrois</div>
+    <div id="version">version</div>
+  </div>
+</header>
+
+<!-- ==========================
+     ACTIONS HAUT DE PAGE
+========================== -->
+<div class="top-actions">
+  <button id="btnCapt" class="btn-capt">Capture d’écran</button>
+  <div id="dateTime" class="date-time"></div>
+  <button id="btnLoc" class="btn-loc">Localisation du nid</button>
+</div>
+
+<!-- ==========================
+     CONTENEUR DES CHRONOS
+========================== -->
+<main id="chronos">
+  <!-- Généré dynamiquement par ui.js -->
+</main>
+
+<!-- ==========================
+     VERSION
+========================== -->
+<script src="./version.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const v = document.getElementById("version");
+    if (v && typeof APP_VERSION !== "undefined") {
+      v.textContent = "v. : " + APP_VERSION;
+    }
+  });
+</script>
+
+<!-- ==========================
+     DATE & HEURE
+========================== -->
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const el = document.getElementById("dateTime");
+    if (!el) return;
+
+    function updateDateTime() {
+      const now = new Date();
+      el.textContent =
+        now.toLocaleDateString("fr-FR") + " " +
+        now.toLocaleTimeString("fr-FR", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit"
+        });
+    }
+
+    updateDateTime();
+    setInterval(updateDateTime, 1000);
+  });
+</script>
+
+<!-- ==========================
+     CAPTURE D'ÉCRAN
+========================== -->
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script>
+  document.getElementById("btnCapt").addEventListener("click", async () => {
+    const canvas = await html2canvas(document.body, {
+      scale: 2,
+      useCORS: true
+    });
+
+    const blob = await new Promise(resolve =>
+      canvas.toBlob(resolve, "image/png")
+    );
+
+    const filename =
+      "Chrono_Frelon_" +
+      new Date().toISOString().replace(/[:.]/g, "-") +
+      ".png";
+
+    if (navigator.share) {
+      try {
+        const file = new File([blob], filename, { type: "image/png" });
+        await navigator.share({
+          files: [file],
+          title: "Chrono Frelon"
+        });
+        return;
+      } catch (e) {}
+    }
+
+    const a = document.createElement("a");
+    a.href = URL.createObjectURL(blob);
+    a.download = filename;
+    a.click();
+  });
+</script>
+
+<!-- ==========================
+     AIDE (UI uniquement)
+========================== -->
+<script>
+document.getElementById("btnHelp").addEventListener("click", () => {
+  const overlay = document.createElement("div");
+  overlay.id = "helpOverlay";
+  overlay.innerHTML = `
+    <div class="help-box">
+      <h2>Aide – Application « Pot à Mèche »</h2>
+
+      <ul>
+        <li>Chaque couleur correspond à une station</li>
+        <li>Start / Stop : mesure le temps</li>
+        <li>Position : relève la localisation</li>
+        <li>Boussole : capture la direction</li>
+        <li>Détail : supprime les valeurs aberrantes</li>
+      </ul>
+
+      <button id="closeHelp">Fermer</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  document.getElementById("closeHelp").onclick = () => {
+    overlay.remove();
+  };
+});
+</script>
+
+<!-- ==========================
+     APP V6
+========================== -->
+<script type="module" src="./app.js"></script>
+
+<!-- ==========================
+     SERVICE WORKER
+========================== -->
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./service-worker.js");
+  }
+</script>
+
+</body>
+</html>
