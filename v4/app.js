@@ -341,3 +341,5 @@ function openDET(i) {
   });
 }
 
+window.closeDET = closeDET;
+
