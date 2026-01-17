@@ -5,6 +5,7 @@
 
 import { toggleChrono, resetChrono, getAverageTime, getDistance } from "./chronos.js";
 import { getPosition } from "./gps.js";
+import { openCompass } from "./compass.js";
 
 /**
  * Initialisation de l’UI
@@ -78,6 +79,9 @@ export function initUI(state) {
     };
     div.querySelector(".det").onclick = () => {
       alert("Détail – à réactiver dans une prochaine étape");
+    };
+    div.querySelector(".compass").onclick = () => {
+      // rien
     };
 
   });
