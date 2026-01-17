@@ -251,7 +251,7 @@ function openCompass(i) {
 
         <div id="headingValue">…</div>
 
-        <button id="btnInitCompass">Initialiser</button><br><br>
+        <button id="btnInitCompass">Initialisation</button><br><br>
 
         <button id="saveDir">Capturer direction</button><br><br>
 
@@ -276,14 +276,14 @@ function openCompass(i) {
 
     window.addEventListener("deviceorientation", orient);
 
-    // 🔄 bouton d'initialisation
+    // 🔄 bouton INITIALISATION
     document.getElementById("btnInitCompass").onclick = () => {
-      warmup = 0;
+      warmup = 0;          // relance la phase de chauffe
       heading = null;
       document.getElementById("headingValue").textContent = "…";
     };
 
-    // capture direction
+    // capture direction (inchangée)
     document.getElementById("saveDir").onclick = () => {
       if (heading !== null) {
         c.directions.push(heading);
@@ -291,7 +291,7 @@ function openCompass(i) {
       }
     };
 
-    // fermeture
+    // fermeture popup
     document.getElementById("closeCompass").onclick = () => {
       window.removeEventListener("deviceorientation", orient);
       overlay.remove();
@@ -385,6 +385,7 @@ function openDET(i) {
 }
 
 window.closeDET = closeDET;
+
 
 
 
