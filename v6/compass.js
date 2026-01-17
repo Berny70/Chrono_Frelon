@@ -1,27 +1,29 @@
 // compass.js
 // ==========================
-// BOUSSOLE – V6 STABLE
+// BOUSSOLE – V6 (SANS DÉLÉGATION)
 // ==========================
 
-// État interne au module (PAS global window)
 let appState = null;
 let currentIndex = null;
 let currentHeading = null;
 let lastHeading = null;
 let active = false;
 
+let btnEnable = null;
+let btnSave = null;
+let btnClose = null;
+
 /**
- * Ouvre l’overlay boussole pour un chrono donné
+ * Ouvre la boussole
  */
 export function openCompass(state, index) {
-  // mémorisation explicite de l’état
   appState = state;
   currentIndex = index;
   currentHeading = null;
   lastHeading = null;
   active = false;
 
-  // sécurité : supprimer un overlay existant
+  // supprimer un overlay existant
   document.getElementById("compassOverlay")?.remove();
 
   const overlay = document.createElement("div");
@@ -31,36 +33,44 @@ export function openCompass(state, index) {
       <h2>Boussole ${state.chronos[index].color}</h2>
       <div id="headingValue" style="font-size:2em;margin:10px 0;">---</div>
 
-      <button data-action="enable">Activer la boussole</button><br><br>
-      <button data-action="save">Capturer</button><br><br>
-      <button data-action="close">Fermer</button>
+      <button id="compassEnable">Activer la boussole</button><br><br>
+      <button id="compassSave">Capturer</button><br><br>
+      <button id="compassClose">Fermer</button>
     </div>
   `;
-
   document.body.appendChild(overlay);
+
+  // récupérer les boutons
+  btnEnable = document.getElementById("compassEnable");
+  btnSave   = document.getElementById("compassSave");
+  btnClose  = document.getElementById("compassClose");
+
+  // brancher explicitement
+  btnEnable.onclick = enableCompass;
+  btnSave.onclick   = saveDirection;
+  btnClose.onclick  = closeCompass;
 }
 
 /**
- * Gestion des événements d’orientation
+ * Orientation device
  */
-function onOrientation(event) {
+function onOrientation(e) {
   if (!active) return;
 
   let heading = null;
 
-  // 🍎 iOS (PRIORITAIRE)
-  if (typeof event.webkitCompassHeading === "number") {
-    if (event.webkitCompassAccuracy < 0) return;
-    heading = event.webkitCompassHeading;
+  // iOS prioritaire
+  if (typeof e.webkitCompassHeading === "number") {
+    if (e.webkitCompassAccuracy < 0) return;
+    heading = e.webkitCompassHeading;
   }
-  // 🤖 Android
-  else if (event.alpha !== null) {
-    heading = (360 - event.alpha) % 360;
+  // Android
+  else if (e.alpha !== null) {
+    heading = (360 - e.alpha) % 360;
   }
 
   if (heading === null || isNaN(heading)) return;
 
-  // filtrage des sauts brutaux
   if (lastHeading !== null) {
     let delta = Math.abs(heading - lastHeading);
     if (delta > 180) delta = 360 - delta;
@@ -75,12 +85,11 @@ function onOrientation(event) {
 }
 
 /**
- * Activation de la boussole (permissions iOS incluses)
+ * Activation boussole
  */
 async function enableCompass() {
   if (active) return;
 
-  // iOS 13+
   if (
     typeof DeviceOrientationEvent !== "undefined" &&
     typeof DeviceOrientationEvent.requestPermission === "function"
@@ -102,47 +111,33 @@ async function enableCompass() {
 }
 
 /**
- * Capture la direction courante
+ * Capture direction
  */
 function saveDirection() {
-  if (!appState || currentHeading === null || currentIndex === null) {
+  if (!appState || currentHeading === null) {
     alert("Boussole non prête");
     return;
   }
 
   appState.chronos[currentIndex].directions.push(currentHeading);
 
-  // feedback utilisateur
-  alert("Direction capturée : " + currentHeading + "°");
+  // feedback clair
+  btnSave.textContent = "✔ Capturé";
+  setTimeout(() => (btnSave.textContent = "Capturer"), 800);
 }
 
 /**
- * Ferme l’overlay et nettoie
+ * Fermeture
  */
 function closeCompass() {
   window.removeEventListener("deviceorientation", onOrientation, true);
   window.removeEventListener("deviceorientationabsolute", onOrientation, true);
 
   active = false;
+  appState = null;
+  currentIndex = null;
   currentHeading = null;
   lastHeading = null;
-  currentIndex = null;
-  appState = null;
 
   document.getElementById("compassOverlay")?.remove();
 }
-
-/**
- * Délégation globale des boutons de l’overlay
- */
-document.addEventListener("click", e => {
-  const btn = e.target.closest("button");
-  if (!btn) return;
-
-  const action = btn.dataset.action;
-  if (!action) return;
-
-  if (action === "enable") enableCompass();
-  if (action === "save") saveDirection();
-  if (action === "close") closeCompass();
-});
