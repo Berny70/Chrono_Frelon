@@ -501,7 +501,17 @@ function openLocationMenu() {
     if (e.target === overlay) overlay.remove();
   });
 }
-
+// ++++++++++++++++++++++++++++++++
+// a supprimer : test sur PC dir undefined
+// +++++++++++++++++++++++++++++++++
+function isCompassAvailable() {
+  return (
+    typeof window.DeviceOrientationEvent !== "undefined"
+  );
+}
+// ++++++++++++++++++++++++++++++++
+// a supprimer : test sur PC
+// +++++++++++++++++++++++++++++++++
 
 
 
