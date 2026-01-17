@@ -6,6 +6,11 @@ const chronos = [];
 const DEFAULT_VITESSE = 4;
 
 let detIndex = null;
+let currentCompassIndex = null;
+let currentHeading = null;
+let lastHeading = null;
+let compassActive = false;
+
 
 // ==========================
 // MOYENNE CIRCULAIRE
@@ -431,6 +436,7 @@ function openDET(i) {
 }
 
 window.closeDET = closeDET;
+
 
 
 
