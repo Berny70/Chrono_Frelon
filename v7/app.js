@@ -445,6 +445,63 @@ function openDET(i) {
 window.closeDET = closeDET;
 window.__chronos = chronos;
 
+function openLocationMenu() {
+  document.getElementById("locOverlay")?.remove();
+
+  const overlay = document.createElement("div");
+  overlay.id = "locOverlay";
+  overlay.innerHTML = `
+    <div class="loc-box">
+      <h2>Localisation du nid</h2>
+
+      <button data-action="local">
+        🗺️ Carte avec les données du smartphone
+      </button><br><br>
+
+      <button data-action="send">
+        📤 Envoi des données smartphone vers la carte partagée
+      </button><br><br>
+
+      <button data-action="shared">
+        🌍 Carte partagée autour du smartphone (10 km)
+      </button><br><br>
+
+      <button data-action="close">Fermer</button>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  overlay.addEventListener("click", async e => {
+    const btn = e.target.closest("button");
+    if (!btn) return;
+
+    const action = btn.dataset.action;
+
+    if (action === "local") {
+      overlay.remove();
+      location.href = "map.html";
+    }
+
+    if (action === "send") {
+      await sendGeoJSON();
+    }
+
+    if (action === "shared") {
+      overlay.remove();
+      location.href = "map.html?mode=shared";
+    }
+
+    if (action === "close") {
+      overlay.remove();
+    }
+  });
+
+  overlay.addEventListener("click", e => {
+    if (e.target === overlay) overlay.remove();
+  });
+}
+
 
 
 
