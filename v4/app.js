@@ -223,6 +223,14 @@ function getPos(i) {
     saveObservations();
   });
 }
+// ==========================
+// FERMETURE POPUP DÉTAIL
+// ==========================
+function closeDET() {
+  const overlay = document.getElementById("detOverlay");
+  if (overlay) overlay.remove();
+}
+
 
 // ==========================
 // BOUSSOLE
@@ -342,4 +350,5 @@ function openDET(i) {
 }
 
 window.closeDET = closeDET;
+
 
