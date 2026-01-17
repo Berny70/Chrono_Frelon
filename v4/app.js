@@ -247,97 +247,116 @@ function closeDET() {
 
 // ==========================
 // BOUSSOLE
+ // ++++++++++++++++++++++++++++++
+// ==========================
+// BOUSSOLE (overlay)
 // ==========================
 function openCompass(i) {
-  const c = chronos[i];
-
-  let heading = null;
-  let lastRaw = null;
-  let waitingForMotion = true;
-
-  const MIN_DELTA = 5; // degrés minimum pour valider un vrai mouvement
+  currentCompassIndex = i;
+  currentHeading = null;
+  compassActive = false;
 
   const overlay = document.createElement("div");
   overlay.id = "compassOverlay";
   overlay.innerHTML = `
     <div class="compass-box">
-      <h2>Boussole ${c.color}</h2>
+      <h2>Boussole ${chronos[i].color}</h2>
+      <div id="headingValue">---</div>
 
-      <div id="headingValue">Initialisation…</div>
-
-      <button id="btnInitCompass">Initialisation</button><br><br>
-
-      <button id="saveDir" disabled>Capturer direction</button><br><br>
-
-      <button id="closeCompass">Fermer</button>
+      <button data-action="enable">Activer la boussole</button><br><br>
+      <button data-action="save">Capturer direction</button><br><br>
+      <button data-action="close">Fermer</button>
     </div>
   `;
   document.body.appendChild(overlay);
+}
 
-  function orient(e) {
-    let raw = null;
+// ==========================
+// ORIENTATION HANDLER (CORRIGÉ)
+// ==========================
+function onOrientation(e) {
+  if (!compassActive) return;
 
-    // iOS prioritaire
-    if (typeof e.webkitCompassHeading === "number") {
-      raw = e.webkitCompassHeading;
-    }
-    // Android fallback
-    else if (e.alpha != null) {
-      raw = 360 - e.alpha;
-    } else {
-      return;
-    }
+  let heading = null;
 
-    raw = Math.round(raw);
-
-    // première valeur connue
-    if (lastRaw === null) {
-      lastRaw = raw;
-      return;
-    }
-
-    // attente d'un vrai mouvement
-    if (waitingForMotion) {
-      if (Math.abs(raw - lastRaw) < MIN_DELTA) {
-        document.getElementById("headingValue").textContent = "Bouger le téléphone…";
-        return;
-      }
-      waitingForMotion = false;
-      document.getElementById("saveDir").disabled = false;
-    }
-
-    heading = raw;
-    document.getElementById("headingValue").textContent = heading + "°";
-    lastRaw = raw;
+  // iOS
+  if (e.webkitCompassHeading !== undefined) {
+    if (e.webkitCompassAccuracy < 0) return;
+    heading = e.webkitCompassHeading;
+  }
+  // Android
+  else if (e.absolute === true && e.alpha !== null) {
+    heading = (360 - e.alpha) % 360;
   }
 
-  window.addEventListener("deviceorientationabsolute", orient);
-  window.addEventListener("deviceorientation", orient);
+  if (heading === null || isNaN(heading)) return;
 
-  // 🔄 INITIALISATION = attendre un mouvement réel
-  document.getElementById("btnInitCompass").onclick = () => {
-    heading = null;
-    lastRaw = null;
-    waitingForMotion = true;
-    document.getElementById("headingValue").textContent = "Initialisation…";
-    document.getElementById("saveDir").disabled = true;
-  };
+  if (lastHeading !== null) {
+    let delta = Math.abs(heading - lastHeading);
+    if (delta > 180) delta = 360 - delta;
+    if (delta > 25) return;
+  }
 
-  // capture
-  document.getElementById("saveDir").onclick = () => {
-    if (heading !== null) {
-      c.directions.push(heading);
-      updateDirection(i);
-    }
-  };
+  lastHeading = heading;
+  currentHeading = Math.round(heading);
 
-  // fermeture
-  document.getElementById("closeCompass").onclick = () => {
-    window.removeEventListener("deviceorientationabsolute", orient);
-    window.removeEventListener("deviceorientation", orient);
-    overlay.remove();
-  };
+  const el = document.getElementById("headingValue");
+  if (el) el.textContent = currentHeading + "°";
 }
+
+// ==========================
+// DÉLÉGATION ÉVÉNEMENTS (iOS / Android)
+// ==========================
+document.addEventListener("click", async e => {
+  const btn = e.target.closest("button");
+  if (!btn) return;
+
+  const action = btn.dataset.action;
+  if (!action) return;
+
+  // ACTIVER
+  if (action === "enable" && !compassActive) {
+    if (
+      typeof DeviceOrientationEvent !== "undefined" &&
+      typeof DeviceOrientationEvent.requestPermission === "function"
+    ) {
+      const res = await DeviceOrientationEvent.requestPermission();
+      if (res !== "granted") {
+        alert("Autorisation boussole refusée");
+        return;
+      }
+    }
+
+    lastHeading = null;
+    currentHeading = null;
+
+    window.addEventListener("deviceorientationabsolute", onOrientation, true);
+    window.addEventListener("deviceorientation", onOrientation, true);
+
+    compassActive = true;
+  }
+
+  // SAUVEGARDER
+  if (action === "save") {
+    if (currentHeading === null) {
+      alert("Boussole non prête");
+      return;
+    }
+    chronos[currentCompassIndex].directions.push(currentHeading);
+    updateDirection(currentCompassIndex);
+  }
+
+  // FERMER
+  if (action === "close") {
+    window.removeEventListener("deviceorientation", onOrientation, true);
+    window.removeEventListener("deviceorientationabsolute", onOrientation, true);
+    compassActive = false;
+    lastHeading = null;
+    document.getElementById("compassOverlay")?.remove();
+  }
+});
+
+ // ++++++++++++++++++++++++++++++
  // ++++++++++++++++++++++++++++++
 function openDET(i) {
   detIndex = i;
@@ -412,6 +431,7 @@ function openDET(i) {
 }
 
 window.closeDET = closeDET;
+
 
 
 
