@@ -53,9 +53,14 @@ export function initUI(state) {
     // ==========================
 
     div.querySelector(".start").onclick = () => {
+      const wasRunning = state.chronos[i].running;
       toggleChrono(state, i);
+    
+      // Si on vient de STOP → mise à jour stats
+      if (wasRunning) {
+        updateChronoStats(state, i);
+      }
     };
-
     div.querySelector(".reset").onclick = () => {
       resetChrono(state, i);
       updateChronoStats(state, i);
@@ -69,6 +74,10 @@ export function initUI(state) {
     div.querySelector(".pos").onclick = () => {
       getPosition(state, i, () => updateGPS(state, i));
     };
+    div.querySelector(".det").onclick = () => {
+      alert("Détail – à réactiver dans une prochaine étape");
+    };
+
   });
 }
 
