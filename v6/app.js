@@ -1,8 +1,29 @@
-export const state = {
-  chronos: [
-    { color:"red", essais:[], directions:[], lat:null, lon:null, vitesse:4 },
-    { color:"blue", essais:[], directions:[], lat:null, lon:null, vitesse:4 },
-    { color:"green", essais:[], directions:[], lat:null, lon:null, vitesse:4 },
-    { color:"white", essais:[], directions:[], lat:null, lon:null, vitesse:4 }
-  ]
-};
+// app.js
+// ==========================
+// APPLICATION V6 – ORCHESTRATEUR
+// ==========================
+
+import { state } from "./state.js";
+import { initUI, updateChronoTime } from "./ui.js";
+import { tickChronos } from "./chronos.js";
+
+// ==========================
+// INITIALISATION
+// ==========================
+function initApp() {
+  console.log("Chrono Frelon – V6 démarrage");
+  console.log("État initial :", state);
+
+  initUI(state);
+
+  // Tick global (rafraîchissement chronos)
+  setInterval(() => {
+    tickChronos(state);
+    updateChronoTime(state);
+  }, 50);
+}
+
+// ==========================
+// DÉMARRAGE
+// ==========================
+window.addEventListener("DOMContentLoaded", initApp);
