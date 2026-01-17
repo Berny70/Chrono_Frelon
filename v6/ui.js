@@ -4,6 +4,7 @@
 // ==========================
 
 import { toggleChrono, resetChrono, getAverageTime, getDistance } from "./chronos.js";
+import { getPosition } from "./gps.js";
 
 /**
  * Initialisation de l’UI
@@ -65,6 +66,10 @@ export function initUI(state) {
       c.vitesse = +e.target.value;
       updateChronoStats(state, i);
     };
+    div.querySelector(".pos").onclick = () => {
+      getPosition(state, i);
+      updateGPS(state, i);
+    };
   });
 }
 
@@ -94,3 +99,13 @@ export function updateChronoStats(state, i) {
   document.getElementById(`d${i}`).textContent =
     getDistance(c) + " m";
 }
+export function updateGPS(state, i) {
+  const c = state.chronos[i];
+
+  document.getElementById(`lat${i}`).textContent =
+    c.lat !== null ? c.lat : "--";
+
+  document.getElementById(`lon${i}`).textContent =
+    c.lon !== null ? c.lon : "--";
+}
+
