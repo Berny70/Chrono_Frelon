@@ -248,12 +248,14 @@ function closeDET() {
 // ==========================
 // BOUSSOLE
 // ==========================
-
 function openCompass(i) {
   const c = chronos[i];
 
   let heading = null;
-  let ignoreNext = true;   // ignore la première valeur (bug 274°)
+  let lastRaw = null;
+  let waitingForMotion = true;
+
+  const MIN_DELTA = 5; // degrés minimum pour valider un vrai mouvement
 
   const overlay = document.createElement("div");
   overlay.id = "compassOverlay";
@@ -261,11 +263,11 @@ function openCompass(i) {
     <div class="compass-box">
       <h2>Boussole ${c.color}</h2>
 
-      <div id="headingValue">—</div>
+      <div id="headingValue">Initialisation…</div>
 
       <button id="btnInitCompass">Initialisation</button><br><br>
 
-      <button id="saveDir">Capturer direction</button><br><br>
+      <button id="saveDir" disabled>Capturer direction</button><br><br>
 
       <button id="closeCompass">Fermer</button>
     </div>
@@ -273,44 +275,55 @@ function openCompass(i) {
   document.body.appendChild(overlay);
 
   function orient(e) {
-    let h = null;
+    let raw = null;
 
-    // iOS (cap réel)
+    // iOS prioritaire
     if (typeof e.webkitCompassHeading === "number") {
-      h = e.webkitCompassHeading;
+      raw = e.webkitCompassHeading;
     }
     // Android fallback
     else if (e.alpha != null) {
-      h = 360 - e.alpha;
+      raw = 360 - e.alpha;
     } else {
       return;
     }
 
-    h = Math.round(h);
+    raw = Math.round(raw);
 
-    // ❌ ignorer la première valeur (bug connu)
-    if (ignoreNext) {
-      ignoreNext = false;
-      document.getElementById("headingValue").textContent = "—";
+    // première valeur connue
+    if (lastRaw === null) {
+      lastRaw = raw;
       return;
     }
 
-    heading = h;
+    // attente d'un vrai mouvement
+    if (waitingForMotion) {
+      if (Math.abs(raw - lastRaw) < MIN_DELTA) {
+        document.getElementById("headingValue").textContent = "Bouger le téléphone…";
+        return;
+      }
+      waitingForMotion = false;
+      document.getElementById("saveDir").disabled = false;
+    }
+
+    heading = raw;
     document.getElementById("headingValue").textContent = heading + "°";
+    lastRaw = raw;
   }
 
-  // écoute capteur
   window.addEventListener("deviceorientationabsolute", orient);
   window.addEventListener("deviceorientation", orient);
 
-  // 🔄 BOUTON INITIALISATION
+  // 🔄 INITIALISATION = attendre un mouvement réel
   document.getElementById("btnInitCompass").onclick = () => {
-    ignoreNext = true;
     heading = null;
-    document.getElementById("headingValue").textContent = "—";
+    lastRaw = null;
+    waitingForMotion = true;
+    document.getElementById("headingValue").textContent = "Initialisation…";
+    document.getElementById("saveDir").disabled = true;
   };
 
-  // 📌 capture direction
+  // capture
   document.getElementById("saveDir").onclick = () => {
     if (heading !== null) {
       c.directions.push(heading);
@@ -318,14 +331,14 @@ function openCompass(i) {
     }
   };
 
-  // fermeture popup
+  // fermeture
   document.getElementById("closeCompass").onclick = () => {
     window.removeEventListener("deviceorientationabsolute", orient);
     window.removeEventListener("deviceorientation", orient);
     overlay.remove();
   };
 }
-
+ // ++++++++++++++++++++++++++++++
 function openDET(i) {
   detIndex = i;
   const c = chronos[i];
@@ -399,6 +412,7 @@ function openDET(i) {
 }
 
 window.closeDET = closeDET;
+
 
 
 
