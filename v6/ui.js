@@ -78,12 +78,14 @@ export function initUI(state) {
     };
 
     // Reset
+// Reset
     div.querySelector(".reset").onclick = () => {
       resetChrono(state, i);
       updateChronoStats(state, i);
       updateChronoTime(state);
-      updateDirectionUI(state, i);
+      updateGPS(state, i);   // 👈 ESSENTIEL
     };
+
 
     // Vitesse
     div.querySelector(`#vit${i}`).oninput = e => {
