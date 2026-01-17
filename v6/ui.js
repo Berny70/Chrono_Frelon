@@ -8,7 +8,7 @@ import {
   resetChrono,
   getAverageTime,
   getDistance,
-  getAverageDirection
+
 } from "./chronos.js";
 
 import { getPosition } from "./gps.js";
@@ -103,7 +103,7 @@ export function initUI(state) {
       // Rafraîchissement direction à la fermeture
       const observer = new MutationObserver(() => {
         if (!document.getElementById("compassOverlay")) {
-          updateDirectionUI(state, i);
+    
           observer.disconnect();
         }
       });
@@ -158,15 +158,4 @@ export function updateGPS(state, i) {
   if (lon) lon.textContent = c.lon ?? "--";
 }
 
-/**
- * Mise à jour direction moyenne
- */
-function updateDirectionUI(state, i) {
-  const c = state.chronos[i];
-  const dir = getAverageDirection(c);
 
-  c.direction = dir;
-
-  const el = document.getElementById(`dir${i}`);
-  if (el) el.textContent = dir ? dir + "°" : "0°";
-}
