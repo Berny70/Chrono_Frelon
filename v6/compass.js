@@ -1,49 +1,42 @@
 // compass.js
 // ==========================
-// BOUSSOLE – V6 ROBUSTE
+// BOUSSOLE – V6 (MODE V4 STABLE)
 // ==========================
 
 let appState = null;
 let currentIndex = null;
 
-let currentHeading = null;
-let lastHeading = null;
-let active = false;
-
-let overlay = null;
+let samples = [];
+let listening = false;
+let listener = null;
 
 /**
- * Ouvre la boussole pour un chrono
+ * Ouvre la boussole
  */
 export function openCompass(state, index) {
-  // mémorisation explicite
   appState = state;
   currentIndex = index;
+  samples = [];
+  listening = false;
 
-  currentHeading = null;
-  lastHeading = null;
-  active = false;
-
-  // sécurité : un seul overlay
   document.getElementById("compassOverlay")?.remove();
 
-  overlay = document.createElement("div");
+  const overlay = document.createElement("div");
   overlay.id = "compassOverlay";
   overlay.innerHTML = `
     <div class="compass-box">
       <h2>Boussole ${state.chronos[index].color}</h2>
 
       <div id="headingValue"
-           style="font-size:2.2em;font-weight:bold;margin:10px 0;">
-        ---
+           style="font-size:2em;margin:10px 0;">
+        —
       </div>
 
-      <button id="compassEnable">Activer la boussole</button><br><br>
-      <button id="compassSave">Capturer</button><br><br>
+      <button id="compassEnable">Activer</button><br><br>
+      <button id="compassSave" disabled>Capturer</button><br><br>
       <button id="compassClose">Fermer</button>
     </div>
   `;
-
   document.body.appendChild(overlay);
 
   document.getElementById("compassEnable").onclick = enableCompass;
@@ -52,12 +45,12 @@ export function openCompass(state, index) {
 }
 
 /**
- * Activation du capteur
+ * Activation et écoute courte
  */
 async function enableCompass() {
-  if (active) return;
+  if (listening) return;
 
-  // iOS : permission obligatoire
+  // iOS permission
   if (
     typeof DeviceOrientationEvent !== "undefined" &&
     typeof DeviceOrientationEvent.requestPermission === "function"
@@ -69,92 +62,95 @@ async function enableCompass() {
     }
   }
 
-  lastHeading = null;
-  currentHeading = null;
+  samples = [];
+  listening = true;
 
-  window.addEventListener("deviceorientation", onOrientation, true);
-  window.addEventListener("deviceorientationabsolute", onOrientation, true);
+  listener = e => {
+    let h = null;
 
-  active = true;
-
-  // watchdog : capteur bloqué / non supporté
-  setTimeout(() => {
-    if (currentHeading === null) {
-      alert(
-        "Boussole indisponible sur ce navigateur.\n" +
-        "Essayez Safari iOS ou Chrome Android."
-      );
-      closeCompass();
+    if (typeof e.webkitCompassHeading === "number") {
+      h = e.webkitCompassHeading;
+    } else if (e.alpha !== null) {
+      h = (360 - e.alpha) % 360;
     }
-  }, 1200);
+
+    if (h !== null && !isNaN(h)) {
+      samples.push(h);
+    }
+  };
+
+  window.addEventListener("deviceorientation", listener, true);
+
+  // écoute volontairement COURTE
+  setTimeout(stopListening, 2000);
 }
 
 /**
- * Lecture orientation
+ * Stoppe l’écoute et calcule la moyenne
  */
-function onOrientation(e) {
-  if (!active) return;
+function stopListening() {
+  window.removeEventListener("deviceorientation", listener, true);
+  listening = false;
 
-  let heading = null;
-
-  // 🍎 iOS (le SEUL fiable)
-  if (typeof e.webkitCompassHeading === "number") {
-    heading = e.webkitCompassHeading;
-  }
-  // 🤖 Android : uniquement si ABSOLU
-  else if (e.alpha !== null && e.absolute === true) {
-    heading = (360 - e.alpha) % 360;
-  }
-
-  // capteur non exploitable
-  if (heading === null || isNaN(heading)) return;
-
-  // blocage classique à 0°
-  if (heading === 0 && lastHeading === 0) return;
-
-  // filtrage des sauts brutaux
-  if (lastHeading !== null) {
-    let delta = Math.abs(heading - lastHeading);
-    if (delta > 180) delta = 360 - delta;
-    if (delta > 25) return;
-  }
-
-  lastHeading = heading;
-  currentHeading = Math.round(heading);
-
-  const el = document.getElementById("headingValue");
-  if (el) el.textContent = currentHeading + "°";
-}
-
-/**
- * Capture de la direction
- */
-function saveDirection() {
-  if (!appState || currentHeading === null) {
-    alert("Boussole non prête");
+  if (samples.length < 5) {
+    alert("Boussole non fiable – recommencez");
     return;
   }
 
-  appState.chronos[currentIndex].directions.push(currentHeading);
+  const angle = moyenneCirculaire(samples);
 
-  // feedback utilisateur
-  const btn = document.getElementById("compassSave");
-  btn.textContent = "✔ Capturé";
-  setTimeout(() => (btn.textContent = "Capturer"), 800);
+  document.getElementById("headingValue").textContent =
+    angle + "°";
+
+  document.getElementById("compassSave").disabled = false;
+
+  // stock temporairement
+  document.getElementById("compassSave").dataset.angle = angle;
 }
 
 /**
- * Fermeture & nettoyage
+ * Capture définitive
+ */
+function saveDirection() {
+  const angle = Number(
+    document.getElementById("compassSave").dataset.angle
+  );
+
+  if (isNaN(angle)) return;
+
+  appState.chronos[currentIndex].directions.push(angle);
+
+  closeCompass();
+}
+
+/**
+ * Fermeture
  */
 function closeCompass() {
-  window.removeEventListener("deviceorientation", onOrientation, true);
-  window.removeEventListener("deviceorientationabsolute", onOrientation, true);
+  window.removeEventListener("deviceorientation", listener, true);
+  document.getElementById("compassOverlay")?.remove();
 
-  active = false;
+  samples = [];
+  listening = false;
   appState = null;
   currentIndex = null;
-  currentHeading = null;
-  lastHeading = null;
+}
 
-  document.getElementById("compassOverlay")?.remove();
+/**
+ * Moyenne circulaire (comme V4)
+ */
+function moyenneCirculaire(degs) {
+  let sin = 0, cos = 0;
+
+  degs.forEach(d => {
+    const r = d * Math.PI / 180;
+    sin += Math.sin(r);
+    cos += Math.cos(r);
+  });
+
+  let a = Math.atan2(sin / degs.length, cos / degs.length);
+  let deg = a * 180 / Math.PI;
+  if (deg < 0) deg += 360;
+
+  return Math.round(deg);
 }
