@@ -144,5 +144,14 @@ div.querySelector(".compass").onclick = () => {
 
   observer.observe(document.body, { childList: true });
 };
+export function updateGPS(state, i) {
+  const c = state.chronos[i];
+
+  document.getElementById(`lat${i}`).textContent =
+    c.lat !== null ? c.lat : "--";
+
+  document.getElementById(`lon${i}`).textContent =
+    c.lon !== null ? c.lon : "--";
+}
 
 
