@@ -2,11 +2,7 @@
 // ==========================
 // GÉOLOCALISATION – V6
 // ==========================
-
-/**
- * Récupère la position GPS pour un chrono
- */
-export function getPosition(state, index) {
+export function getPosition(state, index, onUpdate) {
   if (!navigator.geolocation) {
     alert("Géolocalisation non supportée");
     return;
@@ -15,18 +11,12 @@ export function getPosition(state, index) {
   navigator.geolocation.getCurrentPosition(
     pos => {
       const c = state.chronos[index];
-
       c.lat = +pos.coords.latitude.toFixed(5);
       c.lon = +pos.coords.longitude.toFixed(5);
+
+      if (onUpdate) onUpdate();
     },
-    err => {
-      console.warn("Erreur GPS :", err);
-      alert("Impossible d’obtenir la position GPS");
-    },
-    {
-      enableHighAccuracy: true,
-      timeout: 10000,
-      maximumAge: 0
-    }
+    () => alert("Impossible d’obtenir la position GPS"),
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
   );
 }
