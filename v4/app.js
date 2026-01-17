@@ -239,42 +239,52 @@ function openCompass(i) {
   const c = chronos[i];
   let heading = null;
 
-  if (window.DeviceOrientationEvent?.requestPermission) {
-    DeviceOrientationEvent.requestPermission();
+  function startCompass() {
+    const overlay = document.createElement("div");
+    overlay.id = "compassOverlay";
+    overlay.innerHTML = `
+      <div class="compass-box">
+        <h2>Boussole ${c.color}</h2>
+        <div id="headingValue">---</div>
+        <button id="saveDir">Capturer direction</button><br><br>
+        <button id="closeCompass">Fermer</button>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+
+    function orient(e) {
+      if (e.alpha != null) {
+        heading = Math.round(360 - e.alpha);
+        document.getElementById("headingValue").textContent = heading + "°";
+      }
+    }
+
+    window.addEventListener("deviceorientation", orient);
+
+    document.getElementById("saveDir").onclick = () => {
+      if (heading !== null) {
+        c.directions.push(heading);
+        updateDirection(i);
+      }
+    };
+
+    document.getElementById("closeCompass").onclick = () => {
+      window.removeEventListener("deviceorientation", orient);
+      overlay.remove();
+    };
   }
 
-  const overlay = document.createElement("div");
-  overlay.id = "compassOverlay";
-  overlay.innerHTML = `
-    <div class="compass-box">
-      <h2>Boussole ${c.color}</h2>
-      <div id="headingValue">---</div>
-      <button id="saveDir">Capturer direction</button><br><br>
-      <button id="closeCompass">Fermer</button>
-    </div>
-  `;
-  document.body.appendChild(overlay);
-
-  function orient(e) {
-    if (e.alpha !== null) {
-      heading = Math.round(360 - e.alpha);
-      document.getElementById("headingValue").textContent = heading + "°";
-    }
+  if (
+    typeof DeviceOrientationEvent !== "undefined" &&
+    typeof DeviceOrientationEvent.requestPermission === "function"
+  ) {
+    DeviceOrientationEvent.requestPermission().then(state => {
+      if (state === "granted") startCompass();
+      else alert("Autorisation boussole refusée");
+    });
+  } else {
+    startCompass();
   }
-
-  window.addEventListener("deviceorientation", orient);
-
-  document.getElementById("saveDir").onclick = () => {
-    if (heading !== null) {
-      c.directions.push(heading);
-      updateDirection(i);
-    }
-  };
-
-  document.getElementById("closeCompass").onclick = () => {
-    window.removeEventListener("deviceorientation", orient);
-    overlay.remove();
-  };
 }
 
 function openDET(i) {
@@ -350,5 +360,6 @@ function openDET(i) {
 }
 
 window.closeDET = closeDET;
+
 
 
