@@ -81,7 +81,7 @@ export function initUI(state) {
       alert("Détail – à réactiver dans une prochaine étape");
     };
     div.querySelector(".compass").onclick = () => {
-      // rien
+      openCompass(state, i);
     };
 
   });
