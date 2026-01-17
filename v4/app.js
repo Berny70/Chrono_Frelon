@@ -1,15 +1,3 @@
-// ==========================
-// VERSION (service-worker)
-// ==========================
-fetch("service-worker.js")
-  .then(r => r.text())
-  .then(txt => {
-    const match = txt.match(/APP_VERSION\s*=\s*["']([^"']+)["']/);
-    if (match) {
-      const v = document.getElementById("version");
-      if (v) v.textContent = "v. : " + match[1];
-    }
-  });
 
 // ==========================
 // DONNÉES
@@ -304,5 +292,25 @@ function delDirection(k) {
 
 function closeDET() {
   document.getElementById("detOverlay")?.remove();
+}
+
+function saveObservations() {
+  const obs = chronos.map(c => {
+    if (c.lat === "--" || c.lon === "--" || !c.essais.length || !c.direction)
+      return null;
+
+    const total = c.essais.reduce((a,b)=>a+b,0);
+    const moy = total / c.essais.length;
+
+    return {
+      lat: parseFloat(c.lat),
+      lon: parseFloat(c.lon),
+      direction: c.direction,
+      distance: Math.round(moy * c.vitesse),
+      color: c.color
+    };
+  }).filter(Boolean);
+
+  localStorage.setItem("chronoObservations", JSON.stringify(obs));
 }
 
