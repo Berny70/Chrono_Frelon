@@ -500,7 +500,46 @@ function openLocationMenu() {
   overlay.addEventListener("click", e => {
     if (e.target === overlay) overlay.remove();
   });
+}async function sendGeoJSON() {
+  const geojson = buildGeoJSONObservations();
+
+  if (!geojson.features.length) {
+    alert("Aucune observation valide à envoyer");
+    return;
+  }
+
+  // confirmation utilisateur (important)
+  const ok = confirm(
+    `Envoyer ${geojson.features.length} observation(s) vers la base partagée ?`
+  );
+  if (!ok) return;
+
+  try {
+    const res = await fetch(
+      "https://compteurdevarroas.jodaille.fr/data/observations_2026.geojson",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/geo+json"
+        },
+        body: JSON.stringify(geojson)
+      }
+    );
+
+    if (!res.ok) {
+      throw new Error("Réponse serveur invalide");
+    }
+
+    alert("✅ Observations envoyées avec succès");
+  } catch (err) {
+    console.error(err);
+    alert("❌ Échec de l’envoi (connexion ou serveur indisponible)");
+  }
 }
+
+
+
+
 // ++++++++++++++++++++++++++++++++
 // a supprimer : test sur PC dir undefined
 // +++++++++++++++++++++++++++++++++
@@ -512,6 +551,7 @@ function isCompassAvailable() {
 // ++++++++++++++++++++++++++++++++
 // a supprimer : test sur PC
 // +++++++++++++++++++++++++++++++++
+
 
 
 
