@@ -39,7 +39,7 @@ function saveObservations() {
     if (
       c.lat === "--" ||
       c.lon === "--" ||
-        !c.essais.length ||
+      !c.essais.length ||
       c.direction == null
     ) return null;
 
@@ -49,15 +49,17 @@ function saveObservations() {
     return {
       lat: parseFloat(c.lat),
       lon: parseFloat(c.lon),
-      direction: c.direction,   // 0° est VALIDE
+      direction: c.direction,
       distance: Math.round(moy * c.vitesse),
       color: c.color
     };
   }).filter(Boolean);
 
-  localStorage.setItem("chronoObservations", JSON.stringify(obs));
+  // 🔒 NE PAS écraser avec un tableau vide
+  if (obs.length > 0) {
+    localStorage.setItem("chronoObservations", JSON.stringify(obs));
+  }
 }
-
 
 // ==========================
 // MISE À JOUR DIRECTION
@@ -442,6 +444,7 @@ function openDET(i) {
 
 window.closeDET = closeDET;
 window.__chronos = chronos;
+
 
 
 
