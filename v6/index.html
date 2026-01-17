@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Chrono Frelon – V6</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- PWA -->
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#ffffff">
+
+  <!-- Icône -->
+  <link rel="icon" href="./icon_4_chrono_2.png">
+
+  <!-- Styles -->
+  <link rel="stylesheet" href="./style.css">
+</head>
+
+<body>
+
+<!-- ==========================
+     HEADER
+========================== -->
+<header class="topbar">
+  <div class="top-left">
+    <img src="./icon_4_chrono_2.png" class="top-logo" alt="logo">
+  </div>
+
+  <div class="top-title">
+    Pot à Mèche
+  </div>
+
+  <div class="top-right">
+    <span id="version"></span>
+  </div>
+</header>
+
+<!-- ==========================
+     ACTIONS
+========================== -->
+<div class="top-actions">
+  <div id="dateTime" class="date-time"></div>
+</div>
+
+<!-- ==========================
+     CHRONOS
+========================== -->
+<main id="chronos">
+  <!-- Généré par ui.js -->
+</main>
+
+<!-- ==========================
+     VERSION
+========================== -->
+<script src="./version.js"></script>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    if (typeof APP_VERSION !== "undefined") {
+      document.getElementById("version").textContent =
+        "v. " + APP_VERSION;
+    }
+  });
+</script>
+
+<!-- ==========================
+     DATE / HEURE
+========================== -->
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    const el = document.getElementById("dateTime");
+    if (!el) return;
+
+    function update() {
+      const now = new Date();
+      el.textContent =
+        now.toLocaleDateString("fr-FR") + " " +
+        now.toLocaleTimeString("fr-FR", {
+          hour: "2-digit",
+          minute: "2-digit",
+          second: "2-digit"
+        });
+    }
+
+    update();
+    setInterval(update, 1000);
+  });
+</script>
+
+<!-- ==========================
+     APP V6
+========================== -->
+<script type="module" src="./app.js"></script>
+
+<!-- ==========================
+     SERVICE WORKER
+========================== -->
+<script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("./service-worker.js");
+  }
+</script>
+
+</body>
+</html>
