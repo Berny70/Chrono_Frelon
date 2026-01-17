@@ -54,20 +54,23 @@ export function openCompass(state, index) {
 /**
  * Orientation device
  */
-function onOrientation(e) {
-  if (!active) return;
+    function onOrientation(e) {
+      if (!active) return;
+    
+      let heading = null;
+    
+      // iOS
+      if (typeof e.webkitCompassHeading === "number") {
+        heading = e.webkitCompassHeading;
+      }
+      // Android
+      else if (e.alpha !== null && e.absolute === true) {
+        heading = (360 - e.alpha) % 360;
+      }
+    
+      // ❌ capteur non fiable
+      if (heading === null || isNaN(heading)) return;
 
-  let heading = null;
-
-  // iOS prioritaire
-  if (typeof e.webkitCompassHeading === "number") {
-    if (e.webkitCompassAccuracy < 0) return;
-    heading = e.webkitCompassHeading;
-  }
-  // Android
-  else if (e.alpha !== null) {
-    heading = (360 - e.alpha) % 360;
-  }
 
   if (heading === null || isNaN(heading)) return;
 
