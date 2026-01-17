@@ -121,19 +121,19 @@ window.addEventListener("DOMContentLoaded", () => {
     div.querySelector(".start").onclick = () => startStop(i);
     div.querySelector(".reset").onclick = () => resetChrono(i);
     div.querySelector(".pos").onclick = () => getPos(i);
-div.querySelector(".compass").onclick = async () => {
-  if (
-    typeof DeviceOrientationEvent !== "undefined" &&
-    typeof DeviceOrientationEvent.requestPermission === "function"
-  ) {
-    const state = await DeviceOrientationEvent.requestPermission();
-    if (state !== "granted") {
-      alert("Autorisation boussole refusée");
-      return;
-    }
-  }
-  openCompass(i);
-};
+    div.querySelector(".compass").onclick = async () => {
+      if (
+        typeof DeviceOrientationEvent !== "undefined" &&
+        typeof DeviceOrientationEvent.requestPermission === "function"
+      ) {
+        const state = await DeviceOrientationEvent.requestPermission();
+        if (state !== "granted") {
+          alert("Autorisation boussole refusée");
+          return;
+        }
+      }
+      openCompass(i);
+    };
 
     div.querySelector(".det").onclick = () => openDET(i);
 
@@ -384,6 +384,7 @@ function openDET(i) {
 }
 
 window.closeDET = closeDET;
+
 
 
 
