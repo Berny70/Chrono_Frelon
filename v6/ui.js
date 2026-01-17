@@ -3,15 +3,27 @@
 // INTERFACE UTILISATEUR – V6
 // ==========================
 
-import { toggleChrono, resetChrono, getAverageTime, getDistance } from "./chronos.js";
+import {
+  toggleChrono,
+  resetChrono,
+  getAverageTime,
+  getDistance,
+  getAverageDirection
+} from "./chronos.js";
+
 import { getPosition } from "./gps.js";
 import { openCompass } from "./compass.js";
 
 /**
- * Initialisation de l’UI
+ * Initialisation de l’interface
  */
 export function initUI(state) {
   const container = document.getElementById("chronos");
+  if (!container) {
+    console.error("Container #chronos introuvable");
+    return;
+  }
+
   container.innerHTML = "";
 
   state.chronos.forEach((c, i) => {
@@ -52,46 +64,54 @@ export function initUI(state) {
     // ==========================
     // BOUTONS
     // ==========================
+
+    // Start / Stop
     div.querySelector(".start").onclick = () => {
-      const c = state.chronos[i];
-    
       if (!c.running) {
-        // START
         toggleChrono(state, i);
       } else {
-        // STOP
         toggleChrono(state, i);
         updateChronoStats(state, i);
       }
     };
+
+    // Reset
     div.querySelector(".reset").onclick = () => {
       resetChrono(state, i);
       updateChronoStats(state, i);
-      updateChronoTime(state, i);
+      updateChronoTime(state);
+      updateDirectionUI(state, i);
     };
 
+    // Vitesse
     div.querySelector(`#vit${i}`).oninput = e => {
       c.vitesse = +e.target.value;
       updateChronoStats(state, i);
     };
+
+    // GPS
     div.querySelector(".pos").onclick = () => {
       getPosition(state, i, () => updateGPS(state, i));
     };
-    div.querySelector(".det").onclick = () => {
-      alert("Détail – à réactiver dans une prochaine étape");
-    };
+
+    // Boussole (Option A)
     div.querySelector(".compass").onclick = () => {
       openCompass(state, i);
-    
-      // ⏱️ surveille la fermeture pour rafraîchir l’affichage
+
+      // Rafraîchissement direction à la fermeture
       const observer = new MutationObserver(() => {
         if (!document.getElementById("compassOverlay")) {
           updateDirectionUI(state, i);
           observer.disconnect();
         }
       });
-    
+
       observer.observe(document.body, { childList: true });
+    };
+
+    // Détail (placeholder)
+    div.querySelector(".det").onclick = () => {
+      alert("Détail – à réactiver ultérieurement");
     };
   });
 }
@@ -104,7 +124,7 @@ export function updateChronoTime(state) {
     const el = document.getElementById(`t${i}`);
     if (!el) return;
 
-    if (c.running && c.currentTime !== undefined) {
+    if (c.running && typeof c.currentTime === "number") {
       el.textContent = c.currentTime.toFixed(2) + " s";
     }
   });
@@ -116,42 +136,35 @@ export function updateChronoTime(state) {
 export function updateChronoStats(state, i) {
   const c = state.chronos[i];
 
-  document.getElementById(`m${i}`).textContent =
-    getAverageTime(c).toFixed(0) + " s";
+  const m = document.getElementById(`m${i}`);
+  const d = document.getElementById(`d${i}`);
 
-  document.getElementById(`d${i}`).textContent =
-    getDistance(c) + " m";
+  if (m) m.textContent = getAverageTime(c).toFixed(0) + " s";
+  if (d) d.textContent = getDistance(c) + " m";
 }
+
+/**
+ * Mise à jour GPS
+ */
 export function updateGPS(state, i) {
   const c = state.chronos[i];
 
-  document.getElementById(`lat${i}`).textContent =
-    c.lat !== null ? c.lat : "--";
+  const lat = document.getElementById(`lat${i}`);
+  const lon = document.getElementById(`lon${i}`);
 
-  document.getElementById(`lon${i}`).textContent =
-    c.lon !== null ? c.lon : "--";
+  if (lat) lat.textContent = c.lat ?? "--";
+  if (lon) lon.textContent = c.lon ?? "--";
 }
-div.querySelector(".compass").onclick = () => {
-  openCompass(state, i);
 
-  // ⏱️ surveille la fermeture pour rafraîchir l’affichage
-  const observer = new MutationObserver(() => {
-    if (!document.getElementById("compassOverlay")) {
-      updateDirectionUI(state, i);
-      observer.disconnect();
-    }
-  });
-
-  observer.observe(document.body, { childList: true });
-};
-export function updateGPS(state, i) {
+/**
+ * Mise à jour direction moyenne
+ */
+function updateDirectionUI(state, i) {
   const c = state.chronos[i];
+  const dir = getAverageDirection(c);
 
-  document.getElementById(`lat${i}`).textContent =
-    c.lat !== null ? c.lat : "--";
+  c.direction = dir;
 
-  document.getElementById(`lon${i}`).textContent =
-    c.lon !== null ? c.lon : "--";
+  const el = document.getElementById(`dir${i}`);
+  if (el) el.textContent = dir ? dir + "°" : "0°";
 }
-
-
