@@ -1,4 +1,3 @@
-
 // ==========================
 // DONNÉES
 // ==========================
@@ -28,6 +27,33 @@ function moyenneCirculaire(degs) {
 }
 
 // ==========================
+// SAUVEGARDE OBSERVATIONS
+// ==========================
+function saveObservations() {
+  const obs = chronos.map(c => {
+    if (
+      c.lat === "--" ||
+      c.lon === "--" ||
+      !c.essais.length ||
+      !c.direction
+    ) return null;
+
+    const total = c.essais.reduce((a, b) => a + b, 0);
+    const moy = total / c.essais.length;
+
+    return {
+      lat: parseFloat(c.lat),
+      lon: parseFloat(c.lon),
+      direction: c.direction,
+      distance: Math.round(moy * c.vitesse),
+      color: c.color
+    };
+  }).filter(Boolean);
+
+  localStorage.setItem("chronoObservations", JSON.stringify(obs));
+}
+
+// ==========================
 // MISE À JOUR DIRECTION
 // ==========================
 function updateDirection(i) {
@@ -35,6 +61,7 @@ function updateDirection(i) {
   const m = moyenneCirculaire(c.directions);
   c.direction = m;
   document.getElementById(`dir${i}`).textContent = m + "°";
+  saveObservations();
 }
 
 // ==========================
@@ -49,7 +76,7 @@ window.addEventListener("DOMContentLoaded", () => {
       startTime: 0,
       essais: [],
       directions: [],
-      vitesse: 4,
+      vitesse: DEFAULT_VITESSE,
       direction: 0,
       lat: "--",
       lon: "--",
@@ -68,18 +95,18 @@ window.addEventListener("DOMContentLoaded", () => {
       </div>
 
       <div class="row row-info">
-        <div class="info-left"><b>Lat.:</b> <span id="lat${i}">--</span></div>
-        <div class="info-center"><b>T.moy:</b> <span id="m${i}">0 s</span></div>
-        <div class="info-right">
+        <div><b>Lat.:</b> <span id="lat${i}">--</span></div>
+        <div><b>T.moy:</b> <span id="m${i}">0 s</span></div>
+        <div>
           <b>Vit.:</b>
-          <input type="number" id="vit${i}" value="4" min="1" max="9"> m/s
+          <input type="number" id="vit${i}" value="${DEFAULT_VITESSE}" min="1" max="9"> m/s
         </div>
       </div>
 
       <div class="row row-info">
-        <div class="info-left"><b>Long.:</b> <span id="lon${i}">--</span></div>
-        <div class="info-center"><b>Dir.:</b> <span id="dir${i}">0°</span></div>
-        <div class="info-right"><b>Dist.:</b> <span id="d${i}">0 m</span></div>
+        <div><b>Long.:</b> <span id="lon${i}">--</span></div>
+        <div><b>Dir.:</b> <span id="dir${i}">0°</span></div>
+        <div><b>Dist.:</b> <span id="d${i}">0 m</span></div>
       </div>
 
       <div class="row row-actions">
@@ -137,10 +164,12 @@ function updateStats(i) {
 
   const total = c.essais.reduce((a, b) => a + b, 0);
   const moy = total / c.essais.length;
-  const dist = (moy * c.vitesse) / 2;
+  const dist = moy * c.vitesse;
 
-  document.getElementById(`m${i}`).textContent = moy.toFixed(0) + " s";
+  document.getElementById(`m${i}`).textContent = Math.round(moy) + " s";
   document.getElementById(`d${i}`).textContent = Math.round(dist) + " m";
+
+  saveObservations();
 }
 
 // ==========================
@@ -149,7 +178,6 @@ function updateStats(i) {
 function resetChrono(i) {
   const c = chronos[i];
 
-  // Données internes
   c.running = false;
   c.startTime = 0;
   c.essais = [];
@@ -159,7 +187,6 @@ function resetChrono(i) {
   c.lat = "--";
   c.lon = "--";
 
-  // Affichage
   document.getElementById(`t${i}`).textContent = "0.00 s";
   document.getElementById(`m${i}`).textContent = "0 s";
   document.getElementById(`d${i}`).textContent = "0 m";
@@ -167,8 +194,9 @@ function resetChrono(i) {
   document.getElementById(`lat${i}`).textContent = "--";
   document.getElementById(`lon${i}`).textContent = "--";
   document.getElementById(`vit${i}`).value = DEFAULT_VITESSE;
-}
 
+  saveObservations();
+}
 
 // ==========================
 // TICK
@@ -184,7 +212,7 @@ setInterval(() => {
 }, 50);
 
 // ==========================
-// POSITION
+// POSITION GPS
 // ==========================
 function getPos(i) {
   navigator.geolocation.getCurrentPosition(pos => {
@@ -192,6 +220,7 @@ function getPos(i) {
     chronos[i].lon = pos.coords.longitude.toFixed(5);
     document.getElementById(`lat${i}`).textContent = chronos[i].lat;
     document.getElementById(`lon${i}`).textContent = chronos[i].lon;
+    saveObservations();
   });
 }
 
@@ -213,7 +242,7 @@ function openCompass(i) {
       <h2>Boussole ${c.color}</h2>
       <div id="headingValue">---</div>
       <button id="saveDir">Capturer direction</button><br><br>
-      <button onclick="closeCompass()">Fermer</button>
+      <button id="closeCompass">Fermer</button>
     </div>
   `;
   document.body.appendChild(overlay);
@@ -225,7 +254,7 @@ function openCompass(i) {
     }
   }
 
-  window.addEventListener("deviceorientationabsolute", orient);
+  window.addEventListener("deviceorientation", orient);
 
   document.getElementById("saveDir").onclick = () => {
     if (heading !== null) {
@@ -233,10 +262,11 @@ function openCompass(i) {
       updateDirection(i);
     }
   };
-}
 
-function closeCompass() {
-  document.getElementById("compassOverlay")?.remove();
+  document.getElementById("closeCompass").onclick = () => {
+    window.removeEventListener("deviceorientation", orient);
+    overlay.remove();
+  };
 }
 
 // ==========================
@@ -293,24 +323,3 @@ function delDirection(k) {
 function closeDET() {
   document.getElementById("detOverlay")?.remove();
 }
-
-function saveObservations() {
-  const obs = chronos.map(c => {
-    if (c.lat === "--" || c.lon === "--" || !c.essais.length || !c.direction)
-      return null;
-
-    const total = c.essais.reduce((a,b)=>a+b,0);
-    const moy = total / c.essais.length;
-
-    return {
-      lat: parseFloat(c.lat),
-      lon: parseFloat(c.lon),
-      direction: c.direction,
-      distance: Math.round(moy * c.vitesse),
-      color: c.color
-    };
-  }).filter(Boolean);
-
-  localStorage.setItem("chronoObservations", JSON.stringify(obs));
-}
-
