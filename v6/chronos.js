@@ -23,15 +23,23 @@ export function toggleChrono(state, i) {
 /**
  * Remise à zéro d’un chrono
  */
-export function resetChrono(state, i) {
-  const c = state.chronos[i];
-
-  c.running = false;
-  c.startTime = 0;
-  c.essais = [];
-  c.directions = [];
-  c.direction = 0;
-}
+    export function resetChrono(state, i) {
+      const c = state.chronos[i];
+    
+      // ⏱️ Temps
+      c.running = false;
+      c.startTime = null;
+      c.currentTime = 0;
+    
+      // 📊 Données
+      c.essais = [];
+      c.directions = [];
+      c.direction = 0;
+    
+      // 📍 Position
+      c.lat = null;
+      c.lon = null;
+    }
 
 /**
  * Tick global : appelé toutes les 50 ms
