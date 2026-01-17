@@ -74,11 +74,12 @@ if (observations.length === 0) {
 // ==========================
 observations.forEach(obs => {
   if (
-    obs.lat === "--" ||
-    obs.lon === "--" ||
-    !obs.distance ||
-    obs.direction === 0
+    obs.lat == null ||
+    obs.lon == null ||
+    obs.distance == null ||
+    obs.direction == null
   ) return;
+
 
   const start = [obs.lat, obs.lon];
 
