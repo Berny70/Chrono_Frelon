@@ -269,9 +269,6 @@ function openCompass(i) {
   };
 }
 
-// ==========================
-// DÉTAIL
-// ==========================
 function openDET(i) {
   detIndex = i;
   const c = chronos[i];
@@ -288,38 +285,59 @@ function openDET(i) {
       ${c.essais.map((t, k) => `
         <div class="det-line">
           Essai ${k + 1} : ${Math.ceil(t)} s
-          <button onclick="delEssai(${k})">Supprimer</button>
+          <button class="del-essai" data-k="${k}">Supprimer</button>
         </div>
       `).join("")}
 
       <hr>
       <h3>Directions</h3>
+
       ${c.directions.map((d, k) => `
         <div class="det-line">
           ${d}°
-          <button onclick="delDirection(${k})">Supprimer</button>
+          <button class="del-dir" data-k="${k}">Supprimer</button>
         </div>
       `).join("")}
 
       <br>
-      <button onclick="closeDET()">Fermer</button>
+      <button id="closeDET">Fermer</button>
     </div>
   `;
+
   document.body.appendChild(overlay);
+
+  /* ==========================
+     FERMETURE
+  ========================== */
+
+  // bouton Fermer
+  overlay.querySelector("#closeDET").onclick = closeDET;
+
+  // clic hors de la boîte
+  overlay.addEventListener("click", e => {
+    if (e.target === overlay) closeDET();
+  });
+
+  /* ==========================
+     SUPPRESSIONS
+  ========================== */
+
+  // supprimer essai
+  overlay.querySelectorAll(".del-essai").forEach(btn => {
+    btn.onclick = () => {
+      chronos[detIndex].essais.splice(btn.dataset.k, 1);
+      updateStats(detIndex);
+      openDET(detIndex);
+    };
+  });
+
+  // supprimer direction
+  overlay.querySelectorAll(".del-dir").forEach(btn => {
+    btn.onclick = () => {
+      chronos[detIndex].directions.splice(btn.dataset.k, 1);
+      updateDirection(detIndex);
+      openDET(detIndex);
+    };
+  });
 }
 
-function delEssai(k) {
-  chronos[detIndex].essais.splice(k, 1);
-  updateStats(detIndex);
-  openDET(detIndex);
-}
-
-function delDirection(k) {
-  chronos[detIndex].directions.splice(k, 1);
-  updateDirection(detIndex);
-  openDET(detIndex);
-}
-
-function closeDET() {
-  document.getElementById("detOverlay")?.remove();
-}
