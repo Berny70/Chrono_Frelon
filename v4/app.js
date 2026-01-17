@@ -235,9 +235,12 @@ function closeDET() {
 // ==========================
 // BOUSSOLE
 // ==========================
+
 function openCompass(i) {
   const c = chronos[i];
   let heading = null;
+  let initialized = false;
+  let listenerActive = false;
 
   function startCompass() {
     const overlay = document.createElement("div");
@@ -245,35 +248,53 @@ function openCompass(i) {
     overlay.innerHTML = `
       <div class="compass-box">
         <h2>Boussole ${c.color}</h2>
-        <div id="headingValue">---</div>
-        <button id="saveDir">Capturer direction</button><br><br>
+
+        <div id="headingValue">—</div>
+
+        <button id="btnInitCompass">Initialiser</button><br><br>
+
+        <button id="saveDir" disabled>Capturer direction</button><br><br>
+
         <button id="closeCompass">Fermer</button>
       </div>
     `;
     document.body.appendChild(overlay);
 
     function orient(e) {
-      if (e.alpha != null) {
-        heading = Math.round(360 - e.alpha);
-        document.getElementById("headingValue").textContent = heading + "°";
-      }
+      if (!listenerActive) return;
+      if (e.alpha == null) return;
+
+      heading = Math.round(360 - e.alpha);
+      document.getElementById("headingValue").textContent = heading + "°";
     }
 
     window.addEventListener("deviceorientation", orient);
 
+    // Initialisation manuelle
+    document.getElementById("btnInitCompass").onclick = () => {
+      heading = null;
+      initialized = true;
+      listenerActive = true;
+      document.getElementById("headingValue").textContent = "0°";
+      document.getElementById("saveDir").disabled = false;
+    };
+
+    // Capture direction
     document.getElementById("saveDir").onclick = () => {
-      if (heading !== null) {
+      if (initialized && heading !== null) {
         c.directions.push(heading);
         updateDirection(i);
       }
     };
 
+    // Fermeture
     document.getElementById("closeCompass").onclick = () => {
       window.removeEventListener("deviceorientation", orient);
       overlay.remove();
     };
   }
 
+  // Gestion permission iOS
   if (
     typeof DeviceOrientationEvent !== "undefined" &&
     typeof DeviceOrientationEvent.requestPermission === "function"
@@ -360,6 +381,7 @@ function openDET(i) {
 }
 
 window.closeDET = closeDET;
+
 
 
 
