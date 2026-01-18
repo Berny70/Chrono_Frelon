@@ -10,6 +10,10 @@ let currentCompassIndex = null;
 let currentHeading = null;
 let lastHeading = null;
 let compassActive = false;
+// ==========================
+// aide au developpement
+// ==========================
+console.log("app.js chargé");
 
 
 // ==========================
@@ -476,6 +480,44 @@ document.addEventListener("DOMContentLoaded", () => {
     openHelpPopup();
   });
 });
+function openHelpPopup() {
+  const overlay = document.createElement("div");
+  overlay.id = "helpOverlay";
+
+  overlay.innerHTML = `
+    <div class="help-box">
+      <h2>Aide – Pot à Mèche</h2>
+
+      <button class="help-btn" data-help="install">
+        📱 Installation smartphone
+      </button>
+
+      <button class="help-btn" data-help="vars">
+        📊 Explication des variables
+      </button>
+
+      <button class="help-btn" data-help="contact">
+        ✉️ Contact / retours terrain
+      </button>
+
+      <br>
+      <button id="closeHelp">Fermer</button>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  document.getElementById("closeHelp").onclick = () => overlay.remove();
+
+  overlay.querySelectorAll(".help-btn").forEach(btn => {
+    btn.onclick = () => openHelpSection(btn.dataset.help);
+  });
+
+  overlay.addEventListener("click", e => {
+    if (e.target === overlay) overlay.remove();
+  });
+}
+
 
 
 
