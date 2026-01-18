@@ -36,12 +36,6 @@ body {
   font-weight: bold;
 }
 
-.top-right {
-  text-align: right;
-  font-size: 0.85em;
-  line-height: 1.3em;
-  min-width: 90px;
-}
 /* ================================
    HEADER - GAUCHE
 ================================ */
@@ -62,6 +56,41 @@ body {
   font-size: 0.85em;
 }
 
+/* ================================
+   HEADER - DROIT
+================================ */
+.top-right {
+  text-align: right;
+  font-size: 0.85em;
+  line-height: 1.3em;
+  min-width: 90px;
+}
+
+.author {
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+.top-right-sub {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  font-size: 0.85em;
+}
+
+#btnMail {
+  background: none;
+  border: none;
+  font-size: 1.2em;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+}
+
+#btnMail:hover {
+  opacity: 0.7;
+}
 
 /* ================================
    CHRONOS
@@ -106,7 +135,6 @@ body {
   margin: 6px 0;
 }
 
-/* Ligne principale */
 .row-main .time {
   font-size: 2em;
   font-weight: bold;
@@ -114,7 +142,6 @@ body {
   text-align: center;
 }
 
-/* Lignes infos */
 .row-info {
   font-size: 0.9em;
 }
@@ -129,7 +156,6 @@ body {
   text-align: center;
 }
 
-/* Ligne actions */
 .row-actions {
   margin-top: 8px;
 }
@@ -212,19 +238,10 @@ button {
   margin: 6px 0;
 }
 
-/* Couleur du détail selon chrono */
-#detOverlay.red .det-box {
-  background: #f8d7da;
-}
-#detOverlay.blue .det-box {
-  background: #d0e7f9;
-}
-#detOverlay.green .det-box {
-  background: #d4edda;
-}
-#detOverlay.white .det-box {
-  background: #f0f0f0;
-}
+#detOverlay.red .det-box { background: #f8d7da; }
+#detOverlay.blue .det-box { background: #d0e7f9; }
+#detOverlay.green .det-box { background: #d4edda; }
+#detOverlay.white .det-box { background: #f0f0f0; }
 
 /* ================================
    OVERLAY BOUSSOLE
@@ -255,6 +272,36 @@ button {
 }
 
 /* ================================
+   ACTIONS HAUT DE PAGE
+================================ */
+.top-actions {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 12px;
+  gap: 10px;
+}
+
+.btn-capt {
+  background: #ffeb3b;
+  font-weight: bold;
+}
+
+.btn-loc {
+  background: #8bc34a;
+  font-weight: bold;
+}
+
+/* ================================
+   DATE & HEURE
+================================ */
+.date-time {
+  font-weight: bold;
+  font-size: 0.95em;
+  text-align: center;
+  flex: 1;
+}
+
+/* ================================
    RESPONSIVE
 ================================ */
 @media (max-width: 600px) {
@@ -276,135 +323,7 @@ button {
     padding: 6px 10px;
   }
 }
-/* ================================
-   ACTIONS HAUT DE PAGE
-================================ */
-.top-actions {
-  display: flex;
-  justify-content: space-between;
-  padding: 8px 12px;
-  gap: 10px;
-}
 
-.btn-capt {
-  background: #ffeb3b;
-  font-weight: bold;
-}
-
-.btn-loc {
-  background: #8bc34a;
-  font-weight: bold;
-}
-/* ================================
-   DATE & HEURE
-================================ */
-.date-time {
-  font-weight: bold;
-  font-size: 0.95em;
-  text-align: center;
-  flex: 1;
-}
-/* **************
-HELP
- ************* */
-#helpOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 11000;
-}
-
-.help-box {
-  background: #fff;
-  padding: 18px;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 420px;
-  font-size: 0.95em;
-}
-
-.help-box h2 {
-  margin-top: 0;
-  text-align: center;
-}
-
-.help-box h3 {
-  margin-top: 12px;
-}
-
-.help-box ol,
-.help-box ul {
-  padding-left: 18px;
-}
-
-.help-box button {
-  margin-top: 12px;
-  width: 100%;
-  background: #4caf50;
-  color: #fff;
-  font-weight: bold;
-}
-/* ================================
-   OVERLAY HELP
-================================ */
-#helpOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 20000; /* PLUS HAUT que tout le reste */
-}
-
-.help-box {
-  background: #ffffff;
-  padding: 18px;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 420px;
-  max-height: 85vh;
-  overflow-y: auto;
-  font-size: 0.95em;
-}
-
-/* ================================
-   HAUT DROIT : AUTEUR / VERSION / CONTACT
-================================ */
-.top-right {
-  text-align: right;
-}
-
-.author {
-  font-weight: bold;
-  font-size: 0.9em;
-}
-
-/* Ligne enveloppe + version */
-.top-right-sub {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 6px;
-  font-size: 0.85em;
-}
-
-/* Bouton enveloppe */
-#btnMail {
-  background: none;
-  border: none;
-  font-size: 1.2em;
-  cursor: pointer;
-  padding: 0;
-  line-height: 1;
-}
-
-#btnMail:hover {
-  opacity: 0.7;
-}
 /* ==========================
    HELP – AIDE UTILISATEUR (V7)
    ========================== */
@@ -413,22 +332,23 @@ HELP
 .helpOverlaySub {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999;
+  z-index: 30000;
 }
 
 .help-box {
-  background: white;
+  background: #ffffff;
   padding: 20px;
-  border-radius: 10px;
-  max-width: 90%;
-  width: 360px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 420px;
+  max-height: 85vh;
+  overflow-y: auto;
   text-align: center;
 
-  /* sécurité visibilité texte */
   color: #000;
   font-size: 16px;
   line-height: 1.4;
@@ -438,22 +358,42 @@ HELP
   color: #000;
 }
 
+.help-box h2 {
+  margin-top: 0;
+}
+
+.help-box h3 {
+  margin-top: 12px;
+}
+
+.help-box ul,
+.help-box ol {
+  padding-left: 18px;
+  text-align: left;
+}
+
 .help-btn {
   width: 100%;
   margin: 6px 0;
   padding: 10px;
   font-size: 1em;
+  background: #03a9f4;
+  color: #fff !important;
+  font-weight: bold;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
 }
 
+.help-btn:hover {
+  opacity: 0.85;
+}
 
-
-
-
-
-
-
-
-
-
-
-
+.help-box button {
+  margin-top: 12px;
+  width: 100%;
+  background: #4caf50;
+  color: #fff !important;
+  font-weight: bold;
+  border-radius: 6px;
+}
