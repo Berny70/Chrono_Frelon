@@ -180,6 +180,7 @@ body {
    BOUTONS
 ================================ */
 /* Boutons principaux de l'app */
+/* Boutons principaux de l'app (PAS l'enveloppe) */
 .chrono button,
 .top-actions button,
 .help-box button {
@@ -190,6 +191,14 @@ body {
   border: none;
   cursor: pointer;
 }
+
+/* bouton enveloppe : neutre */
+#btnMail {
+  padding: 0 !important;
+  font-size: 1.1em;
+  border-radius: 0;
+}
+
 
 
 .start {
@@ -468,5 +477,6 @@ body {
   background: #9e9e9e;
   color: #000;
 }
+
 
 
