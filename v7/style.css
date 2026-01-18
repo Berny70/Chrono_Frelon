@@ -168,7 +168,10 @@ body {
 /* ================================
    BOUTONS
 ================================ */
-button {
+/* Boutons principaux de l'app */
+.chrono button,
+.top-actions button,
+.help-box button {
   padding: 8px 12px;
   font-size: 0.95em;
   font-weight: bold;
@@ -176,6 +179,7 @@ button {
   border: none;
   cursor: pointer;
 }
+
 
 .start {
   background: #4caf50;
@@ -397,3 +401,4 @@ button {
   font-weight: bold;
   border-radius: 6px;
 }
+
