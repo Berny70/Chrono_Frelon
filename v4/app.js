@@ -13,8 +13,11 @@ let compassActive = false;
 // ==========================
 // aide au developpement
 // ==========================
-console.log("app.js chargé");
-console.log("HELP LOADED");
+console.log(
+  "app.js chargé en version :",
+  typeof APP_VERSION !== "undefined" ? APP_VERSION : "inconnue"
+);
+
 
 
 // ==========================
@@ -612,6 +615,7 @@ window.closeHelp = closeHelp;
 document.getElementById("btnBackMap")?.addEventListener("click", () => {
   window.location.href = "index.html";
 });
+
 
 
 
