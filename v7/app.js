@@ -1,5 +1,5 @@
 // ==========================
-// DONNÉES
+// DONNÉES GLOBALES
 // ==========================
 const chronoColors = ["red", "blue", "green", "white"];
 const chronos = [];
@@ -10,7 +10,6 @@ let currentCompassIndex = null;
 let currentHeading = null;
 let lastHeading = null;
 let compassActive = false;
-
 
 // ==========================
 // MOYENNE CIRCULAIRE
@@ -55,7 +54,6 @@ function saveObservations() {
     };
   }).filter(Boolean);
 
-  // 🔒 NE PAS écraser avec un tableau vide
   if (obs.length > 0) {
     localStorage.setItem("chronoObservations", JSON.stringify(obs));
   }
@@ -66,14 +64,13 @@ function saveObservations() {
 // ==========================
 function updateDirection(i) {
   const c = chronos[i];
-  const m = moyenneCirculaire(c.directions);
-  c.direction = m;
-  document.getElementById(`dir${i}`).textContent = m + "°";
+  c.direction = moyenneCirculaire(c.directions);
+  document.getElementById(`dir${i}`).textContent = c.direction + "°";
   saveObservations();
 }
 
 // ==========================
-// INIT
+// INITIALISATION
 // ==========================
 window.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("chronos");
@@ -94,7 +91,6 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const div = document.createElement("div");
     div.className = `chrono ${color}`;
-
     div.innerHTML = `
       <div class="row row-main">
         <button class="start">Start / Stop</button>
@@ -129,6 +125,8 @@ window.addEventListener("DOMContentLoaded", () => {
     div.querySelector(".start").onclick = () => startStop(i);
     div.querySelector(".reset").onclick = () => resetChrono(i);
     div.querySelector(".pos").onclick = () => getPos(i);
+    div.querySelector(".det").onclick = () => openDET(i);
+
     div.querySelector(".compass").onclick = async () => {
       if (
         typeof DeviceOrientationEvent !== "undefined" &&
@@ -143,17 +141,19 @@ window.addEventListener("DOMContentLoaded", () => {
       openCompass(i);
     };
 
-    div.querySelector(".det").onclick = () => openDET(i);
-    
-    document.getElementById("btnLoc").onclick = () => {
-      openLocationMenu();
-    };
-    
     div.querySelector(`#vit${i}`).oninput = e => {
       c.vitesse = +e.target.value;
       updateStats(i);
     };
   });
+
+  // ✅ BOUTON LOCALISATION DU NID — UNE SEULE FOIS
+  const btnLoc = document.getElementById("btnLoc");
+  if (btnLoc) {
+    btnLoc.addEventListener("click", openLocationMenu);
+  } else {
+    console.warn("btnLoc introuvable");
+  }
 });
 
 // ==========================
@@ -203,14 +203,16 @@ function updateStats(i) {
 function resetChrono(i) {
   const c = chronos[i];
 
-  c.running = false;
-  c.startTime = 0;
-  c.essais = [];
-  c.directions = [];
-  c.direction = 0;
-  c.vitesse = DEFAULT_VITESSE;
-  c.lat = "--";
-  c.lon = "--";
+  Object.assign(c, {
+    running: false,
+    startTime: 0,
+    essais: [],
+    directions: [],
+    direction: 0,
+    vitesse: DEFAULT_VITESSE,
+    lat: "--",
+    lon: "--"
+  });
 
   document.getElementById(`t${i}`).textContent = "0.00 s";
   document.getElementById(`m${i}`).textContent = "0 s";
@@ -248,203 +250,10 @@ function getPos(i) {
     saveObservations();
   });
 }
-// ==========================
-// FERMETURE POPUP DÉTAIL
-// ==========================
-function closeDET() {
-  const overlay = document.getElementById("detOverlay");
-  if (overlay) overlay.remove();
-}
-
 
 // ==========================
-// BOUSSOLE
- // ++++++++++++++++++++++++++++++
+// LOCALISATION DU NID
 // ==========================
-// BOUSSOLE (overlay)
-// ==========================
-function openCompass(i) {
-  currentCompassIndex = i;
-  currentHeading = null;
-  compassActive = false;
-
-  const overlay = document.createElement("div");
-  overlay.id = "compassOverlay";
-  overlay.innerHTML = `
-    <div class="compass-box">
-      <h2>Boussole ${chronos[i].color}</h2>
-      <div id="headingValue">---</div>
-
-      <button data-action="enable">Activer la boussole</button><br><br>
-      <button data-action="save">Capturer direction</button><br><br>
-      <button data-action="close">Fermer</button>
-    </div>
-  `;
-  document.body.appendChild(overlay);
-}
-
-// ==========================
-// ORIENTATION HANDLER (CORRIGÉ)
-// ==========================
-function onOrientation(e) {
-  if (!compassActive) return;
-
-  let heading = null;
-
-  // iOS
-  if (e.webkitCompassHeading !== undefined) {
-    if (e.webkitCompassAccuracy < 0) return;
-    heading = e.webkitCompassHeading;
-  }
-  // Android
-  else if (e.absolute === true && e.alpha !== null) {
-    heading = (360 - e.alpha) % 360;
-  }
-
-  if (heading === null || isNaN(heading)) return;
-
-  if (lastHeading !== null) {
-    let delta = Math.abs(heading - lastHeading);
-    if (delta > 180) delta = 360 - delta;
-    if (delta > 25) return;
-  }
-
-  lastHeading = heading;
-  currentHeading = Math.round(heading);
-
-  const el = document.getElementById("headingValue");
-  if (el) el.textContent = currentHeading + "°";
-}
-
-// ==========================
-// DÉLÉGATION ÉVÉNEMENTS (iOS / Android)
-// ==========================
-document.addEventListener("click", async e => {
-  const btn = e.target.closest("button");
-  if (!btn) return;
-
-  const action = btn.dataset.action;
-  if (!action) return;
-
-  // ACTIVER
-  if (action === "enable" && !compassActive) {
-    if (
-      typeof DeviceOrientationEvent !== "undefined" &&
-      typeof DeviceOrientationEvent.requestPermission === "function"
-    ) {
-      const res = await DeviceOrientationEvent.requestPermission();
-      if (res !== "granted") {
-        alert("Autorisation boussole refusée");
-        return;
-      }
-    }
-
-    lastHeading = null;
-    currentHeading = null;
-
-    window.addEventListener("deviceorientationabsolute", onOrientation, true);
-    window.addEventListener("deviceorientation", onOrientation, true);
-
-    compassActive = true;
-  }
-
-  // SAUVEGARDER
-  if (action === "save") {
-    if (currentHeading === null) {
-      alert("Boussole non prête");
-      return;
-    }
-    chronos[currentCompassIndex].directions.push(currentHeading);
-    updateDirection(currentCompassIndex);
-  }
-
-  // FERMER
-  if (action === "close") {
-    window.removeEventListener("deviceorientation", onOrientation, true);
-    window.removeEventListener("deviceorientationabsolute", onOrientation, true);
-    compassActive = false;
-    lastHeading = null;
-    document.getElementById("compassOverlay")?.remove();
-  }
-});
-
- // ++++++++++++++++++++++++++++++
- // ++++++++++++++++++++++++++++++
-function openDET(i) {
-  detIndex = i;
-  const c = chronos[i];
-  closeDET();
-
-  const overlay = document.createElement("div");
-  overlay.id = "detOverlay";
-  overlay.className = c.color;
-
-  overlay.innerHTML = `
-    <div class="det-box">
-      <h2>Détail ${c.color}</h2>
-
-      ${c.essais.map((t, k) => `
-        <div class="det-line">
-          Essai ${k + 1} : ${Math.ceil(t)} s
-          <button class="del-essai" data-k="${k}">Supprimer</button>
-        </div>
-      `).join("")}
-
-      <hr>
-      <h3>Directions</h3>
-
-      ${c.directions.map((d, k) => `
-        <div class="det-line">
-          ${d}°
-          <button class="del-dir" data-k="${k}">Supprimer</button>
-        </div>
-      `).join("")}
-
-      <br>
-      <button id="closeDET">Fermer</button>
-    </div>
-  `;
-
-  document.body.appendChild(overlay);
-
-  /* ==========================
-     FERMETURE
-  ========================== */
-
-  // bouton Fermer
-  overlay.querySelector("#closeDET").onclick = closeDET;
-
-  // clic hors de la boîte
-  overlay.addEventListener("click", e => {
-    if (e.target === overlay) closeDET();
-  });
-
-  /* ==========================
-     SUPPRESSIONS
-  ========================== */
-
-  // supprimer essai
-  overlay.querySelectorAll(".del-essai").forEach(btn => {
-    btn.onclick = () => {
-      chronos[detIndex].essais.splice(btn.dataset.k, 1);
-      updateStats(detIndex);
-      openDET(detIndex);
-    };
-  });
-
-  // supprimer direction
-  overlay.querySelectorAll(".del-dir").forEach(btn => {
-    btn.onclick = () => {
-      chronos[detIndex].directions.splice(btn.dataset.k, 1);
-      updateDirection(detIndex);
-      openDET(detIndex);
-    };
-  });
-}
-
-window.closeDET = closeDET;
-window.__chronos = chronos;
-
 function openLocationMenu() {
   document.getElementById("locOverlay")?.remove();
 
@@ -454,18 +263,9 @@ function openLocationMenu() {
     <div class="loc-box">
       <h2>Localisation du nid</h2>
 
-      <button data-action="local">
-        🗺️ Carte avec les données du smartphone
-      </button><br><br>
-
-      <button data-action="send">
-        📤 Envoi des données smartphone vers la carte partagée
-      </button><br><br>
-
-      <button data-action="shared">
-        🌍 Carte partagée autour du smartphone (10 km)
-      </button><br><br>
-
+      <button data-action="local">🗺️ Carte locale</button><br><br>
+      <button data-action="send">📤 Envoi vers carte partagée</button><br><br>
+      <button data-action="shared">🌍 Carte partagée (10 km)</button><br><br>
       <button data-action="close">Fermer</button>
     </div>
   `;
@@ -478,136 +278,18 @@ function openLocationMenu() {
 
     const action = btn.dataset.action;
 
-    if (action === "local") {
-      overlay.remove();
-      location.href = "map.html";
-    }
-
-    if (action === "send") {
-      await sendGeoJSON();
-    }
-
-    if (action === "shared") {
-      overlay.remove();
-      location.href = "map.html?mode=shared";
-    }
-
-    if (action === "close") {
-      overlay.remove();
-    }
+    if (action === "local") location.href = "map.html";
+    if (action === "shared") location.href = "map.html?mode=shared";
+    if (action === "send") await sendGeoJSON();
+    if (action === "close") overlay.remove();
   });
 
   overlay.addEventListener("click", e => {
     if (e.target === overlay) overlay.remove();
   });
-}async function sendGeoJSON() {
-  const geojson = buildGeoJSONObservations();
-
-  if (!geojson.features.length) {
-    alert("Aucune observation valide à envoyer");
-    return;
-  }
-
-  // confirmation utilisateur (important)
-  const ok = confirm(
-    `Envoyer ${geojson.features.length} observation(s) vers la base partagée ?`
-  );
-  if (!ok) return;
-
-  try {
-    const res = await fetch(
-      "https://compteurdevarroas.jodaille.fr/data/observations_2026.geojson",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/geo+json"
-        },
-        body: JSON.stringify(geojson)
-      }
-    );
-
-    if (!res.ok) {
-      throw new Error("Réponse serveur invalide");
-    }
-
-    alert("✅ Observations envoyées avec succès");
-  } catch (err) {
-    console.error(err);
-    alert("❌ Échec de l’envoi (connexion ou serveur indisponible)");
-  }
 }
 
-function buildGeoJSONObservations() {
-  const features = chronos.map(c => {
-    if (
-      c.lat === "--" ||
-      c.lon === "--" ||
-      !c.essais.length ||
-      c.direction == null
-    ) return null;
-
-    const total = c.essais.reduce((a, b) => a + b, 0);
-    const moy = total / c.essais.length;
-
-    return {
-      type: "Feature",
-      geometry: {
-        type: "Point",
-        coordinates: [
-          parseFloat(c.lon),
-          parseFloat(c.lat)
-        ]
-      },
-      properties: {
-        timestamp: new Date().toISOString(),
-        direction: c.direction,
-        distance: Math.round(moy * c.vitesse),
-        source: "chrono-pot-a-meche",
-        cle: "1978-07-04-1"
-      }
-    };
-  }).filter(Boolean);
-
-  return {
-    type: "FeatureCollection",
-    features
-  };
-}
-
-
-
-// ++++++++++++++++++++++++++++++++
-// a supprimer : test sur PC dir undefined
-// +++++++++++++++++++++++++++++++++
-function isCompassAvailable() {
-  return (
-    typeof window.DeviceOrientationEvent !== "undefined"
-  );
-}
-// ++++++++++++++++++++++++++++++++
-// a supprimer : test sur PC
-// +++++++++++++++++++++++++++++++++
-
-
-window.openHelpPopup = openHelpPopup;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// ==========================
+// EXPORT GLOBALS
+// ==========================
+window.__chronos = chronos;
