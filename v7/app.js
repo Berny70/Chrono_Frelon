@@ -380,6 +380,13 @@ function openLocationMenu() {
     if (e.target === overlay) overlay.remove();
   });
 }
+
+
+// ==========================
+// EXPORT GLOBALS
+// ==========================
+window.__chronos = chronos;
+
 document.addEventListener("DOMContentLoaded", () => {
   const btnMail = document.getElementById("btnMail");
   if (!btnMail) return;
@@ -392,12 +399,6 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   });
 });
-
-
-// ==========================
-// EXPORT GLOBALS
-// ==========================
-window.__chronos = chronos;
 
 
 
