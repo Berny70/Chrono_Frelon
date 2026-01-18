@@ -445,6 +445,9 @@ function openDET(i) {
 window.closeDET = closeDET;
 window.__chronos = chronos;
 
+  /* ==========================
+    MAil to 
+  ========================== */
 document.addEventListener("DOMContentLoaded", () => {
   const btnMail = document.getElementById("btnMail");
   if (!btnMail) return;
@@ -457,6 +460,24 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   });
 });
+
+  /* ==========================
+     HELP
+  ========================== */
+document.addEventListener("DOMContentLoaded", () => {
+  const btnHelp = document.getElementById("btnHelp");
+  if (!btnHelp) {
+    console.warn("btnHelp introuvable");
+    return;
+  }
+
+  btnHelp.addEventListener("click", () => {
+    console.log("Aide cliquée");
+    openHelpPopup();
+  });
+});
+
+
 
 
 
