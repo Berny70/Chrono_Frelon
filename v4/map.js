@@ -138,3 +138,6 @@ function destinationPoint(lat, lon, bearing, distance) {
     lon: λ2 * 180 / Math.PI
   };
 }
+document.getElementById("btnBackMap")?.addEventListener("click", () => {
+  window.location.href = "index.html";
+});
