@@ -78,6 +78,23 @@ function updateDirection(i) {
 }
 
 // ==========================
+// HELP
+// ==========================
+document.addEventListener("DOMContentLoaded", () => {
+  const btnHelp = document.getElementById("btnHelp");
+  if (!btnHelp) {
+    console.warn("btnHelp introuvable");
+    return;
+  }
+
+  btnHelp.addEventListener("click", () => {
+    console.log("Aide cliquée");
+    openHelpPopup();
+  });
+});
+
+
+// ==========================
 // INIT
 // ==========================
 window.addEventListener("DOMContentLoaded", () => {
@@ -586,6 +603,7 @@ window.openHelpPopup = openHelpPopup;
 window.openHelpSection = openHelpSection;
 window.openHelpSubPopup = openHelpSubPopup;
 window.closeHelp = closeHelp;
+
 
 
 
