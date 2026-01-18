@@ -477,73 +477,83 @@ document.addEventListener("DOMContentLoaded", () => {
     openHelpPopup();
   });
 });
-function openHelpPopup() {
-  // supprimer une aide existante si elle existe déjà
-  document.getElementById("helpOverlay")?.remove();
+function openHelpSection(type) {
+  // CONTACT
+  if (type === "contact") {
+    const sub = document.createElement("div");
+    sub.className = "helpOverlaySub";
+    sub.innerHTML = `
+      <div class="help-box">
+        <h3>Contact & retours terrain</h3>
 
-  const overlay = document.createElement("div");
-  overlay.id = "helpOverlay";
+        <p>
+          Pour toute question, remarque ou retour d’expérience
+          concernant l’application « Pot à Mèche » :
+        </p>
 
+        <a
+          href="https://docs.google.com/forms/d/e/1FAIpQLSdZZLGB8u3ULsnCr6GbNkQ9mVIAhWCk2NEatUOeeElGAoMcmg/viewform"
+          target="_blank"
+          rel="noopener"
+          class="contact-btn"
+        >
+          📋 Formulaire de contact
+        </a>
 
-  overlay.innerHTML = `
-    <div class="help-box">
-      <h2>Aide – Pot à Mèche</h2>
+        <p style="margin-top:10px; font-size:0.9em;">
+          ou par email :<br>
+          <a href="mailto:contact@jodaille.fr">contact@jodaille.fr</a>
+        </p>
 
-      <button class="help-btn" data-help="install">
-        📱 Installation smartphone
-      </button>
+        <br>
+        <button onclick="this.closest('.helpOverlaySub').remove()">Fermer</button>
+      </div>
+    `;
+    document.body.appendChild(sub);
+    return;
+  }
 
-      <button class="help-btn" data-help="vars">
-        📊 Explication des variables
-      </button>
+  // INSTALLATION
+  if (type === "install") {
+    openHelpSubPopup(`
+      <h3>Installation sur smartphone</h3>
 
-      <button class="help-btn" data-help="contact">
-        ✉️ Contact / retours terrain
-      </button>
+      <ul>
+        <li>Ouvrir l’application dans le navigateur (Chrome, Safari…)</li>
+        <li>Menu du navigateur → <b>Ajouter à l’écran d’accueil</b></li>
+        <li>L’application peut ensuite fonctionner hors connexion</li>
+        <li>Autoriser la localisation GPS</li>
+        <li>Autoriser l’accès à la boussole (orientation)</li>
+      </ul>
+    `);
+    return;
+  }
 
-      <br>
-      <button id="closeHelp">Fermer</button>
-    </div>
-  `;
+  // EXPLICATION DE L’APPLICATION
+  if (type === "vars") {
+    openHelpSubPopup(`
+      <h3>Fonctionnement de l’application</h3>
 
-  document.body.appendChild(overlay);
+      <ul>
+        <li><b>Chaque couleur</b> correspond à une station (pot à mèche)</li>
+        <li><b>Start / Stop</b> : mesure le temps de vol d’un frelon</li>
+        <li><b>Position</b> : relève la localisation GPS de la station</li>
+        <li><b>Boussole</b> : capture la direction de départ du frelon</li>
+        <li><b>Détail</b> : permet de supprimer des valeurs aberrantes</li>
+      </ul>
 
-  document.getElementById("closeHelp").onclick = () => overlay.remove();
-
-  overlay.querySelectorAll(".help-btn").forEach(btn => {
-    btn.onclick = () => openHelpSection(btn.dataset.help);
-  });
-
-  overlay.addEventListener("click", e => {
-    if (e.target === overlay) overlay.remove();
-  });
+      <p>
+        Il est conseillé de réaliser plusieurs mesures par station
+        afin d’obtenir une estimation plus fiable.
+      </p>
+    `);
+    return;
+  }
 }
+
 
 
 window.closeDET = closeDET;
 window.__chronos = chronos;
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
