@@ -10,29 +10,62 @@
     rel="stylesheet"
     href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
   />
+<style>
+  body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+  }
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, Helvetica, sans-serif;
-    }
+  #map {
+    height: 100vh;
+    width: 100vw;
+    z-index: 1;
+  }
 
-    #map {
-      height: 100vh;
-      width: 100vw;
-    }
+  /* ==========================
+     LÉGENDE
+  ========================== */
+  .legend {
+    position: fixed;
+    bottom: 10px;
+    left: 10px;
 
-    .legend {
-      position: absolute;
-      bottom: 10px;
-      left: 10px;
-      background: white;
-      padding: 8px;
-      border-radius: 6px;
-      font-size: 0.9em;
-      box-shadow: 0 0 5px rgba(0,0,0,0.3);
-    }
-  </style>
+    background: white;
+    padding: 8px;
+    border-radius: 6px;
+    font-size: 0.9em;
+
+    box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    z-index: 10000; /* 🔑 AU-DESSUS DE LA CARTE */
+  }
+
+  /* ==========================
+     BOUTON RETOUR
+  ========================== */
+  #btnBackMap {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+
+    background: #c62828;
+    color: white;
+    border: none;
+    border-radius: 20px;
+
+    padding: 8px 14px;
+    font-size: 0.9em;
+    font-weight: bold;
+
+    cursor: pointer;
+    z-index: 10001; /* 🔑 AU-DESSUS DE TOUT */
+  }
+
+  #btnBackMap:hover {
+    opacity: 0.85;
+  }
+</style>
+
+ 
 </head>
 
 <body>
