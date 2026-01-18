@@ -465,6 +465,53 @@ document.addEventListener("DOMContentLoaded", () => {
   /* ==========================
      HELP
   ========================== */
+function openHelpPopup() {
+  // sécurité : éviter les doublons
+  document.getElementById("helpOverlay")?.remove();
+
+  const overlay = document.createElement("div");
+  overlay.id = "helpOverlay";
+
+  overlay.innerHTML = `
+    <div class="help-box">
+      <h2>Aide – Pot à Mèche</h2>
+
+      <button class="help-btn" data-help="install">
+        📱 Installation smartphone
+      </button>
+
+      <button class="help-btn" data-help="vars">
+        📊 Explication de l’application
+      </button>
+
+      <button class="help-btn" data-help="contact">
+        ✉️ Contact / retours terrain
+      </button>
+
+      <br>
+      <button onclick="closeHelp()">Fermer</button>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  // clic hors popup = fermer
+  overlay.addEventListener("click", e => {
+    if (e.target === overlay) closeHelp();
+  });
+
+  // boutons internes
+  overlay.querySelectorAll(".help-btn").forEach(btn => {
+    btn.onclick = () => openHelpSection(btn.dataset.help);
+  });
+}
+
+function closeHelp() {
+  document.getElementById("helpOverlay")?.remove();
+}
+
+
+
 document.addEventListener("DOMContentLoaded", () => {
   const btnHelp = document.getElementById("btnHelp");
   if (!btnHelp) {
@@ -554,7 +601,6 @@ function openHelpSection(type) {
 window.openHelpPopup = openHelpPopup;
 window.openHelpSection = openHelpSection;
 
-window.__chronos = chronos;
 
 
 
