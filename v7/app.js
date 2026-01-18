@@ -589,6 +589,8 @@ function isCompassAvailable() {
 // +++++++++++++++++++++++++++++++++
 
 
+window.openHelpPopup = openHelpPopup;
+
 
 
 
