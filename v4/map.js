@@ -139,5 +139,5 @@ function destinationPoint(lat, lon, bearing, distance) {
   };
 }
 document.getElementById("btnBackMap")?.addEventListener("click", () => {
-  window.location.href = "index.html";
+  location.href = "map.html?v=" + (window.APP_VERSION || "dev");
 });
