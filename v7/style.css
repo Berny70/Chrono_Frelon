@@ -405,9 +405,9 @@ HELP
 #btnMail:hover {
   opacity: 0.7;
 }
-+++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-CSS – HELP (si pas déjà présent)
+/* ==========================
+   HELP – AIDE UTILISATEUR (V7)
+   ========================== */
 
 #helpOverlay,
 .helpOverlaySub {
@@ -427,6 +427,15 @@ CSS – HELP (si pas déjà présent)
   max-width: 90%;
   width: 360px;
   text-align: center;
+
+  /* sécurité visibilité texte */
+  color: #000;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.help-box * {
+  color: #000;
 }
 
 .help-btn {
@@ -435,7 +444,6 @@ CSS – HELP (si pas déjà présent)
   padding: 10px;
   font-size: 1em;
 }
-
 
 
 
