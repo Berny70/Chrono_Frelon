@@ -380,11 +380,24 @@ function openLocationMenu() {
     if (e.target === overlay) overlay.remove();
   });
 }
+document.addEventListener("DOMContentLoaded", () => {
+  const btnMail = document.getElementById("btnMail");
+  if (!btnMail) return;
+
+  btnMail.addEventListener("click", () => {
+    window.open(
+      "https://docs.google.com/forms/d/e/1FAIpQLSdZZLGB8u3ULsnCr6GbNkQ9mVIAhWCk2NEatUOeeElGAoMcmg/viewform",
+      "_blank",
+      "noopener"
+    );
+  });
+});
 
 
 // ==========================
 // EXPORT GLOBALS
 // ==========================
 window.__chronos = chronos;
+
 
 
