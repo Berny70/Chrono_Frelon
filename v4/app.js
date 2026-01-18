@@ -446,9 +446,6 @@ function openDET(i) {
   });
 }
 
-window.closeDET = closeDET;
-window.__chronos = chronos;
-
   /* ==========================
     MAil to 
   ========================== */
@@ -517,6 +514,10 @@ function openHelpPopup() {
     if (e.target === overlay) overlay.remove();
   });
 }
+
+
+window.closeDET = closeDET;
+window.__chronos = chronos;
 
 
 
