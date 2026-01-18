@@ -445,13 +445,19 @@ function openDET(i) {
 window.closeDET = closeDET;
 window.__chronos = chronos;
 
-document.getElementById("btnMail")?.addEventListener("click", () => {
-  window.open(
-    "https://docs.google.com/forms/d/e/1FAIpQLSdZZLGB8u3ULsnCr6GbNkQ9mVIAhWCk2NEatUOeeElGAoMcmg/viewform",
-    "_blank",
-    "noopener"
-  );
+document.addEventListener("DOMContentLoaded", () => {
+  const btnMail = document.getElementById("btnMail");
+  if (!btnMail) return;
+
+  btnMail.addEventListener("click", () => {
+    window.open(
+      "https://docs.google.com/forms/d/e/1FAIpQLSdZZLGB8u3ULsnCr6GbNkQ9mVIAhWCk2NEatUOeeElGAoMcmg/viewform",
+      "_blank",
+      "noopener"
+    );
+  });
 });
+
 
 
 
