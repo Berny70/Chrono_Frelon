@@ -402,3 +402,59 @@ body {
   border-radius: 6px;
 }
 
+/* ==========================
+   OVERLAY LOCALISATION DU NID
+   ========================== */
+
+#locOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 25000;
+}
+
+.loc-box {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 420px;
+  text-align: center;
+
+  color: #000;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.loc-box button {
+  width: 100%;
+  margin: 6px 0;
+  padding: 10px;
+  font-size: 1em;
+  font-weight: bold;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.loc-box button[data-action="local"] {
+  background: #8bc34a;
+}
+
+.loc-box button[data-action="send"] {
+  background: #03a9f4;
+  color: #fff;
+}
+
+.loc-box button[data-action="shared"] {
+  background: #ff9800;
+}
+
+.loc-box button[data-action="close"] {
+  background: #9e9e9e;
+  color: #000;
+}
+
