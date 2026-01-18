@@ -25,6 +25,7 @@
 <header class="topbar">
   <div class="top-left">
     <img src="./icon_4_chrono_2.png" class="top-logo" alt="logo">
+    <!-- HELP : appel unique -->
     <button onclick="openHelpPopup()">❓ Aide</button>
   </div>
 
@@ -51,7 +52,7 @@
      CONTENEUR DES CHRONOS
 ========================== -->
 <main id="chronos">
-  <!-- Généré dynamiquement par ui.js -->
+  <!-- Généré dynamiquement par app.js -->
 </main>
 
 <!-- ==========================
@@ -59,36 +60,36 @@
 ========================== -->
 <script src="./version.js"></script>
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const v = document.getElementById("version");
-    if (v && typeof APP_VERSION !== "undefined") {
-      v.textContent = "v. : " + APP_VERSION;
-    }
-  });
+document.addEventListener("DOMContentLoaded", () => {
+  const v = document.getElementById("version");
+  if (v && typeof APP_VERSION !== "undefined") {
+    v.textContent = "v. : " + APP_VERSION;
+  }
+});
 </script>
 
 <!-- ==========================
      DATE & HEURE
 ========================== -->
 <script>
-  document.addEventListener("DOMContentLoaded", () => {
-    const el = document.getElementById("dateTime");
-    if (!el) return;
+document.addEventListener("DOMContentLoaded", () => {
+  const el = document.getElementById("dateTime");
+  if (!el) return;
 
-    function updateDateTime() {
-      const now = new Date();
-      el.textContent =
-        now.toLocaleDateString("fr-FR") + " " +
-        now.toLocaleTimeString("fr-FR", {
-          hour: "2-digit",
-          minute: "2-digit",
-          second: "2-digit"
-        });
-    }
+  function updateDateTime() {
+    const now = new Date();
+    el.textContent =
+      now.toLocaleDateString("fr-FR") + " " +
+      now.toLocaleTimeString("fr-FR", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit"
+      });
+  }
 
-    updateDateTime();
-    setInterval(updateDateTime, 1000);
-  });
+  updateDateTime();
+  setInterval(updateDateTime, 1000);
+});
 </script>
 
 <!-- ==========================
@@ -96,7 +97,11 @@
 ========================== -->
 <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <script>
-  document.getElementById("btnCapt").addEventListener("click", async () => {
+document.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("btnCapt");
+  if (!btn) return;
+
+  btn.addEventListener("click", async () => {
     const canvas = await html2canvas(document.body, {
       scale: 2,
       useCORS: true
@@ -127,56 +132,27 @@
     a.download = filename;
     a.click();
   });
-</script>
-
-<!-- ==========================
-     AIDE (UI uniquement)
-========================== -->
-<script>
-document.getElementById("btnHelp").addEventListener("click", () => {
-  const overlay = document.createElement("div");
-  overlay.id = "helpOverlay";
-  overlay.innerHTML = `
-    <div class="help-box">
-      <h2>Aide – Application « Pot à Mèche »</h2>
-
-      <ul>
-        <li>Chaque couleur correspond à une station</li>
-        <li>Start / Stop : mesure le temps</li>
-        <li>Position : relève la localisation</li>
-        <li>Boussole : capture la direction</li>
-        <li>Détail : supprime les valeurs aberrantes</li>
-      </ul>
-
-      <button id="closeHelp">Fermer</button>
-    </div>
-  `;
-  document.body.appendChild(overlay);
-
-  document.getElementById("closeHelp").onclick = () => {
-    overlay.remove();
-  };
 });
 </script>
 
 <!-- ==========================
-     APP V6
+     APP PRINCIPALE
 ========================== -->
-<script type="module" src="./app.js"></script>
+<script src="./app.js"></script>
+
+<!-- ==========================
+     HELP (UI)
+========================== -->
+<script src="./js/help.js"></script>
 
 <!-- ==========================
      SERVICE WORKER
 ========================== -->
 <script>
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("./service-worker.js");
-  }
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("./service-worker.js");
+}
 </script>
-  <!-- ==========================
-     appel du HELP
-========================== -->
-  <script src="js/help.js"></script>
-
 
 </body>
 </html>
