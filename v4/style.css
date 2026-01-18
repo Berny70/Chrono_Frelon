@@ -305,9 +305,27 @@ button {
   flex: 1;
 }
 /* ==========================
-   HELP OVERLAY
+   HELP OVERLAY PRINCIPAL
 ========================== */
-#helpOverlay,
+#helpOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+
+  background: rgba(0, 0, 0, 0.6);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  z-index: 9000; /* inférieur */
+}
+
+/* ==========================
+   SOUS-AIDE
+========================== */
 .helpOverlaySub {
   position: fixed;
   top: 0;
@@ -321,7 +339,7 @@ button {
   align-items: center;
   justify-content: center;
 
-  z-index: 9999;
+  z-index: 10000; /* AU-DESSUS */
 }
 
 /* Boîte centrale */
@@ -343,6 +361,7 @@ button {
   font-size: 1em;
   cursor: pointer;
 }
+
 
 /* ================================
    AIDE : CONTACT / SUGGESTIONS
@@ -366,6 +385,7 @@ button {
 #btnFeedbackHelp:hover {
   opacity: 0.85;
 }
+
 
 
 
