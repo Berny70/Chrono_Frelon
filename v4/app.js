@@ -14,6 +14,7 @@ let compassActive = false;
 // aide au developpement
 // ==========================
 console.log("app.js chargé");
+console.log("HELP LOADED");
 
 
 // ==========================
@@ -585,6 +586,7 @@ window.openHelpPopup = openHelpPopup;
 window.openHelpSection = openHelpSection;
 window.openHelpSubPopup = openHelpSubPopup;
 window.closeHelp = closeHelp;
+
 
 
 
