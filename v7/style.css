@@ -405,79 +405,39 @@ HELP
 #btnMail:hover {
   opacity: 0.7;
 }
-/* ================================
-   AIDE : CONTACT / SUGGESTIONS
-================================ */
-.help-contact {
-  text-align: center;
-  margin-top: 12px;
-}
++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-#btnFeedbackHelp {
-  background: #2196f3;
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  padding: 10px 14px;
-  font-size: 1em;
-  font-weight: bold;
-  cursor: pointer;
-}
+CSS – HELP (si pas déjà présent)
 
-#btnFeedbackHelp:hover {
-  opacity: 0.85;
-}
-
-#locOverlay {
+#helpOverlay,
+.helpOverlaySub {
   position: fixed;
   inset: 0;
   background: rgba(0,0,0,0.6);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10000;
+  z-index: 9999;
 }
 
-.loc-box {
+.help-box {
   background: white;
   padding: 20px;
-  border-radius: 12px;
-  width: 90%;
-  max-width: 420px;
+  border-radius: 10px;
+  max-width: 90%;
+  width: 360px;
   text-align: center;
 }
 
-.loc-box button {
+.help-btn {
   width: 100%;
-  padding: 12px;
-  font-size: 15px;
+  margin: 6px 0;
+  padding: 10px;
+  font-size: 1em;
 }
 
-#btnBackMap {
-  position: fixed;
-  top: 12px;
-  right: 12px;
-  z-index: 2000;           /* au-dessus de Leaflet */
 
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
 
-  background: #d32f2f;     /* rouge */
-  color: white;
-  font-size: 20px;
-  font-weight: bold;
-
-  border: none;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.4);
-
-  cursor: pointer;
-  touch-action: manipulation;
-}
-
-#btnBackMap:active {
-  transform: scale(0.95);
-}
 
 
 
