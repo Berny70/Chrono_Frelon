@@ -17,7 +17,12 @@ console.log(
   "app.js chargé en version :",
   typeof APP_VERSION !== "undefined" ? APP_VERSION : "inconnue"
 );
-
+// correctif zoom
+if (window.visualViewport) {
+  window.visualViewport.addEventListener("resize", () => {
+    document.body.style.zoom = "1";
+  });
+}
 
 
 // ==========================
@@ -615,6 +620,7 @@ window.closeHelp = closeHelp;
 document.getElementById("btnBackMap")?.addEventListener("click", () => {
   window.location.href = "index.html";
 });
+
 
 
 
