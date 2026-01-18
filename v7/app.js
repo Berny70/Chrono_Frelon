@@ -30,6 +30,51 @@ function moyenneCirculaire(degs) {
   return Math.round(deg);
 }
 
+// ++++++++++++++++++++
+(function ensureLocOverlayCSS() {
+  if (document.getElementById("locOverlayStyle")) return;
+
+  const style = document.createElement("style");
+  style.id = "locOverlayStyle";
+  style.textContent = `
+    #locOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+    }
+
+    #locOverlay .loc-box {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 420px;
+      text-align: center;
+      color: #000;
+      font-size: 16px;
+      line-height: 1.4;
+    }
+
+    #locOverlay .loc-box button {
+      width: 100%;
+      margin: 6px 0;
+      padding: 10px;
+      font-size: 1em;
+      font-weight: bold;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+    }
+  `;
+  document.head.appendChild(style);
+})();
+
+// +++++++++++++++++
+
 // ==========================
 // SAUVEGARDE OBSERVATIONS
 // ==========================
@@ -341,4 +386,5 @@ function openLocationMenu() {
 // EXPORT GLOBALS
 // ==========================
 window.__chronos = chronos;
+
 
