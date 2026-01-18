@@ -385,6 +385,31 @@ button {
 #btnFeedbackHelp:hover {
   opacity: 0.85;
 }
+/* ==========================
+   BOUTON RETOUR CARTE
+========================== */
+#btnBackMap {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+
+  background: #c62828;
+  color: white;
+  border: none;
+  border-radius: 20px;
+
+  padding: 8px 14px;
+  font-size: 0.9em;
+  font-weight: bold;
+
+  cursor: pointer;
+  z-index: 10000;
+}
+
+#btnBackMap:hover {
+  opacity: 0.85;
+}
+
 
 
 
