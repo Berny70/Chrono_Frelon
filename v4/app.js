@@ -522,8 +522,12 @@ function openHelpPopup() {
 
   // boutons internes
   overlay.querySelectorAll(".help-btn").forEach(btn => {
-    btn.onclick = () => openHelpSection(btn.dataset.help);
+    btn.onclick = e => {
+      e.stopPropagation(); // ⬅️ TRÈS IMPORTANT
+      openHelpSection(btn.dataset.help);
+    };
   });
+
 }
 
 function openHelpSection(type) {
@@ -603,6 +607,7 @@ window.openHelpPopup = openHelpPopup;
 window.openHelpSection = openHelpSection;
 window.openHelpSubPopup = openHelpSubPopup;
 window.closeHelp = closeHelp;
+
 
 
 
