@@ -140,7 +140,8 @@
 <script src="./version.js"></script>
 
 <script type="module">
-  import "./app.js?v=" + (window.APP_VERSION || "dev");
+  const v = window.APP_VERSION || "dev";
+  import("./app.js?v=" + v);
 </script>
 
 <!-- ==========================
