@@ -551,9 +551,10 @@ function openHelpSection(type) {
   }
 }
 
-
-
+window.openHelpPopup = openHelpPopup;
+window.openHelpSection = openHelpSection;
 window.closeDET = closeDET;
 window.__chronos = chronos;
+
 
 
