@@ -135,36 +135,6 @@
 </script>
 
 <!-- ==========================
-     AIDE (UI uniquement)
-========================== -->
-<script>
-document.getElementById("btnHelp").addEventListener("click", () => {
-  const overlay = document.createElement("div");
-  overlay.id = "helpOverlay";
-  overlay.innerHTML = `
-    <div class="help-box">
-      <h2>Aide – Application « Pot à Mèche »</h2>
-
-      <ul>
-        <li>Chaque couleur correspond à une station</li>
-        <li>Start / Stop : mesure le temps</li>
-        <li>Position : relève la localisation</li>
-        <li>Boussole : capture la direction</li>
-        <li>Détail : supprime les valeurs aberrantes</li>
-      </ul>
-
-      <button id="closeHelp">Fermer</button>
-    </div>
-  `;
-  document.body.appendChild(overlay);
-
-  document.getElementById("closeHelp").onclick = () => {
-    overlay.remove();
-  };
-});
-</script>
-
-<!-- ==========================
      APP V6
 ========================== -->
 <script type="module" src="./app.js"></script>
