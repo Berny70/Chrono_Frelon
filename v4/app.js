@@ -478,8 +478,12 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 function openHelpPopup() {
+  // supprimer une aide existante si elle existe déjà
+  document.getElementById("helpOverlay")?.remove();
+
   const overlay = document.createElement("div");
   overlay.id = "helpOverlay";
+
 
   overlay.innerHTML = `
     <div class="help-box">
@@ -518,6 +522,7 @@ function openHelpPopup() {
 
 window.closeDET = closeDET;
 window.__chronos = chronos;
+
 
 
 
