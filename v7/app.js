@@ -263,33 +263,82 @@ function openLocationMenu() {
     <div class="loc-box">
       <h2>Localisation du nid</h2>
 
-      <button data-action="local">🗺️ Carte locale</button><br><br>
-      <button data-action="send">📤 Envoi vers carte partagée</button><br><br>
-      <button data-action="shared">🌍 Carte partagée (10 km)</button><br><br>
+      <button data-action="local">
+        🗺️ Carte avec les données du smartphone
+      </button><br><br>
+
+      <button data-action="send">
+        📤 Envoi des données smartphone vers la carte partagée
+      </button><br><br>
+
+      <button data-action="shared">
+        🌍 Carte partagée autour du smartphone (10 km)
+      </button><br><br>
+
       <button data-action="close">Fermer</button>
     </div>
   `;
 
   document.body.appendChild(overlay);
 
+  // 🔒 FORÇAGE STYLE OVERLAY (sécurité absolue)
+  overlay.style.position = "fixed";
+  overlay.style.top = "0";
+  overlay.style.left = "0";
+  overlay.style.width = "100vw";
+  overlay.style.height = "100vh";
+  overlay.style.background = "rgba(0,0,0,0.6)";
+  overlay.style.display = "flex";
+  overlay.style.alignItems = "center";
+  overlay.style.justifyContent = "center";
+  overlay.style.zIndex = "99999";
+
+  // 🔒 FORÇAGE STYLE BOÎTE
+  const box = overlay.querySelector(".loc-box");
+  if (box) {
+    box.style.background = "#fff";
+    box.style.padding = "20px";
+    box.style.borderRadius = "12px";
+    box.style.width = "90%";
+    box.style.maxWidth = "420px";
+    box.style.textAlign = "center";
+  }
+
+  // actions boutons
   overlay.addEventListener("click", async e => {
     const btn = e.target.closest("button");
     if (!btn) return;
 
     const action = btn.dataset.action;
 
-    if (action === "local") location.href = "map.html";
-    if (action === "shared") location.href = "map.html?mode=shared";
-    if (action === "send") await sendGeoJSON();
-    if (action === "close") overlay.remove();
+    if (action === "local") {
+      overlay.remove();
+      location.href = "map.html";
+    }
+
+    if (action === "shared") {
+      overlay.remove();
+      location.href = "map.html?mode=shared";
+    }
+
+    if (action === "send") {
+      await sendGeoJSON();
+    }
+
+    if (action === "close") {
+      overlay.remove();
+    }
   });
 
+  // clic hors boîte → fermer
   overlay.addEventListener("click", e => {
     if (e.target === overlay) overlay.remove();
   });
 }
 
+
 // ==========================
 // EXPORT GLOBALS
 // ==========================
 window.__chronos = chronos;
+
