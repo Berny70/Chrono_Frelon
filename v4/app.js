@@ -557,10 +557,13 @@ function closeHelp() {
   document.getElementById("helpOverlay")?.remove();
 }
 // ==========================
-// HELP – fonctions globales
+// HELP – AIDE UTILISATEUR
 // ==========================
+
 function openHelpPopup() {
+  // éviter les doublons
   document.getElementById("helpOverlay")?.remove();
+  document.querySelector(".helpOverlaySub")?.remove();
 
   const overlay = document.createElement("div");
   overlay.id = "helpOverlay";
@@ -588,16 +591,19 @@ function openHelpPopup() {
 
   document.body.appendChild(overlay);
 
+  // clic hors popup = fermer
   overlay.addEventListener("click", e => {
     if (e.target === overlay) closeHelp();
   });
 
+  // boutons internes
   overlay.querySelectorAll(".help-btn").forEach(btn => {
     btn.onclick = () => openHelpSection(btn.dataset.help);
   });
 }
 
 function openHelpSection(type) {
+  // CONTACT
   if (type === "contact") {
     window.open(
       "https://docs.google.com/forms/d/e/1FAIpQLSdZZLGB8u3ULsnCr6GbNkQ9mVIAhWCk2NEatUOeeElGAoMcmg/viewform",
@@ -609,39 +615,53 @@ function openHelpSection(type) {
 
   let html = "";
 
+  // INSTALLATION
   if (type === "install") {
     html = `
       <h3>Installation sur smartphone</h3>
       <ul>
-        <li>Ouvrir l’application dans le navigateur</li>
-        <li>Menu → Ajouter à l’écran d’accueil</li>
-        <li>Autoriser la localisation et la boussole</li>
-      </ul>`;
+        <li>Ouvrir l’application dans le navigateur (Chrome, Safari…)</li>
+        <li>Menu → <b>Ajouter à l’écran d’accueil</b></li>
+        <li>L’application peut fonctionner hors connexion</li>
+        <li>Autoriser la localisation GPS</li>
+        <li>Autoriser l’accès à la boussole</li>
+      </ul>
+    `;
   }
 
+  // EXPLICATION DE L’APPLICATION
   if (type === "vars") {
     html = `
       <h3>Fonctionnement de l’application</h3>
       <ul>
-        <li>Chaque couleur correspond à une station</li>
-        <li>Start / Stop : mesure le temps</li>
-        <li>Position : relève la localisation</li>
-        <li>Boussole : capture la direction</li>
-        <li>Détail : supprime les valeurs aberrantes</li>
-      </ul>`;
+        <li><b>Chaque couleur</b> correspond à une station (pot à mèche)</li>
+        <li><b>Start / Stop</b> : mesure le temps de vol du frelon</li>
+        <li><b>Position</b> : relève la localisation GPS de la station</li>
+        <li><b>Boussole</b> : capture la direction de départ</li>
+        <li><b>Détail</b> : supprime les valeurs aberrantes</li>
+      </ul>
+
+      <p>
+        Il est conseillé de réaliser plusieurs mesures par station
+        afin d’obtenir une estimation plus fiable.
+      </p>
+    `;
   }
 
   openHelpSubPopup(html);
 }
 
 function openHelpSubPopup(html) {
+  // une seule sous-aide à la fois
+  document.querySelector(".helpOverlaySub")?.remove();
+
   const sub = document.createElement("div");
   sub.className = "helpOverlaySub";
   sub.innerHTML = `
     <div class="help-box">
       ${html}
       <br>
-      <button onclick="this.closest('.helpOverlaySub').remove()">Fermer</button>
+      <button onclick="closeHelp()">Fermer</button>
     </div>
   `;
   document.body.appendChild(sub);
@@ -649,10 +669,16 @@ function openHelpSubPopup(html) {
 
 function closeHelp() {
   document.getElementById("helpOverlay")?.remove();
+  document.querySelector(".helpOverlaySub")?.remove();
 }
 
+// ==========================
+// EXPOSITION (type="module")
+// ==========================
 window.openHelpPopup = openHelpPopup;
 window.openHelpSection = openHelpSection;
+window.openHelpSubPopup = openHelpSubPopup;
+window.closeHelp = closeHelp;
 
 
 
