@@ -609,6 +609,10 @@ window.openHelpSubPopup = openHelpSubPopup;
 window.closeHelp = closeHelp;
 
 
+document.getElementById("btnBackMap")?.addEventListener("click", () => {
+  window.location.href = "index.html";
+});
+
 
 
 
