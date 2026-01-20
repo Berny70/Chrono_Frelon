@@ -1,5 +1,5 @@
 // ==========================
-// DONNÉES GLOBALES
+// DONNÉES GLOBALES – V7.3
 // ==========================
 const chronoColors = ["red", "blue", "green", "white"];
 const chronos = [];
@@ -30,53 +30,8 @@ function moyenneCirculaire(degs) {
   return Math.round(deg);
 }
 
-// ++++++++++++++++++++
-(function ensureLocOverlayCSS() {
-  if (document.getElementById("locOverlayStyle")) return;
-
-  const style = document.createElement("style");
-  style.id = "locOverlayStyle";
-  style.textContent = `
-    #locOverlay {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.6);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 99999;
-    }
-
-    #locOverlay .loc-box {
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      width: 90%;
-      max-width: 420px;
-      text-align: center;
-      color: #000;
-      font-size: 16px;
-      line-height: 1.4;
-    }
-
-    #locOverlay .loc-box button {
-      width: 100%;
-      margin: 6px 0;
-      padding: 10px;
-      font-size: 1em;
-      font-weight: bold;
-      border-radius: 6px;
-      border: none;
-      cursor: pointer;
-    }
-  `;
-  document.head.appendChild(style);
-})();
-
-// +++++++++++++++++
-
 // ==========================
-// SAUVEGARDE OBSERVATIONS
+// SAUVEGARDE OBSERVATIONS (résumé)
 // ==========================
 function saveObservations() {
   const obs = chronos.map(c => {
@@ -115,7 +70,7 @@ function updateDirection(i) {
 }
 
 // ==========================
-// INITIALISATION
+// INITIALISATION UI
 // ==========================
 window.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("chronos");
@@ -177,8 +132,8 @@ window.addEventListener("DOMContentLoaded", () => {
         typeof DeviceOrientationEvent !== "undefined" &&
         typeof DeviceOrientationEvent.requestPermission === "function"
       ) {
-        const state = await DeviceOrientationEvent.requestPermission();
-        if (state !== "granted") {
+        const res = await DeviceOrientationEvent.requestPermission();
+        if (res !== "granted") {
           alert("Autorisation boussole refusée");
           return;
         }
@@ -192,13 +147,7 @@ window.addEventListener("DOMContentLoaded", () => {
     };
   });
 
-  // ✅ BOUTON LOCALISATION DU NID — UNE SEULE FOIS
-  const btnLoc = document.getElementById("btnLoc");
-  if (btnLoc) {
-    btnLoc.addEventListener("click", openLocationMenu);
-  } else {
-    console.warn("btnLoc introuvable");
-  }
+  document.getElementById("btnLoc")?.addEventListener("click", openLocationMenu);
 });
 
 // ==========================
@@ -247,7 +196,6 @@ function updateStats(i) {
 // ==========================
 function resetChrono(i) {
   const c = chronos[i];
-
   Object.assign(c, {
     running: false,
     startTime: 0,
@@ -297,6 +245,151 @@ function getPos(i) {
 }
 
 // ==========================
+// BOUSSOLE (overlay)
+// ==========================
+function openCompass(i) {
+  currentCompassIndex = i;
+  currentHeading = null;
+  lastHeading = null;
+  compassActive = false;
+
+  const overlay = document.createElement("div");
+  overlay.id = "compassOverlay";
+  overlay.innerHTML = `
+    <div class="compass-box">
+      <h2>Boussole ${chronos[i].color}</h2>
+      <div id="headingValue">---</div>
+      <button data-action="enable">Activer la boussole</button><br><br>
+      <button data-action="save">Capturer direction</button><br><br>
+      <button data-action="close">Fermer</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+}
+
+// ==========================
+// ORIENTATION
+// ==========================
+function onOrientation(e) {
+  if (!compassActive) return;
+
+  let heading = null;
+
+  if (e.webkitCompassHeading !== undefined) {
+    heading = e.webkitCompassHeading;
+  } else if (e.alpha !== null) {
+    heading = (360 - e.alpha) % 360;
+  }
+
+  if (heading === null || isNaN(heading)) return;
+
+  if (lastHeading !== null) {
+    let delta = Math.abs(heading - lastHeading);
+    if (delta > 180) delta = 360 - delta;
+    if (delta > 25) return;
+  }
+
+  lastHeading = heading;
+  currentHeading = Math.round(heading);
+
+  const el = document.getElementById("headingValue");
+  if (el) el.textContent = currentHeading + "°";
+}
+
+// ==========================
+// GESTION BOUTONS BOUSSOLE
+// ==========================
+document.addEventListener("click", async e => {
+  const btn = e.target.closest("button");
+  if (!btn || !btn.dataset.action) return;
+
+  const action = btn.dataset.action;
+
+  if (action === "enable" && !compassActive) {
+    if (
+      typeof DeviceOrientationEvent !== "undefined" &&
+      typeof DeviceOrientationEvent.requestPermission === "function"
+    ) {
+      const res = await DeviceOrientationEvent.requestPermission();
+      if (res !== "granted") return;
+    }
+
+    window.addEventListener("deviceorientation", onOrientation, true);
+    compassActive = true;
+  }
+
+  if (action === "save") {
+    if (currentHeading === null) return;
+    chronos[currentCompassIndex].directions.push(currentHeading);
+    updateDirection(currentCompassIndex);
+  }
+
+  if (action === "close") {
+    window.removeEventListener("deviceorientation", onOrientation, true);
+    compassActive = false;
+    document.getElementById("compassOverlay")?.remove();
+  }
+});
+
+// ==========================
+// DÉTAIL
+// ==========================
+function openDET(i) {
+  detIndex = i;
+  const c = chronos[i];
+
+  const overlay = document.createElement("div");
+  overlay.id = "detOverlay";
+  overlay.className = c.color;
+
+  overlay.innerHTML = `
+    <div class="det-box">
+      <h2>Détail ${c.color}</h2>
+
+      ${c.essais.map((t, k) => `
+        <div class="det-line">
+          Essai ${k + 1} : ${Math.ceil(t)} s
+          <button class="del-essai" data-k="${k}">Supprimer</button>
+        </div>
+      `).join("")}
+
+      <hr>
+      <h3>Directions</h3>
+
+      ${c.directions.map((d, k) => `
+        <div class="det-line">
+          ${d}°
+          <button class="del-dir" data-k="${k}">Supprimer</button>
+        </div>
+      `).join("")}
+
+      <br>
+      <button id="closeDET">Fermer</button>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  overlay.querySelector("#closeDET").onclick = () => overlay.remove();
+
+  overlay.querySelectorAll(".del-essai").forEach(btn => {
+    btn.onclick = () => {
+      chronos[detIndex].essais.splice(btn.dataset.k, 1);
+      updateStats(detIndex);
+      openDET(detIndex);
+    };
+  });
+
+  overlay.querySelectorAll(".del-dir").forEach(btn => {
+    btn.onclick = () => {
+      chronos[detIndex].directions.splice(btn.dataset.k, 1);
+      updateDirection(detIndex);
+      openDET(detIndex);
+    };
+  });
+}
+
+// ==========================
 // LOCALISATION DU NID
 // ==========================
 function openLocationMenu() {
@@ -308,90 +401,32 @@ function openLocationMenu() {
     <div class="loc-box">
       <h2>Localisation du nid</h2>
 
-      <button data-action="local">
-        🗺️ Carte avec les données du smartphone
-      </button><br><br>
-
-      <button data-action="send">
-        📤 Envoi des données smartphone vers la carte partagée
-      </button><br><br>
-
-      <button data-action="shared">
-        🌍 Carte partagée autour du smartphone (10 km)
-      </button><br><br>
-
+      <button data-action="local">🗺️ Carte locale</button>
+      <button data-action="send">📤 Envoi vers carte partagée</button>
+      <button data-action="shared">🌍 Carte partagée (10 km)</button>
       <button data-action="close">Fermer</button>
     </div>
   `;
 
   document.body.appendChild(overlay);
 
-  // 🔒 FORÇAGE STYLE OVERLAY (sécurité absolue)
-  overlay.style.position = "fixed";
-  overlay.style.top = "0";
-  overlay.style.left = "0";
-  overlay.style.width = "100vw";
-  overlay.style.height = "100vh";
-  overlay.style.background = "rgba(0,0,0,0.6)";
-  overlay.style.display = "flex";
-  overlay.style.alignItems = "center";
-  overlay.style.justifyContent = "center";
-  overlay.style.zIndex = "99999";
-
-  // 🔒 FORÇAGE STYLE BOÎTE
-  const box = overlay.querySelector(".loc-box");
-  if (box) {
-    box.style.background = "#fff";
-    box.style.padding = "20px";
-    box.style.borderRadius = "12px";
-    box.style.width = "90%";
-    box.style.maxWidth = "420px";
-    box.style.textAlign = "center";
-  }
-
-  // actions boutons
   overlay.addEventListener("click", async e => {
     const btn = e.target.closest("button");
     if (!btn) return;
 
     const action = btn.dataset.action;
 
-    if (action === "local") {
-      overlay.remove();
-      location.href = "map.html";
-    }
-
-    if (action === "shared") {
-      overlay.remove();
-      location.href = "map.html?mode=shared";
-    }
-
-    if (action === "send") {
-      await sendGeoJSON();
-    }
-
-    if (action === "close") {
-      overlay.remove();
-    }
-  });
-
-  // clic hors boîte → fermer
-  overlay.addEventListener("click", e => {
-    if (e.target === overlay) overlay.remove();
+    if (action === "local") location.href = "map.html";
+    if (action === "shared") location.href = "map.html?mode=shared";
+    if (action === "close") overlay.remove();
   });
 }
 
-
 // ==========================
-// EXPORT GLOBALS
+// CONTACT
 // ==========================
-window.__chronos = chronos;
-
 document.addEventListener("DOMContentLoaded", () => {
-  const btnMail = document.getElementById("btnMail");
-  if (!btnMail) return;
-
-  btnMail.addEventListener("click", () => {
+  document.getElementById("btnMail")?.addEventListener("click", () => {
     window.open(
       "https://docs.google.com/forms/d/e/1FAIpQLSdZZLGB8u3ULsnCr6GbNkQ9mVIAhWCk2NEatUOeeElGAoMcmg/viewform",
       "_blank",
@@ -400,5 +435,7 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-
-
+// ==========================
+// EXPORT DEBUG
+// ==========================
+window.__chronos = chronos;
