@@ -275,18 +275,22 @@ function onOrientation(e) {
 
   let heading = null;
 
-  if (e.webkitCompassHeading !== undefined) {
+  // iOS (Safari)
+  if (typeof e.webkitCompassHeading === "number") {
     heading = e.webkitCompassHeading;
-  } else if (e.alpha !== null) {
+  }
+  // Android (Chrome)
+  else if (e.absolute === true && typeof e.alpha === "number") {
     heading = (360 - e.alpha) % 360;
   }
 
   if (heading === null || isNaN(heading)) return;
 
+  // filtre anti-sauts
   if (lastHeading !== null) {
     let delta = Math.abs(heading - lastHeading);
     if (delta > 180) delta = 360 - delta;
-    if (delta > 25) return;
+    if (delta > 20) return;
   }
 
   lastHeading = heading;
@@ -439,3 +443,4 @@ document.addEventListener("DOMContentLoaded", () => {
 // EXPORT DEBUG
 // ==========================
 window.__chronos = chronos;
+
