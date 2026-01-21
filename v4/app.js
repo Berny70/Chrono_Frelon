@@ -317,9 +317,15 @@ document.addEventListener("click", async e => {
       const res = await DeviceOrientationEvent.requestPermission();
       if (res !== "granted") return;
     }
-
+    
+    lastHeading = null;
+    currentHeading = null;
+    
+    window.addEventListener("deviceorientationabsolute", onOrientation, true);
     window.addEventListener("deviceorientation", onOrientation, true);
+    
     compassActive = true;
+
   }
 
   if (action === "save") {
@@ -330,7 +336,12 @@ document.addEventListener("click", async e => {
 
   if (action === "close") {
     window.removeEventListener("deviceorientation", onOrientation, true);
+    window.removeEventListener("deviceorientationabsolute", onOrientation, true);
+    
     compassActive = false;
+    lastHeading = null;
+    currentHeading = null;
+
     document.getElementById("compassOverlay")?.remove();
   }
 });
@@ -443,4 +454,5 @@ document.addEventListener("DOMContentLoaded", () => {
 // EXPORT DEBUG
 // ==========================
 window.__chronos = chronos;
+
 
