@@ -477,6 +477,27 @@ body {
   background: #9e9e9e;
   color: #000;
 }
+/* ==========================
+   GPS Spinner 
+   ========================== */
+.gps-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid #ccc;
+  border-top: 2px solid #4caf50;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  vertical-align: middle;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+
+
+
 
 
 
