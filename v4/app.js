@@ -236,8 +236,10 @@ setInterval(() => {
 // ==========================
     function getPos(i) {
       // feedback immédiat utilisateur
-      document.getElementById(`lat${i}`).textContent = "…";
-      document.getElementById(`lon${i}`).textContent = "…";
+          document.getElementById(`lat${i}`).innerHTML =
+            '<span class="gps-spinner"></span>';
+          document.getElementById(`lon${i}`).textContent = "GPS…";
+
     
       navigator.geolocation.getCurrentPosition(
         pos => {
@@ -482,6 +484,7 @@ document.addEventListener("DOMContentLoaded", () => {
 // EXPORT DEBUG
 // ==========================
 window.__chronos = chronos;
+
 
 
 
