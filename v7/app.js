@@ -286,15 +286,43 @@ setInterval(() => {
 // ==========================
 // POSITION GPS
 // ==========================
-function getPos(i) {
-  navigator.geolocation.getCurrentPosition(pos => {
-    chronos[i].lat = pos.coords.latitude.toFixed(5);
-    chronos[i].lon = pos.coords.longitude.toFixed(5);
-    document.getElementById(`lat${i}`).textContent = chronos[i].lat;
-    document.getElementById(`lon${i}`).textContent = chronos[i].lon;
-    saveObservations();
-  });
-}
+    function getPos(i) {
+      // feedback immédiat utilisateur
+      document.getElementById(`lat${i}`).textContent = "…";
+      document.getElementById(`lon${i}`).textContent = "…";
+    
+      navigator.geolocation.getCurrentPosition(
+        pos => {
+          chronos[i].lat = pos.coords.latitude.toFixed(5);
+          chronos[i].lon = pos.coords.longitude.toFixed(5);
+    
+          document.getElementById(`lat${i}`).textContent = chronos[i].lat;
+          document.getElementById(`lon${i}`).textContent = chronos[i].lon;
+    
+          // journal horodaté (V7.4)
+          chronos[i].log.push(
+            logObservation("position", {
+              lat: chronos[i].lat,
+              lon: chronos[i].lon,
+              accuracy: pos.coords.accuracy
+            })
+          );
+    
+          saveObservations();
+        },
+        err => {
+          alert("GPS indisponible ou refusé");
+          document.getElementById(`lat${i}`).textContent = "--";
+          document.getElementById(`lon${i}`).textContent = "--";
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 20000,
+          maximumAge: 0
+        }
+      );
+    }
+
 
 // ==========================
 // LOCALISATION DU NID
@@ -399,6 +427,7 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   });
 });
+
 
 
 
