@@ -8,10 +8,10 @@ mettre à jour des paramètres (calibration, seuils, nom, réseau…)
 Le tout sans application native, directement depuis le navigateur.
 
 [ Smartphone ]
-   └── Navigateur (Chrome / Edge / Android)
-         └── PWA (HTML / JS / CSS)
-               └── Web Bluetooth API
-                     └── BLE
-                           └── ESP32 (GATT Server)
-                                   └── Balance connectée
+.....└── Navigateur (Chrome / Edge / Android)
+..........└── PWA (HTML / JS / CSS)
+...............└── Web Bluetooth API
+.....................└── BLE
+..........................└── ESP32 (GATT Server)
+................................└── Balance connectée
 
