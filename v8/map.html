@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Localisation du nid</title>
+  <title data-i18n="map_title">Localisation du nid</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- Leaflet -->
@@ -22,6 +22,18 @@
       width: 100vw;
     }
 
+    #btnBackMap {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      z-index: 2000;
+      padding: 6px 10px;
+      font-size: 1em;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+    }
+
     .legend {
       position: absolute;
       bottom: 10px;
@@ -36,18 +48,27 @@
 </head>
 
 <body>
-<button id="btnBackMap" title="Retour">⬅</button>
+
+<button id="btnBackMap" title="Retour">
+  ⬅ <span data-i18n="back">Retour</span>
+</button>
 
 <div id="map"></div>
 
 <div class="legend">
   <b>Chrono Frelon – V7</b><br>
-  Points d’observation et directions
+  <span data-i18n="map_legend">
+    Points d’observation et directions
+  </span>
 </div>
 
 <!-- Leaflet -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
+<!-- I18N -->
+<script src="./js/i18n.js"></script>
+
+<!-- MAP -->
 <script src="./map.js"></script>
 
 </body>
