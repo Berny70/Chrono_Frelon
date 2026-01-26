@@ -15,15 +15,6 @@
   "help_vars": "Explication de l’application",
   "help_contact": "Contact / retours terrain",
 
-  "gps_error": "GPS indisponible ou refusé",
-  "compass_denied": "Autorisation boussole refusée"
-  
-  "help_title": "Aide – Pot à Mèche",
-  "help_install": "Installation smartphone",
-  "help_vars": "Explication de l’application",
-  "help_contact": "Contact / retours terrain",
-  "close": "Fermer",
-
   "install_step_1": "Ouvrir l’application dans le navigateur",
   "install_step_2": "Menu → Ajouter à l’écran d’accueil",
   "install_step_3": "Autoriser la localisation GPS",
@@ -32,7 +23,7 @@
   "vars_1": "Chaque couleur correspond à une station",
   "vars_2": "Start / Stop : mesure le temps",
   "vars_3": "Position : relève la localisation GPS",
-  "vars_4": "Boussole : capture la direction"
+  "vars_4": "Boussole : capture la direction",
 
   "gps_error": "GPS indisponible ou refusé",
   "compass_denied": "Autorisation boussole refusée",
@@ -48,7 +39,7 @@
 
   "map_local": "Carte locale",
   "map_send": "Envoi vers carte partagée",
-  "map_shared": "Carte partagée (10 km)"
+  "map_shared": "Carte partagée (10 km)",
 
   "map_title": "Localisation du nid",
   "back": "Retour",
@@ -62,6 +53,3 @@
   "map_distance": "Distance",
   "map_direction": "Direction"
 }
-
-
-
