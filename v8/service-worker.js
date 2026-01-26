@@ -9,23 +9,23 @@ const CACHE_NAME = "chrono-frelon-v8.0";
 /* ⚠️ Liste STRICTE des fichiers à mettre en cache
    (éviter "./" qui peut matcher trop large) */
 const FILES_TO_CACHE = [
-  "/Chrono_Frelon/",
-  "/Chrono_Frelon/index.html",
-  "/Chrono_Frelon/style.css",
-  "/Chrono_Frelon/app.js",
-  "/Chrono_Frelon/version.js",
-  "/Chrono_Frelon/manifest.json",
-  "/Chrono_Frelon/icon_4_chrono_2.png",
+  "./",
+  "./index.html",
+  "./style.css",
+  "./app.js",
+  "./version.js",
+  "./manifest.json",
+  "./icon_4_chrono_2.png",
 
   // JS
-  "/Chrono_Frelon/js/i18n.js",
-  "/Chrono_Frelon/js/help.js",
+  "./js/i18n.js",
+  "./js/help.js",
 
   // I18N
-  "/Chrono_Frelon/i18n/fr.json",
-  "/Chrono_Frelon/i18n/en.json",
-  "/Chrono_Frelon/i18n/de.json",
-  "/Chrono_Frelon/i18n/it.json"
+  "./i18n/fr.json",
+  "./i18n/en.json",
+  "./i18n/de.json",
+  "./i18n/it.json"
 ];
 
 /* ==========================
@@ -97,6 +97,7 @@ self.addEventListener("message", event => {
     });
   }
 });
+
 
 
 
