@@ -1,5 +1,5 @@
 // ==========================
-// HELP – AIDE UTILISATEUR (V7)
+// HELP – MULTILINGUE (V7 i18n)
 // ==========================
 
 function openHelpPopup() {
@@ -12,22 +12,22 @@ function openHelpPopup() {
 
   overlay.innerHTML = `
     <div class="help-box">
-      <h2>Aide – Pot à Mèche</h2>
+      <h2>${t("help_title")}</h2>
 
       <button class="help-btn" data-help="install">
-        📱 Installation smartphone
+        📱 ${t("help_install")}
       </button>
 
       <button class="help-btn" data-help="vars">
-        📊 Explication de l’application
+        📊 ${t("help_vars")}
       </button>
 
       <button class="help-btn" data-help="contact">
-        ✉️ Contact / retours terrain
+        ✉️ ${t("help_contact")}
       </button>
 
       <br>
-      <button onclick="closeHelp()">Fermer</button>
+      <button onclick="closeHelp()">${t("close")}</button>
     </div>
   `;
 
@@ -56,25 +56,24 @@ function openHelpSection(type) {
 
   if (type === "install") {
     html = `
-      <h3>Installation sur smartphone</h3>
+      <h3>${t("help_install")}</h3>
       <ul>
-        <li>Ouvrir l’application dans le navigateur</li>
-        <li>Menu → <b>Ajouter à l’écran d’accueil</b></li>
-        <li>Autoriser la localisation GPS</li>
-        <li>Autoriser l’accès à la boussole</li>
+        <li>${t("install_step_1")}</li>
+        <li>${t("install_step_2")}</li>
+        <li>${t("install_step_3")}</li>
+        <li>${t("install_step_4")}</li>
       </ul>
     `;
   }
 
   if (type === "vars") {
     html = `
-      <h3>Fonctionnement de l’application</h3>
+      <h3>${t("help_vars")}</h3>
       <ul>
-        <li>Chaque couleur correspond à une station</li>
-        <li>Start / Stop : mesure le temps</li>
-        <li>Position : relève la localisation</li>
-        <li>Boussole : capture la direction</li>
-        <li>Détail : supprime les valeurs aberrantes</li>
+        <li>${t("vars_1")}</li>
+        <li>${t("vars_2")}</li>
+        <li>${t("vars_3")}</li>
+        <li>${t("vars_4")}</li>
       </ul>
     `;
   }
@@ -91,7 +90,7 @@ function openHelpSubPopup(html) {
     <div class="help-box">
       ${html}
       <br>
-      <button onclick="closeHelp()">Fermer</button>
+      <button onclick="closeHelp()">${t("close")}</button>
     </div>
   `;
 
