@@ -1,1 +1,20 @@
+{
+  "app_title": "Pot à Mèche",
+  "help": "Aide",
+  "start": "Start / Stop",
+  "reset": "Reset",
+  "position": "Position",
+  "compass": "Boussole",
+  "detail": "Détail",
+  "capture": "Capture d’écran",
+  "nest_location": "Localisation du nid",
+  "close": "Fermer",
 
+  "help_title": "Aide – Pot à Mèche",
+  "help_install": "Installation smartphone",
+  "help_vars": "Explication de l’application",
+  "help_contact": "Contact / retours terrain",
+
+  "gps_error": "GPS indisponible ou refusé",
+  "compass_denied": "Autorisation boussole refusée"
+}
