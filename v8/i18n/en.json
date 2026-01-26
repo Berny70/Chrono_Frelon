@@ -49,6 +49,19 @@
   "map_local": "Local map",
   "map_send": "Send to shared map",
   "map_shared": "Shared map (10 km)"
+
+  "map_title": "Nest location",
+  "back": "Back",
+  "map_legend": "Observation points and directions",
+
+  "map_no_data_title": "No usable data for map display",
+  "map_no_data_1": "record a position",
+  "map_no_data_2": "capture a direction using the compass",
+
+  "map_station": "Station",
+  "map_distance": "Distance",
+  "map_direction": "Direction"
 }
+
 
 
