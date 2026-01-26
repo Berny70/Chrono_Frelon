@@ -33,6 +33,22 @@
   "vars_2": "Start / Stop: measures time",
   "vars_3": "Position: records GPS location",
   "vars_4": "Compass: captures direction"
+
+  "gps_error": "GPS unavailable or denied",
+  "compass_denied": "Compass permission denied",
+
+  "compass_title": "Compass",
+  "compass_enable": "Enable compass",
+  "compass_save": "Capture direction",
+
+  "detail_title": "Details",
+  "try": "Trial",
+  "delete": "Delete",
+  "directions": "Directions",
+
+  "map_local": "Local map",
+  "map_send": "Send to shared map",
+  "map_shared": "Shared map (10 km)"
 }
 
 
