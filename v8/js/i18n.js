@@ -16,7 +16,6 @@ async function loadLang(lang) {
 
   console.log("[i18n] loading:", lang);
 
-  // 🔑 BASE DYNAMIQUE (ex: /Chrono_Frelon/v8/)
   const BASE = location.pathname.replace(/\/[^\/]*$/, "/");
   const url = `${BASE}i18n/${lang}.json`;
 
@@ -28,7 +27,6 @@ async function loadLang(lang) {
   applyTranslations();
   updateLangButtons();
 }
-
 
 // ==========================
 // TRADUCTION
@@ -50,7 +48,7 @@ function updateLangButtons() {
 }
 
 // ==========================
-// INIT AUTOMATIQUE 🔥
+// INIT AUTOMATIQUE
 // ==========================
 document.addEventListener("DOMContentLoaded", () => {
   console.log("[i18n] init");
@@ -66,7 +64,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ==========================
-// CLIC BOUTONS LANGUE (GLOBAL)
+// CLIC BOUTONS LANGUE
 // ==========================
 document.addEventListener("click", e => {
   const btn = e.target.closest("button[data-lang]");
