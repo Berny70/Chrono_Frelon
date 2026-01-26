@@ -16,12 +16,19 @@ async function loadLang(lang) {
 
   console.log("[i18n] loading:", lang);
 
-  const res = await fetch(`../i18n/${lang}.json`);
+  // 🔑 BASE DYNAMIQUE (ex: /Chrono_Frelon/v8/)
+  const BASE = location.pathname.replace(/\/[^\/]*$/, "/");
+  const url = `${BASE}i18n/${lang}.json`;
+
+  console.log("[i18n] fetch:", url);
+
+  const res = await fetch(url);
   STRINGS = await res.json();
 
   applyTranslations();
   updateLangButtons();
 }
+
 
 // ==========================
 // TRADUCTION
