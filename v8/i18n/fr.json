@@ -33,5 +33,22 @@
   "vars_2": "Start / Stop : mesure le temps",
   "vars_3": "Position : relève la localisation GPS",
   "vars_4": "Boussole : capture la direction"
+
+  "gps_error": "GPS indisponible ou refusé",
+  "compass_denied": "Autorisation boussole refusée",
+
+  "compass_title": "Boussole",
+  "compass_enable": "Activer la boussole",
+  "compass_save": "Capturer direction",
+
+  "detail_title": "Détail",
+  "try": "Essai",
+  "delete": "Supprimer",
+  "directions": "Directions",
+
+  "map_local": "Carte locale",
+  "map_send": "Envoi vers carte partagée",
+  "map_shared": "Carte partagée (10 km)"
 }
+
 
