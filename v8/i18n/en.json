@@ -17,5 +17,22 @@
 
   "gps_error": "GPS unavailable or denied",
   "compass_denied": "Compass permission denied"
+
+  "help_title": "Help – Wick Trap",
+  "help_install": "Smartphone installation",
+  "help_vars": "How the app works",
+  "help_contact": "Contact / field feedback",
+  "close": "Close",
+
+  "install_step_1": "Open the app in your browser",
+  "install_step_2": "Menu → Add to home screen",
+  "install_step_3": "Allow GPS location access",
+  "install_step_4": "Allow compass access",
+
+  "vars_1": "Each color represents one station",
+  "vars_2": "Start / Stop: measures time",
+  "vars_3": "Position: records GPS location",
+  "vars_4": "Compass: captures direction"
 }
+
 
