@@ -17,8 +17,8 @@
 
   "install_step_1": "Ouvrir l’application dans le navigateur",
   "install_step_2": "Menu → Ajouter à l’écran d’accueil",
-  "install_step_3": "Autoriser la localisation GPS",
-  "install_step_4": "Autoriser l’accès à la boussole",
+  "install_step_3": "Cliquer sur Position",
+  "install_step_4": "Clique sur Boussole",
 
   "vars_1": "Chaque couleur correspond à une station",
   "vars_2": "Start / Stop : mesure le temps",
