@@ -494,6 +494,33 @@ body {
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
+/* ==========================
+   langue
+   ========================== */
+.lang-buttons {
+  display: flex;
+  gap: 4px;
+  margin-right: 6px;
+}
+
+.lang-buttons button {
+  background: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 1em;
+  cursor: pointer;
+}
+
+.lang-buttons button.active {
+  background: #2196f3;
+  color: #fff;
+  border-color: #2196f3;
+}
+
+.lang-buttons button:hover {
+  opacity: 0.85;
+}
 
 
 
