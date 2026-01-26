@@ -1,1 +1,21 @@
+{
+  "app_title": "Wick Trap",
+  "help": "Help",
+  "start": "Start / Stop",
+  "reset": "Reset",
+  "position": "Position",
+  "compass": "Compass",
+  "detail": "Details",
+  "capture": "Screenshot",
+  "nest_location": "Nest location",
+  "close": "Close",
+
+  "help_title": "Help – Wick Trap",
+  "help_install": "Smartphone installation",
+  "help_vars": "How the app works",
+  "help_contact": "Contact / field feedback",
+
+  "gps_error": "GPS unavailable or denied",
+  "compass_denied": "Compass permission denied"
+}
 
