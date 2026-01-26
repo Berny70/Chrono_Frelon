@@ -500,30 +500,29 @@ body {
 .lang-bar {
   display: flex;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
   margin: 6px 0 12px 0;
 }
 
 .lang-bar button {
-  background: #f5f5f5;
-  border: 1px solid #ccc;
+  background: #f0f0f0;
+  border: 1px solid #999;
   border-radius: 6px;
-  padding: 4px 10px;
+  padding: 4px 12px;
   font-size: 0.9em;
+  font-weight: bold;
   cursor: pointer;
 }
 
 .lang-bar button.active {
-  background: #2196f3;
+  background: #000;
   color: #fff;
-  border-color: #2196f3;
+  border-color: #000;
 }
 
 .lang-bar button:hover {
   opacity: 0.85;
 }
-
-
 
 
 
