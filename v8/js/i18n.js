@@ -16,9 +16,7 @@ async function loadLang(lang) {
 
   console.log("[i18n] loading:", lang);
 
-  const BASE = location.pathname.replace(/\/[^\/]*$/, "/");
-  const url = `${BASE}i18n/${lang}.json`;
-
+  const url = `./i18n/${lang}.json`;
   console.log("[i18n] fetch:", url);
 
   const res = await fetch(url);
@@ -27,6 +25,7 @@ async function loadLang(lang) {
   applyTranslations();
   updateLangButtons();
 }
+
 
 // ==========================
 // TRADUCTION
