@@ -1,5 +1,5 @@
 // ==========================
-// DONNÉES GLOBALES – V7.3
+// DONNÉES GLOBALES – V7 i18n
 // ==========================
 const chronoColors = ["red", "blue", "green", "white"];
 const chronos = [];
@@ -31,7 +31,7 @@ function moyenneCirculaire(degs) {
 }
 
 // ==========================
-// SAUVEGARDE OBSERVATIONS (résumé)
+// SAUVEGARDE OBSERVATIONS
 // ==========================
 function saveObservations() {
   const obs = chronos.map(c => {
@@ -93,9 +93,9 @@ window.addEventListener("DOMContentLoaded", () => {
     div.className = `chrono ${color}`;
     div.innerHTML = `
       <div class="row row-main">
-        <button class="start">Start / Stop</button>
+        <button class="start">${t("start")}</button>
         <span class="time" id="t${i}">0.00 s</span>
-        <button class="reset">Reset</button>
+        <button class="reset">${t("reset")}</button>
       </div>
 
       <div class="row row-info">
@@ -114,9 +114,9 @@ window.addEventListener("DOMContentLoaded", () => {
       </div>
 
       <div class="row row-actions">
-        <button class="pos">Position</button>
-        <button class="compass">Boussole</button>
-        <button class="det">Détail</button>
+        <button class="pos">${t("position")}</button>
+        <button class="compass">${t("compass")}</button>
+        <button class="det">${t("detail")}</button>
       </div>
     `;
 
@@ -134,7 +134,7 @@ window.addEventListener("DOMContentLoaded", () => {
       ) {
         const res = await DeviceOrientationEvent.requestPermission();
         if (res !== "granted") {
-          alert("Autorisation boussole refusée");
+          alert(t("compass_denied"));
           return;
         }
       }
@@ -234,48 +234,36 @@ setInterval(() => {
 // ==========================
 // POSITION GPS
 // ==========================
-    function getPos(i) {
-      // feedback immédiat utilisateur
-          document.getElementById(`lat${i}`).innerHTML =
-            '<span class="gps-spinner"></span>';
-          document.getElementById(`lon${i}`).textContent = "GPS…";
+function getPos(i) {
+  document.getElementById(`lat${i}`).innerHTML =
+    '<span class="gps-spinner"></span>';
+  document.getElementById(`lon${i}`).textContent = "GPS…";
 
-    
-      navigator.geolocation.getCurrentPosition(
-        pos => {
-          chronos[i].lat = pos.coords.latitude.toFixed(5);
-          chronos[i].lon = pos.coords.longitude.toFixed(5);
-    
-          document.getElementById(`lat${i}`).textContent = chronos[i].lat;
-          document.getElementById(`lon${i}`).textContent = chronos[i].lon;
-    
-          // journal horodaté (V7.4)
-          chronos[i].log.push(
-            logObservation("position", {
-              lat: chronos[i].lat,
-              lon: chronos[i].lon,
-              accuracy: pos.coords.accuracy
-            })
-          );
-    
-          saveObservations();
-        },
-        err => {
-          alert("GPS indisponible ou refusé");
-          document.getElementById(`lat${i}`).textContent = "--";
-          document.getElementById(`lon${i}`).textContent = "--";
-        },
-        {
-          enableHighAccuracy: true,
-          timeout: 20000,
-          maximumAge: 0
-        }
-      );
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      chronos[i].lat = pos.coords.latitude.toFixed(5);
+      chronos[i].lon = pos.coords.longitude.toFixed(5);
+
+      document.getElementById(`lat${i}`).textContent = chronos[i].lat;
+      document.getElementById(`lon${i}`).textContent = chronos[i].lon;
+
+      saveObservations();
+    },
+    () => {
+      alert(t("gps_error"));
+      document.getElementById(`lat${i}`).textContent = "--";
+      document.getElementById(`lon${i}`).textContent = "--";
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 20000,
+      maximumAge: 0
     }
-
+  );
+}
 
 // ==========================
-// BOUSSOLE (overlay)
+// BOUSSOLE
 // ==========================
 function openCompass(i) {
   currentCompassIndex = i;
@@ -287,11 +275,11 @@ function openCompass(i) {
   overlay.id = "compassOverlay";
   overlay.innerHTML = `
     <div class="compass-box">
-      <h2>Boussole ${chronos[i].color}</h2>
+      <h2>${t("compass_title")} ${chronos[i].color}</h2>
       <div id="headingValue">---</div>
-      <button data-action="enable">Activer la boussole</button><br><br>
-      <button data-action="save">Capturer direction</button><br><br>
-      <button data-action="close">Fermer</button>
+      <button data-action="enable">${t("compass_enable")}</button><br><br>
+      <button data-action="save">${t("compass_save")}</button><br><br>
+      <button data-action="close">${t("close")}</button>
     </div>
   `;
   document.body.appendChild(overlay);
@@ -305,18 +293,14 @@ function onOrientation(e) {
 
   let heading = null;
 
-  // iOS (Safari)
   if (typeof e.webkitCompassHeading === "number") {
     heading = e.webkitCompassHeading;
-  }
-  // Android (Chrome)
-  else if (e.absolute === true && typeof e.alpha === "number") {
+  } else if (e.absolute === true && typeof e.alpha === "number") {
     heading = (360 - e.alpha) % 360;
   }
 
   if (heading === null || isNaN(heading)) return;
 
-  // filtre anti-sauts
   if (lastHeading !== null) {
     let delta = Math.abs(heading - lastHeading);
     if (delta > 180) delta = 360 - delta;
@@ -326,8 +310,8 @@ function onOrientation(e) {
   lastHeading = heading;
   currentHeading = Math.round(heading);
 
-  const el = document.getElementById("headingValue");
-  if (el) el.textContent = currentHeading + "°";
+  document.getElementById("headingValue").textContent =
+    currentHeading + "°";
 }
 
 // ==========================
@@ -347,15 +331,14 @@ document.addEventListener("click", async e => {
       const res = await DeviceOrientationEvent.requestPermission();
       if (res !== "granted") return;
     }
-    
+
     lastHeading = null;
     currentHeading = null;
-    
+
     window.addEventListener("deviceorientationabsolute", onOrientation, true);
     window.addEventListener("deviceorientation", onOrientation, true);
-    
-    compassActive = true;
 
+    compassActive = true;
   }
 
   if (action === "save") {
@@ -367,7 +350,7 @@ document.addEventListener("click", async e => {
   if (action === "close") {
     window.removeEventListener("deviceorientation", onOrientation, true);
     window.removeEventListener("deviceorientationabsolute", onOrientation, true);
-    
+
     compassActive = false;
     lastHeading = null;
     currentHeading = null;
@@ -389,27 +372,31 @@ function openDET(i) {
 
   overlay.innerHTML = `
     <div class="det-box">
-      <h2>Détail ${c.color}</h2>
+      <h2>${t("detail_title")} ${c.color}</h2>
 
-      ${c.essais.map((t, k) => `
+      ${c.essais.map((tps, k) => `
         <div class="det-line">
-          Essai ${k + 1} : ${Math.ceil(t)} s
-          <button class="del-essai" data-k="${k}">Supprimer</button>
+          ${t("try")} ${k + 1} : ${Math.ceil(tps)} s
+          <button class="del-essai" data-k="${k}">
+            ${t("delete")}
+          </button>
         </div>
       `).join("")}
 
       <hr>
-      <h3>Directions</h3>
+      <h3>${t("directions")}</h3>
 
       ${c.directions.map((d, k) => `
         <div class="det-line">
           ${d}°
-          <button class="del-dir" data-k="${k}">Supprimer</button>
+          <button class="del-dir" data-k="${k}">
+            ${t("delete")}
+          </button>
         </div>
       `).join("")}
 
       <br>
-      <button id="closeDET">Fermer</button>
+      <button id="closeDET">${t("close")}</button>
     </div>
   `;
 
@@ -444,18 +431,18 @@ function openLocationMenu() {
   overlay.id = "locOverlay";
   overlay.innerHTML = `
     <div class="loc-box">
-      <h2>Localisation du nid</h2>
+      <h2>${t("nest_location")}</h2>
 
-      <button data-action="local">🗺️ Carte locale</button>
-      <button data-action="send">📤 Envoi vers carte partagée</button>
-      <button data-action="shared">🌍 Carte partagée (10 km)</button>
-      <button data-action="close">Fermer</button>
+      <button data-action="local">🗺️ ${t("map_local")}</button>
+      <button data-action="send">📤 ${t("map_send")}</button>
+      <button data-action="shared">🌍 ${t("map_shared")}</button>
+      <button data-action="close">${t("close")}</button>
     </div>
   `;
 
   document.body.appendChild(overlay);
 
-  overlay.addEventListener("click", async e => {
+  overlay.addEventListener("click", e => {
     const btn = e.target.closest("button");
     if (!btn) return;
 
@@ -484,7 +471,3 @@ document.addEventListener("DOMContentLoaded", () => {
 // EXPORT DEBUG
 // ==========================
 window.__chronos = chronos;
-
-
-
-
