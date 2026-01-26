@@ -25,25 +25,21 @@ const points = observations
 const savedView = localStorage.getItem("mapView");
 
 if (savedView) {
-  // 🔁 Restaurer le dernier zoom utilisateur
   const { center, zoom } = JSON.parse(savedView);
   map.setView(center, zoom);
 
 } else if (points.length === 1) {
-  // 📍 Une seule station → zoom terrain
   map.setView(points[0], 16);
 
 } else if (points.length > 1) {
-  // 📍📍 Plusieurs stations → tout afficher
   const bounds = L.latLngBounds(points);
   map.fitBounds(bounds, { padding: [30, 30] });
 
 } else {
-  // 🌍 Fallback (France)
   map.setView([46.5, 2.5], 6);
 }
 
-// Sauvegarde du zoom et du centre si l’utilisateur bouge la carte
+// Sauvegarde du zoom utilisateur
 map.on("moveend", () => {
   const center = map.getCenter();
   const zoom = map.getZoom();
@@ -62,10 +58,9 @@ map.on("moveend", () => {
 // ==========================
 if (observations.length === 0) {
   alert(
-    "Aucune donnée exploitable pour la localisation.\n\n" +
-    "Pour utiliser la carte, veuillez au minimum :\n" +
-    "• saisir une position\n" +
-    "• et capturer une direction avec la boussole."
+    t("map_no_data_title") + "\n\n" +
+    "• " + t("map_no_data_1") + "\n" +
+    "• " + t("map_no_data_2")
   );
 }
 
@@ -80,7 +75,6 @@ observations.forEach(obs => {
     obs.direction == null
   ) return;
 
-
   const start = [obs.lat, obs.lon];
 
   // Point d’observation
@@ -92,9 +86,9 @@ observations.forEach(obs => {
   }).addTo(map);
 
   marker.bindPopup(
-    `<b>${obs.color}</b><br>
-     Dist: ${obs.distance} m<br>
-     Dir: ${obs.direction}°`
+    `<b>${t("map_station")} ${obs.color}</b><br>
+     ${t("map_distance")}: ${obs.distance} m<br>
+     ${t("map_direction")}: ${obs.direction}°`
   );
 
   // Calcul du point d’arrivée
@@ -138,7 +132,10 @@ function destinationPoint(lat, lon, bearing, distance) {
     lon: λ2 * 180 / Math.PI
   };
 }
+
+// ==========================
+// BOUTON RETOUR
+// ==========================
 document.getElementById("btnBackMap")?.addEventListener("click", () => {
   location.href = "index.html";
 });
-
