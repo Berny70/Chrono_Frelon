@@ -38,14 +38,6 @@
     <div class="author">B. Barrois</div>
    <div class="top-right-sub">
 
-      <!-- Boutons langue -->
-      <div class="lang-buttons">
-        <button data-lang="fr" title="Français">🇫🇷</button>
-        <button data-lang="en" title="English">🇬🇧</button>
-        <button data-lang="de" title="Deutsch">🇩🇪</button>
-        <button data-lang="it" title="Italiano">🇮🇹</button>
-      </div>
-    
       <!-- Contact -->
       <button id="btnMail" title="Contact" type="button">✉️</button>
     
@@ -71,7 +63,13 @@
     Localisation du nid
   </button>
 </div>
-
+<!-- Sélecteur de langue centré -->
+<div class="lang-bar">
+  <button data-lang="fr">🇫🇷 FR</button>
+  <button data-lang="en">🇬🇧 EN</button>
+  <button data-lang="de">🇩🇪 DE</button>
+  <button data-lang="it">🇮🇹 IT</button>
+</div>
 <!-- ==========================
      CONTENEUR DES CHRONOS
 ========================== -->
@@ -115,6 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
   setInterval(updateDateTime, 1000);
 });
 </script>
+<!-- Sélecteur de langue -->
 
 <!-- ==========================
      I18N (⚠️ AVANT app.js & help.js)
