@@ -3,8 +3,8 @@
    Version : 7.6
    ========================== */
 
-const APP_VERSION = "8.1";
-const CACHE_NAME = "chrono-frelon-v8.1";
+const APP_VERSION = "8.2";
+const CACHE_NAME = "chrono-frelon-v8.2";
 
 /* ⚠️ Liste STRICTE des fichiers à mettre en cache
    (éviter "./" qui peut matcher trop large) */
@@ -97,6 +97,7 @@ self.addEventListener("message", event => {
     });
   }
 });
+
 
 
 
