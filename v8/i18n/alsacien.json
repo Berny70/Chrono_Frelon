@@ -1,0 +1,55 @@
+{
+“app_title”: "Dòpf mit Doch",
+“help”: “Hilf”,
+“start”: "Start / Stopp",
+“reset”: "Zrìcksetze",
+“position”: “Position”,
+“compass”: “Kompass”,
+“detail”: “Detail”,
+“capture”: “Bildschirmfoto”,
+“nest_location”: “Neschtlokalisierung”,
+“close”: "Zùmàche",
+
+“help_title”: "Hilf – Dòpf mit Doch",
+“help_install”: “Installation uff em Smartphone”,
+“help_vars”: "Erklärung vun dr App",
+“help_contact”: "Kontakt / Rìckmèldunge vum Feld",
+
+“install_step_1”: "D App im Browser uffmàche",
+“install_step_2”: "Menü → Zùem Startbildschirm dezùtüe",
+“install_step_3”: "GPS-Lokalisierung erlàube",
+“install_step_4”: "Kompass-Zùgriff erlàube",
+
+“vars_1”: "Jedi Fàrb stellt e Station dar",
+“vars_2”: "Start / Stopp : misst d Zìt",
+“vars_3”: "Position : nimmt d GPS-Position",
+“vars_4”: "Kompass : nimmt d Rìchtung uff",
+
+“gps_error”: "GPS nìcht verfìegbàr odr nìcht erlàubt",
+“compass_denied”: "Kompass-Zùgriff abgelehnt",
+
+“compass_title”: “Kompass”,
+“compass_enable”: “Kompass aktiviere”,
+“compass_save”: "Rìchtung speichere",
+
+“detail_title”: “Detail”,
+“try”: "Versüech",
+“delete”: "Lösche",
+“directions”: "Rìchtunge",
+
+“map_local”: "Lokali Kàrt",
+“map_send”: "Àn d gmeinsàmi Kàrt schìcke",
+“map_shared”: "Gmeinsàmi Kàrt (10 km)",
+
+“map_title”: “Neschtlokalisierung”,
+“back”: "Zrìck",
+“map_legend”: "Beobàchtùngspünkt un Rìchtunge",
+
+“map_no_data_title”: "Keni brùchbàri Dàte fer d Lokalisierung",
+“map_no_data_1”: "e Position eigèwwe",
+“map_no_data_2”: "e Rìchtung mit em Kompass uffnèhme",
+
+“map_station”: “Station”,
+“map_distance”: "Entfèrnung",
+“map_direction”: "Rìchtung"
+}
