@@ -52,7 +52,7 @@ function saveObservations() {
     };
   }).filter(Boolean);
 
-  if (obs.length > 0) {
+  if (obs.length) {
     localStorage.setItem("chronoObservations", JSON.stringify(obs));
   }
 }
@@ -60,7 +60,7 @@ function saveObservations() {
 // ==========================
 // INITIALISATION UI
 // ==========================
-document.addEventListener("DOMContentLoaded", () => {
+window.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("chronos");
   if (!container) return;
 
@@ -86,6 +86,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <span class="time" id="t${i}">0.00 s</span>
         <button class="reset">${t("reset")}</button>
       </div>
+
       <div class="row row-info">
         <div><b>Lat.:</b> <span id="lat${i}">--</span></div>
         <div><b>T.moy:</b> <span id="m${i}">0 s</span></div>
@@ -94,11 +95,13 @@ document.addEventListener("DOMContentLoaded", () => {
           <input type="number" id="vit${i}" value="${DEFAULT_VITESSE}" min="1" max="9"> m/s
         </div>
       </div>
+
       <div class="row row-info">
         <div><b>Lon.:</b> <span id="lon${i}">--</span></div>
         <div><b>Dir.:</b> <span id="dir${i}">0°</span></div>
         <div><b>Dist.:</b> <span id="d${i}">0 m</span></div>
       </div>
+
       <div class="row row-actions">
         <button class="pos">${t("position")}</button>
         <button class="compass">${t("compass")}</button>
@@ -112,25 +115,126 @@ document.addEventListener("DOMContentLoaded", () => {
     div.querySelector(".reset").onclick = () => resetChrono(i);
     div.querySelector(".pos").onclick = () => getPos(i);
     div.querySelector(".det").onclick = () => openDET(i);
+    div.querySelector(".compass").onclick = () => openCompass(i);
+
+    div.querySelector(`#vit${i}`).oninput = e => {
+      c.vitesse = +e.target.value;
+      updateStats(i);
+    };
   });
 
   document.getElementById("btnLoc")?.addEventListener("click", openLocationMenu);
 });
 
 // ==========================
-// GPS
+// START / STOP
+// ==========================
+function startStop(i) {
+  const c = chronos[i];
+  const now = Date.now();
+
+  if (!c.running) {
+    c.startTime = now;
+    c.running = true;
+  } else {
+    const elapsed = (now - c.startTime) / 1000;
+    c.running = false;
+    c.essais.push(elapsed);
+    document.getElementById(`t${i}`).textContent = elapsed.toFixed(2) + " s";
+    updateStats(i);
+  }
+}
+
+// ==========================
+// STATS
+// ==========================
+function updateStats(i) {
+  const c = chronos[i];
+
+  if (!c.essais.length) {
+    document.getElementById(`m${i}`).textContent = "0 s";
+    document.getElementById(`d${i}`).textContent = "0 m";
+    return;
+  }
+
+  const total = c.essais.reduce((a, b) => a + b, 0);
+  const moy = total / c.essais.length;
+  const dist = moy * c.vitesse;
+
+  document.getElementById(`m${i}`).textContent = Math.round(moy) + " s";
+  document.getElementById(`d${i}`).textContent = Math.round(dist) + " m";
+
+  saveObservations();
+}
+
+// ==========================
+// RESET
+// ==========================
+function resetChrono(i) {
+  const c = chronos[i];
+  Object.assign(c, {
+    running: false,
+    startTime: 0,
+    essais: [],
+    directions: [],
+    direction: 0,
+    vitesse: DEFAULT_VITESSE,
+    lat: "--",
+    lon: "--"
+  });
+
+  document.getElementById(`t${i}`).textContent = "0.00 s";
+  document.getElementById(`m${i}`).textContent = "0 s";
+  document.getElementById(`d${i}`).textContent = "0 m";
+  document.getElementById(`dir${i}`).textContent = "0°";
+  document.getElementById(`lat${i}`).textContent = "--";
+  document.getElementById(`lon${i}`).textContent = "--";
+  document.getElementById(`vit${i}`).value = DEFAULT_VITESSE;
+
+  saveObservations();
+}
+
+// ==========================
+// TICK
+// ==========================
+setInterval(() => {
+  const now = Date.now();
+  chronos.forEach((c, i) => {
+    if (c.running) {
+      document.getElementById(`t${i}`).textContent =
+        ((now - c.startTime) / 1000).toFixed(2) + " s";
+    }
+  });
+}, 50);
+
+// ==========================
+// POSITION GPS (AVEC SPINNER)
 // ==========================
 function getPos(i) {
+  document.getElementById(`lat${i}`).innerHTML =
+    '<span class="gps-spinner"></span>';
+  document.getElementById(`lon${i}`).textContent = "GPS…";
+
   navigator.geolocation.getCurrentPosition(
     pos => {
       chronos[i].lat = pos.coords.latitude.toFixed(5);
       chronos[i].lon = pos.coords.longitude.toFixed(5);
+
       document.getElementById(`lat${i}`).textContent = chronos[i].lat;
       document.getElementById(`lon${i}`).textContent = chronos[i].lon;
+
       saveObservations();
     },
-    () => alert("Erreur GPS"),
-    { enableHighAccuracy: true }
+    () => {
+      alert(t("gps_error"));
+      document.getElementById(`lat${i}`).textContent = "--";
+      document.getElementById(`lon${i}`).textContent = "--";
+    },
+    {
+      enableHighAccuracy: true,
+      timeout: 20000,
+      maximumAge: 0
+    }
   );
 }
 
@@ -151,11 +255,13 @@ function openLocationMenu() {
       <button data-action="close">${t("close")}</button>
     </div>
   `;
+
   document.body.appendChild(overlay);
 
   overlay.onclick = e => {
     const btn = e.target.closest("button");
     if (!btn) return;
+
     if (btn.dataset.action === "local") location.href = "map.html";
     if (btn.dataset.action === "shared") location.href = "map.html?mode=shared";
     if (btn.dataset.action === "send") envoyerVersCartePartagee();
@@ -192,12 +298,12 @@ async function envoyerVersCartePartagee() {
     console.error(error);
     alert("Erreur Supabase");
   } else {
-    alert("Envoyé ✔️");
+    alert("Envoyé vers la carte partagée ✅");
   }
 }
 
 // ==========================
-// === CARTE PARTAGÉE =======
+// CARTE PARTAGÉE (ISOLÉE)
 // ==========================
 document.addEventListener("DOMContentLoaded", () => {
   const mapDiv = document.getElementById("map");
@@ -217,13 +323,10 @@ document.addEventListener("DOMContentLoaded", () => {
   loadVisiblePoints(map, markers);
 });
 
-// ==========================
-// CHARGEMENT FLUIDE
-// ==========================
 async function loadVisiblePoints(map, markers) {
   const b = map.getBounds();
 
-  const { data, error } = await window.supabaseClient
+  let query = window.supabaseClient
     .from("chrono_frelon_geo")
     .select("id, lat, lon, direction, distance")
     .gte("lat", b.getSouth())
@@ -232,6 +335,13 @@ async function loadVisiblePoints(map, markers) {
     .lte("lon", b.getEast())
     .limit(1000);
 
+  const params = new URLSearchParams(location.search);
+  if (params.get("mode") !== "shared") {
+    const phoneId = localStorage.getItem("phone_id");
+    if (phoneId) query = query.eq("phone_id", phoneId);
+  }
+
+  const { data, error } = await query;
   if (error) return console.error(error);
 
   markers.clearLayers();
@@ -247,9 +357,9 @@ async function loadVisiblePoints(map, markers) {
 // DEBOUNCE
 // ==========================
 function debounce(fn, delay) {
-  let t;
-  return (...a) => {
-    clearTimeout(t);
-    t = setTimeout(() => fn(...a), delay);
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => fn(...args), delay);
   };
 }
