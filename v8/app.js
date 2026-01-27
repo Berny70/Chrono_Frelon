@@ -16,14 +16,12 @@ let compassActive = false;
 // ==========================
 function moyenneCirculaire(degs) {
   if (!degs.length) return 0;
-
   let sin = 0, cos = 0;
   degs.forEach(d => {
     const r = d * Math.PI / 180;
     sin += Math.sin(r);
     cos += Math.cos(r);
   });
-
   let a = Math.atan2(sin / degs.length, cos / degs.length);
   let deg = a * 180 / Math.PI;
   if (deg < 0) deg += 360;
@@ -60,21 +58,12 @@ function saveObservations() {
 }
 
 // ==========================
-// MISE À JOUR DIRECTION
-// ==========================
-function updateDirection(i) {
-  const c = chronos[i];
-  c.direction = moyenneCirculaire(c.directions);
-  document.getElementById(`dir${i}`).textContent = c.direction + "°";
-  saveObservations();
-}
-
-// ==========================
 // INITIALISATION UI
 // ==========================
-window.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("chronos");
-  if (!container) return; // ⬅️ IMPORTANT : page carte, on sort
+  if (!container) return;
+
   chronoColors.forEach((color, i) => {
     const c = {
       running: false,
@@ -97,7 +86,6 @@ window.addEventListener("DOMContentLoaded", () => {
         <span class="time" id="t${i}">0.00 s</span>
         <button class="reset">${t("reset")}</button>
       </div>
-
       <div class="row row-info">
         <div><b>Lat.:</b> <span id="lat${i}">--</span></div>
         <div><b>T.moy:</b> <span id="m${i}">0 s</span></div>
@@ -106,13 +94,11 @@ window.addEventListener("DOMContentLoaded", () => {
           <input type="number" id="vit${i}" value="${DEFAULT_VITESSE}" min="1" max="9"> m/s
         </div>
       </div>
-
       <div class="row row-info">
-        <div><b>Long.:</b> <span id="lon${i}">--</span></div>
+        <div><b>Lon.:</b> <span id="lon${i}">--</span></div>
         <div><b>Dir.:</b> <span id="dir${i}">0°</span></div>
         <div><b>Dist.:</b> <span id="d${i}">0 m</span></div>
       </div>
-
       <div class="row row-actions">
         <button class="pos">${t("position")}</button>
         <button class="compass">${t("compass")}</button>
@@ -126,303 +112,30 @@ window.addEventListener("DOMContentLoaded", () => {
     div.querySelector(".reset").onclick = () => resetChrono(i);
     div.querySelector(".pos").onclick = () => getPos(i);
     div.querySelector(".det").onclick = () => openDET(i);
-
-    div.querySelector(".compass").onclick = async () => {
-      if (
-        typeof DeviceOrientationEvent !== "undefined" &&
-        typeof DeviceOrientationEvent.requestPermission === "function"
-      ) {
-        const res = await DeviceOrientationEvent.requestPermission();
-        if (res !== "granted") {
-          alert(t("compass_denied"));
-          return;
-        }
-      }
-      openCompass(i);
-    };
-
-    div.querySelector(`#vit${i}`).oninput = e => {
-      c.vitesse = +e.target.value;
-      updateStats(i);
-    };
   });
 
   document.getElementById("btnLoc")?.addEventListener("click", openLocationMenu);
 });
 
 // ==========================
-// START / STOP
-// ==========================
-function startStop(i) {
-  const c = chronos[i];
-  const now = Date.now();
-
-  if (!c.running) {
-    c.startTime = now;
-    c.running = true;
-  } else {
-    const elapsed = (now - c.startTime) / 1000;
-    c.running = false;
-    c.essais.push(elapsed);
-    document.getElementById(`t${i}`).textContent = elapsed.toFixed(2) + " s";
-    updateStats(i);
-  }
-}
-
-// ==========================
-// STATS
-// ==========================
-function updateStats(i) {
-  const c = chronos[i];
-
-  if (!c.essais.length) {
-    document.getElementById(`m${i}`).textContent = "0 s";
-    document.getElementById(`d${i}`).textContent = "0 m";
-    return;
-  }
-
-  const total = c.essais.reduce((a, b) => a + b, 0);
-  const moy = total / c.essais.length;
-  const dist = moy * c.vitesse;
-
-  document.getElementById(`m${i}`).textContent = Math.round(moy) + " s";
-  document.getElementById(`d${i}`).textContent = Math.round(dist) + " m";
-
-  saveObservations();
-}
-
-// ==========================
-// RESET
-// ==========================
-function resetChrono(i) {
-  const c = chronos[i];
-  Object.assign(c, {
-    running: false,
-    startTime: 0,
-    essais: [],
-    directions: [],
-    direction: 0,
-    vitesse: DEFAULT_VITESSE,
-    lat: "--",
-    lon: "--"
-  });
-
-  document.getElementById(`t${i}`).textContent = "0.00 s";
-  document.getElementById(`m${i}`).textContent = "0 s";
-  document.getElementById(`d${i}`).textContent = "0 m";
-  document.getElementById(`dir${i}`).textContent = "0°";
-  document.getElementById(`lat${i}`).textContent = "--";
-  document.getElementById(`lon${i}`).textContent = "--";
-  document.getElementById(`vit${i}`).value = DEFAULT_VITESSE;
-
-  saveObservations();
-}
-
-// ==========================
-// TICK
-// ==========================
-setInterval(() => {
-  const now = Date.now();
-  chronos.forEach((c, i) => {
-    if (c.running) {
-      document.getElementById(`t${i}`).textContent =
-        ((now - c.startTime) / 1000).toFixed(2) + " s";
-    }
-  });
-}, 50);
-
-// ==========================
-// POSITION GPS
+// GPS
 // ==========================
 function getPos(i) {
-  document.getElementById(`lat${i}`).innerHTML =
-    '<span class="gps-spinner"></span>';
-  document.getElementById(`lon${i}`).textContent = "GPS…";
-
   navigator.geolocation.getCurrentPosition(
     pos => {
       chronos[i].lat = pos.coords.latitude.toFixed(5);
       chronos[i].lon = pos.coords.longitude.toFixed(5);
-
       document.getElementById(`lat${i}`).textContent = chronos[i].lat;
       document.getElementById(`lon${i}`).textContent = chronos[i].lon;
-
       saveObservations();
     },
-    () => {
-      alert(t("gps_error"));
-      document.getElementById(`lat${i}`).textContent = "--";
-      document.getElementById(`lon${i}`).textContent = "--";
-    },
-    {
-      enableHighAccuracy: true,
-      timeout: 20000,
-      maximumAge: 0
-    }
+    () => alert("Erreur GPS"),
+    { enableHighAccuracy: true }
   );
 }
 
 // ==========================
-// BOUSSOLE
-// ==========================
-function openCompass(i) {
-  currentCompassIndex = i;
-  currentHeading = null;
-  lastHeading = null;
-  compassActive = false;
-
-  const overlay = document.createElement("div");
-  overlay.id = "compassOverlay";
-  overlay.innerHTML = `
-    <div class="compass-box">
-      <h2>${t("compass_title")} ${chronos[i].color}</h2>
-      <div id="headingValue">---</div>
-      <button data-action="enable">${t("compass_enable")}</button><br><br>
-      <button data-action="save">${t("compass_save")}</button><br><br>
-      <button data-action="close">${t("close")}</button>
-    </div>
-  `;
-  document.body.appendChild(overlay);
-}
-
-// ==========================
-// ORIENTATION
-// ==========================
-function onOrientation(e) {
-  if (!compassActive) return;
-
-  let heading = null;
-
-  if (typeof e.webkitCompassHeading === "number") {
-    heading = e.webkitCompassHeading;
-  } else if (e.absolute === true && typeof e.alpha === "number") {
-    heading = (360 - e.alpha) % 360;
-  }
-
-  if (heading === null || isNaN(heading)) return;
-
-  if (lastHeading !== null) {
-    let delta = Math.abs(heading - lastHeading);
-    if (delta > 180) delta = 360 - delta;
-    if (delta > 20) return;
-  }
-
-  lastHeading = heading;
-  currentHeading = Math.round(heading);
-
-  document.getElementById("headingValue").textContent =
-    currentHeading + "°";
-}
-
-// ==========================
-// GESTION BOUTONS BOUSSOLE
-// ==========================
-document.addEventListener("click", async e => {
-  const btn = e.target.closest("button");
-  if (!btn || !btn.dataset.action) return;
-
-  const action = btn.dataset.action;
-
-  if (action === "enable" && !compassActive) {
-    if (
-      typeof DeviceOrientationEvent !== "undefined" &&
-      typeof DeviceOrientationEvent.requestPermission === "function"
-    ) {
-      const res = await DeviceOrientationEvent.requestPermission();
-      if (res !== "granted") return;
-    }
-
-    lastHeading = null;
-    currentHeading = null;
-
-    window.addEventListener("deviceorientationabsolute", onOrientation, true);
-    window.addEventListener("deviceorientation", onOrientation, true);
-
-    compassActive = true;
-  }
-
-  if (action === "save") {
-    if (currentHeading === null) return;
-    chronos[currentCompassIndex].directions.push(currentHeading);
-    updateDirection(currentCompassIndex);
-  }
-
-  if (action === "close") {
-    window.removeEventListener("deviceorientation", onOrientation, true);
-    window.removeEventListener("deviceorientationabsolute", onOrientation, true);
-
-    compassActive = false;
-    lastHeading = null;
-    currentHeading = null;
-
-    document.getElementById("compassOverlay")?.remove();
-  }
-});
-
-// ==========================
-// DÉTAIL
-// ==========================
-function openDET(i) {
-  detIndex = i;
-  const c = chronos[i];
-
-  const overlay = document.createElement("div");
-  overlay.id = "detOverlay";
-  overlay.className = c.color;
-
-  overlay.innerHTML = `
-    <div class="det-box">
-      <h2>${t("detail_title")} ${c.color}</h2>
-
-      ${c.essais.map((tps, k) => `
-        <div class="det-line">
-          ${t("try")} ${k + 1} : ${Math.ceil(tps)} s
-          <button class="del-essai" data-k="${k}">
-            ${t("delete")}
-          </button>
-        </div>
-      `).join("")}
-
-      <hr>
-      <h3>${t("directions")}</h3>
-
-      ${c.directions.map((d, k) => `
-        <div class="det-line">
-          ${d}°
-          <button class="del-dir" data-k="${k}">
-            ${t("delete")}
-          </button>
-        </div>
-      `).join("")}
-
-      <br>
-      <button id="closeDET">${t("close")}</button>
-    </div>
-  `;
-
-  document.body.appendChild(overlay);
-
-  overlay.querySelector("#closeDET").onclick = () => overlay.remove();
-
-  overlay.querySelectorAll(".del-essai").forEach(btn => {
-    btn.onclick = () => {
-      chronos[detIndex].essais.splice(btn.dataset.k, 1);
-      updateStats(detIndex);
-      openDET(detIndex);
-    };
-  });
-
-  overlay.querySelectorAll(".del-dir").forEach(btn => {
-    btn.onclick = () => {
-      chronos[detIndex].directions.splice(btn.dataset.k, 1);
-      updateDirection(detIndex);
-      openDET(detIndex);
-    };
-  });
-}
-
-// ==========================
-// LOCALISATION DU NID
+// MENU LOCALISATION
 // ==========================
 function openLocationMenu() {
   document.getElementById("locOverlay")?.remove();
@@ -432,94 +145,37 @@ function openLocationMenu() {
   overlay.innerHTML = `
     <div class="loc-box">
       <h2>${t("nest_location")}</h2>
-
-      <button data-action="local">🗺️ ${t("map_local")}</button>
-      <button data-action="send">📤 ${t("map_send")}</button>
-      <button data-action="shared">🌍 ${t("map_shared")}</button>
+      <button data-action="local">🗺️ Carte locale</button>
+      <button data-action="send">📤 Envoyer</button>
+      <button data-action="shared">🌍 Carte partagée</button>
       <button data-action="close">${t("close")}</button>
     </div>
   `;
-
   document.body.appendChild(overlay);
 
-  overlay.addEventListener("click", e => {
+  overlay.onclick = e => {
     const btn = e.target.closest("button");
     if (!btn) return;
-
-    const action = btn.dataset.action;
-
-    if (action === "local") location.href = "map.html";
-    
-    if (action === "shared") location.href = "map.html?mode=shared";
-    
-    if (action === "send") {
-      envoyerVersCartePartagee();
-    }
-    
-    if (action === "close") overlay.remove();
-
-  });
+    if (btn.dataset.action === "local") location.href = "map.html";
+    if (btn.dataset.action === "shared") location.href = "map.html?mode=shared";
+    if (btn.dataset.action === "send") envoyerVersCartePartagee();
+    if (btn.dataset.action === "close") overlay.remove();
+  };
 }
 
 // ==========================
-// CONTACT
-// ==========================
-document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("btnMail")?.addEventListener("click", () => {
-    window.open(
-      "https://docs.google.com/forms/d/e/1FAIpQLSdZZLGB8u3ULsnCr6GbNkQ9mVIAhWCk2NEatUOeeElGAoMcmg/viewform",
-      "_blank",
-      "noopener"
-    );
-  });
-});
-
-// ==========================
-// EXPORT DEBUG
-// ==========================
-window.__chronos = chronos;
-// ==========================
-// Fonction d’appel RPC SupaBase
-// ==========================
-async function chargerDonneesAutour(lat, lon) {
-  const { data, error } = await window.supabaseClient.rpc(
-    "get_nearby_frelons",
-    {
-      lat: lat,
-      lon: lon,
-      radius_m: 10000
-    }
-  );
-
-  if (error) {
-    console.error("Erreur RPC :", error);
-    return [];
-  }
-
-  return data;
-}
-// ==========================
-// envoi vers Supabase
+// ENVOI SUPABASE
 // ==========================
 async function envoyerVersCartePartagee() {
-  // récupérer les observations locales
-  const obs = JSON.parse(
-    localStorage.getItem("chronoObservations") || "[]"
-  );
+  const obs = JSON.parse(localStorage.getItem("chronoObservations") || "[]");
+  if (!obs.length) return alert("Aucune observation");
 
-  if (obs.length === 0) {
-    alert("Aucune observation à envoyer");
-    return;
-  }
-
-  // identifiant téléphone (anonyme, persistant)
   let phoneId = localStorage.getItem("phone_id");
   if (!phoneId) {
     phoneId = crypto.randomUUID();
     localStorage.setItem("phone_id", phoneId);
   }
 
-  // préparation des lignes à insérer
   const rows = obs.map(o => ({
     lat: o.lat,
     lon: o.lon,
@@ -528,95 +184,72 @@ async function envoyerVersCartePartagee() {
     phone_id: phoneId
   }));
 
-  // 🔥 INSERT SUPABASE
   const { error } = await window.supabaseClient
     .from("chrono_frelon_geo")
     .insert(rows);
 
   if (error) {
     console.error(error);
-    alert("Erreur lors de l’envoi");
+    alert("Erreur Supabase");
   } else {
-    alert("Observations envoyées vers la carte partagée ✅");
+    alert("Envoyé ✔️");
   }
 }
 
-// Création de la carte
-map = L.map('map').setView([lat0, lng0], zoom0)
+// ==========================
+// === CARTE PARTAGÉE =======
+// ==========================
+document.addEventListener("DOMContentLoaded", () => {
+  const mapDiv = document.getElementById("map");
+  if (!mapDiv) return;
 
-// Fond de carte
-L.tileLayer(TILE_URL, {
-  maxZoom: 19,
-  attribution: '© OpenStreetMap'
-}).addTo(map)
+  const map = L.map("map").setView([46.5, 2.5], 6);
 
-// Groupe de points (ou clusters)
-markersLayer = L.markerClusterGroup()
-map.addLayer(markersLayer)
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19,
+    attribution: "© OpenStreetMap"
+  }).addTo(map);
 
+  const markers = L.markerClusterGroup();
+  map.addLayer(markers);
 
-async function loadVisiblePoints() {
-  const bounds = map.getBounds()
+  map.on("moveend", debounce(() => loadVisiblePoints(map, markers), 300));
+  loadVisiblePoints(map, markers);
+});
 
-  const minLat = bounds.getSouth()
-  const maxLat = bounds.getNorth()
-  const minLng = bounds.getWest()
-  const maxLng = bounds.getEast()
+// ==========================
+// CHARGEMENT FLUIDE
+// ==========================
+async function loadVisiblePoints(map, markers) {
+  const b = map.getBounds();
 
-  // Requête Supabase minimale
-  const { data, error } = await supabase
-    .from('detections')
-    .select('id, lat, lng')   // ⚠️ léger
-    .gte('lat', minLat)
-    .lte('lat', maxLat)
-    .gte('lng', minLng)
-    .lte('lng', maxLng)
-    .limit(1000)              // sécurité
+  const { data, error } = await window.supabaseClient
+    .from("chrono_frelon_geo")
+    .select("id, lat, lon, direction, distance")
+    .gte("lat", b.getSouth())
+    .lte("lat", b.getNorth())
+    .gte("lon", b.getWest())
+    .lte("lon", b.getEast())
+    .limit(1000);
 
-  if (error) return
+  if (error) return console.error(error);
 
-  markersLayer.clearLayers()
+  markers.clearLayers();
 
-  data.forEach(point => {
-    const marker = L.circleMarker([point.lat, point.lng], {
-      radius: 6,
-      weight: 1
-    })
-
-    marker.on('click', () => loadPointDetails(point.id))
-
-    markersLayer.addLayer(marker)
-  })
+  data.forEach(p => {
+    const m = L.circleMarker([p.lat, p.lon], { radius: 6 });
+    m.bindPopup(`🧭 ${p.direction}°<br>📏 ${p.distance} m`);
+    markers.addLayer(m);
+  });
 }
 
-
-async function loadPointDetails(id) {
-  const { data, error } = await supabase
-    .from('detections')
-    .select('*')
-    .eq('id', id)
-    .single()
-
-  if (error) return
-
-  openBottomSheet(data) // ou popup, ou panneau
-}
-
-// Quand la carte s’arrête de bouger
-map.on('moveend', debounce(loadVisiblePoints, 300))
-
-// Chargement initial
-loadVisiblePoints()
-
+// ==========================
+// DEBOUNCE
+// ==========================
 function debounce(fn, delay) {
-  let timer
-  return (...args) => {
-    clearTimeout(timer)
-    timer = setTimeout(() => fn(...args), delay)
-  }
+  let t;
+  return (...a) => {
+    clearTimeout(t);
+    t = setTimeout(() => fn(...a), delay);
+  };
 }
-
-
-
-
-
