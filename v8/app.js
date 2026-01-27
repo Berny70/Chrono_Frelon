@@ -475,7 +475,7 @@ window.__chronos = chronos;
 // Fonction d’appel RPC SupaBase
 // ==========================
 async function chargerDonneesAutour(lat, lon) {
-  const { data, error } = await supabase.rpc(
+  const { data, error } = await window.supabaseClient.rpc(
     "get_nearby_frelons",
     {
       lat: lat,
@@ -491,6 +491,7 @@ async function chargerDonneesAutour(lat, lon) {
 
   return data;
 }
+
 
 
 
