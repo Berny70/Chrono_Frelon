@@ -14,8 +14,7 @@ let compassActive = false;
 // liaison vers la base SupaBase 
 // ==========================
 
-const supabase = window._supabaseClient;
-
+var supabase = window.supabaseClient;
 
 // ==========================
 // MOYENNE CIRCULAIRE
@@ -497,6 +496,7 @@ async function chargerDonneesAutour(lat, lon) {
 
   return data;
 }
+
 
 
 
