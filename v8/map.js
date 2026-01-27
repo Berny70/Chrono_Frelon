@@ -1,8 +1,9 @@
 // ==========================
 // MODE (LOCAL / PARTAGÉ)
 // ==========================
-const params = new URLSearchParams(window.location.search);
-const MODE_SHARED = params.get("mode") === "shared";
+const mapParams = new URLSearchParams(window.location.search);
+const MODE_SHARED = mapParams.get("mode") === "shared";
+
 
 // ==========================
 // DONNÉES
