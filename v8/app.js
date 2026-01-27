@@ -449,8 +449,15 @@ function openLocationMenu() {
     const action = btn.dataset.action;
 
     if (action === "local") location.href = "map.html";
+    
     if (action === "shared") location.href = "map.html?mode=shared";
+    
+    if (action === "send") {
+      envoyerVersCartePartagee();
+    }
+    
     if (action === "close") overlay.remove();
+
   });
 }
 
@@ -491,6 +498,7 @@ async function chargerDonneesAutour(lat, lon) {
 
   return data;
 }
+
 
 
 
