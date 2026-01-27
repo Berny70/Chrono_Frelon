@@ -1,5 +1,5 @@
 {
-“app_title”: "Dòpf mit Doch",
+  “app_title”: "Dòpf mit Doch",
 “help”: “Hilf”,
 “start”: "Start / Stopp",
 “reset”: "Zrìcksetze",
@@ -52,4 +52,5 @@
 “map_station”: “Station”,
 “map_distance”: "Entfèrnung",
 “map_direction”: "Rìchtung"
+}
 }
