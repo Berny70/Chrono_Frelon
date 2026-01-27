@@ -10,6 +10,16 @@ let currentCompassIndex = null;
 let currentHeading = null;
 let lastHeading = null;
 let compassActive = false;
+// ==========================
+// liaison vers la base SupaBase 
+// ==========================
+const SUPABASE_URL = "https://pqozgsgytzntrqscevrt.supabase.co";
+const SUPABASE_KEY = "PUBLIC_ANON_KEY";
+
+const supabase = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
 // ==========================
 // MOYENNE CIRCULAIRE
@@ -471,3 +481,25 @@ document.addEventListener("DOMContentLoaded", () => {
 // EXPORT DEBUG
 // ==========================
 window.__chronos = chronos;
+// ==========================
+// Fonction d’appel RPC SupaBase
+// ==========================
+async function chargerDonneesAutour(lat, lon) {
+  const { data, error } = await supabase.rpc(
+    "get_nearby_frelons",
+    {
+      lat: lat,
+      lon: lon,
+      radius_m: 10000
+    }
+  );
+
+  if (error) {
+    console.error("Erreur RPC :", error);
+    return [];
+  }
+
+  return data;
+}
+
+
