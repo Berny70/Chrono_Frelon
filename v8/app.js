@@ -541,9 +541,80 @@ async function envoyerVersCartePartagee() {
   }
 }
 
+// Création de la carte
+map = L.map('map').setView([lat0, lng0], zoom0)
+
+// Fond de carte
+L.tileLayer(TILE_URL, {
+  maxZoom: 19,
+  attribution: '© OpenStreetMap'
+}).addTo(map)
+
+// Groupe de points (ou clusters)
+markersLayer = L.markerClusterGroup()
+map.addLayer(markersLayer)
 
 
+async function loadVisiblePoints() {
+  const bounds = map.getBounds()
 
+  const minLat = bounds.getSouth()
+  const maxLat = bounds.getNorth()
+  const minLng = bounds.getWest()
+  const maxLng = bounds.getEast()
+
+  // Requête Supabase minimale
+  const { data, error } = await supabase
+    .from('detections')
+    .select('id, lat, lng')   // ⚠️ léger
+    .gte('lat', minLat)
+    .lte('lat', maxLat)
+    .gte('lng', minLng)
+    .lte('lng', maxLng)
+    .limit(1000)              // sécurité
+
+  if (error) return
+
+  markersLayer.clearLayers()
+
+  data.forEach(point => {
+    const marker = L.circleMarker([point.lat, point.lng], {
+      radius: 6,
+      weight: 1
+    })
+
+    marker.on('click', () => loadPointDetails(point.id))
+
+    markersLayer.addLayer(marker)
+  })
+}
+
+
+async function loadPointDetails(id) {
+  const { data, error } = await supabase
+    .from('detections')
+    .select('*')
+    .eq('id', id)
+    .single()
+
+  if (error) return
+
+  openBottomSheet(data) // ou popup, ou panneau
+}
+
+// Quand la carte s’arrête de bouger
+map.on('moveend', debounce(loadVisiblePoints, 300))
+
+// Chargement initial
+loadVisiblePoints()
+
+function debounce(fn, delay) {
+  let timer
+  return (...args) => {
+    clearTimeout(timer)
+    timer = setTimeout(() => fn(...args), delay)
+  }
+}
 
 
 
