@@ -512,6 +512,11 @@ body {
   font-size: 0.9em;
   font-weight: bold;
   cursor: pointer;
+
+  /* alignement contenu */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .lang-bar button.active {
@@ -524,16 +529,13 @@ body {
   opacity: 0.85;
 }
 
+/* image du drapeau (Alsace) */
 .lang-bar button img {
   width: 24px;      /* ajuste ici : 20–26 px selon ton goût */
   height: auto;
   display: block;
 }
-.lang-bar button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
+
 
 
 
