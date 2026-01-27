@@ -74,7 +74,7 @@ function updateDirection(i) {
 // ==========================
 window.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("chronos");
-
+  if (!container) return; // ⬅️ IMPORTANT : page carte, on sort
   chronoColors.forEach((color, i) => {
     const c = {
       running: false,
@@ -540,6 +540,7 @@ async function envoyerVersCartePartagee() {
     alert("Observations envoyées vers la carte partagée ✅");
   }
 }
+
 
 
 
