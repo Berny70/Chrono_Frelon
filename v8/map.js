@@ -1,5 +1,5 @@
 // ==========================
-// Base SUPABASE
+// MODE (LOCAL / PARTAGÉ)
 // ==========================
 const params = new URLSearchParams(window.location.search);
 const MODE_SHARED = params.get("mode") === "shared";
@@ -8,17 +8,6 @@ const MODE_SHARED = params.get("mode") === "shared";
 // DONNÉES
 // ==========================
 let observations = [];
-
-if (!MODE_SHARED) {
-  // 🟢 MODE LOCAL (inchangé)
-  observations = JSON.parse(
-    localStorage.getItem("chronoObservations") || "[]"
-  );
-
-} else {
-  // 🌍 MODE PARTAGÉ (Supabase)
-  chargerObservationsPartagees();
-}
 
 // ==========================
 // INITIALISATION CARTE
@@ -31,31 +20,39 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 }).addTo(map);
 
 // ==========================
-// GESTION ZOOM / CENTRAGE
+// MODE LOCAL : chargement immédiat
 // ==========================
-const points = observations
-  .filter(o => o.lat && o.lon)
-  .map(o => [o.lat, o.lon]);
+if (!MODE_SHARED) {
+  observations = JSON.parse(
+    localStorage.getItem("chronoObservations") || "[]"
+  );
 
-const savedView = localStorage.getItem("mapView");
-
-if (savedView) {
-  const { center, zoom } = JSON.parse(savedView);
-  map.setView(center, zoom);
-
-} else if (points.length === 1) {
-  map.setView(points[0], 16);
-
-} else if (points.length > 1) {
-  const bounds = L.latLngBounds(points);
-  map.fitBounds(bounds, { padding: [30, 30] });
-
-} else {
-  map.setView([46.5, 2.5], 6);
+  if (observations.length === 0) {
+    alert(
+      t("map_no_data_title") + "\n\n" +
+      "• " + t("map_no_data_1") + "\n" +
+      "• " + t("map_no_data_2")
+    );
+    map.setView([46.5, 2.5], 6);
+  } else {
+    centrerCarte(observations);
+    afficherObservations();
+  }
 }
 
-// Sauvegarde du zoom utilisateur
+// ==========================
+// MODE PARTAGÉ : Supabase
+// ==========================
+if (MODE_SHARED) {
+  chargerObservationsPartagees();
+}
+
+// ==========================
+// SAUVEGARDE DU ZOOM UTILISATEUR
+// ==========================
 map.on("moveend", () => {
+  if (MODE_SHARED) return;
+
   const center = map.getCenter();
   const zoom = map.getZoom();
 
@@ -69,23 +66,7 @@ map.on("moveend", () => {
 });
 
 // ==========================
-// MESSAGE SI AUCUNE DONNÉE
-// ==========================
-
-if (!MODE_SHARED) {
-  if (observations.length === 0) {
-    alert(
-      t("map_no_data_title") + "\n\n" +
-      "• " + t("map_no_data_1") + "\n" +
-      "• " + t("map_no_data_2")
-    );
-  } else {
-    afficherObservations();
-  }
-}
-
-// ==========================
-// AFFICHAGE POINTS + VECTEURS
+// AFFICHAGE DES OBSERVATIONS
 // ==========================
 function afficherObservations() {
   observations.forEach(obs => {
@@ -97,11 +78,13 @@ function afficherObservations() {
     ) return;
 
     const start = [obs.lat, obs.lon];
+    const color = obs.color || "red";
 
+    // Point d’observation
     const marker = L.circleMarker(start, {
       radius: 6,
-      color: obs.color || "red",
-      fillColor: obs.color || "red",
+      color,
+      fillColor: color,
       fillOpacity: 1
     }).addTo(map);
 
@@ -111,6 +94,7 @@ function afficherObservations() {
        ${t("map_direction")}: ${obs.direction}°`
     );
 
+    // Calcul du point d’arrivée
     const dest = destinationPoint(
       obs.lat,
       obs.lon,
@@ -118,13 +102,68 @@ function afficherObservations() {
       obs.distance
     );
 
+    // Vecteur directionnel
     L.polyline([start, [dest.lat, dest.lon]], {
-      color: obs.color || "red",
+      color,
       weight: 3
     }).addTo(map);
   });
 }
 
+// ==========================
+// CENTRAGE DE LA CARTE
+// ==========================
+function centrerCarte(data) {
+  const points = data
+    .filter(o => o.lat && o.lon)
+    .map(o => [o.lat, o.lon]);
+
+  const savedView = localStorage.getItem("mapView");
+
+  if (!MODE_SHARED && savedView) {
+    const { center, zoom } = JSON.parse(savedView);
+    map.setView(center, zoom);
+
+  } else if (points.length === 1) {
+    map.setView(points[0], 16);
+
+  } else if (points.length > 1) {
+    const bounds = L.latLngBounds(points);
+    map.fitBounds(bounds, { padding: [30, 30] });
+
+  } else {
+    map.setView([46.5, 2.5], 6);
+  }
+}
+
+// ==========================
+// MODE PARTAGÉ : APPEL SUPABASE
+// ==========================
+async function chargerObservationsPartagees() {
+  navigator.geolocation.getCurrentPosition(async pos => {
+    const lat = pos.coords.latitude;
+    const lon = pos.coords.longitude;
+
+    // 🔥 RPC SUPABASE
+    observations = await chargerDonneesAutour(lat, lon);
+
+    if (!observations || observations.length === 0) {
+      alert(
+        t("map_no_shared_data") ||
+        "Aucune donnée partagée dans un rayon de 10 km"
+      );
+      map.setView([lat, lon], 11);
+      return;
+    }
+
+    centrerCarte(observations);
+    afficherObservations();
+
+  }, () => {
+    alert("GPS indisponible");
+    map.setView([46.5, 2.5], 6);
+  });
+}
 
 // ==========================
 // FONCTION GÉO
@@ -159,26 +198,3 @@ function destinationPoint(lat, lon, bearing, distance) {
 document.getElementById("btnBackMap")?.addEventListener("click", () => {
   location.href = "index.html";
 });
-
-// ==========================
-// Fonction Supabase
-// ==========================
-async function chargerObservationsPartagees() {
-  navigator.geolocation.getCurrentPosition(async pos => {
-    const lat = pos.coords.latitude;
-    const lon = pos.coords.longitude;
-
-    // 🔥 APPEL RPC SUPABASE
-    observations = await chargerDonneesAutour(lat, lon);
-
-    if (observations.length === 0) {
-      alert(t("map_no_shared_data") || "Aucune donnée partagée dans un rayon de 10 km");
-      return;
-    }
-
-    afficherObservations();
-  }, () => {
-    alert("GPS indisponible");
-  });
-}
-
