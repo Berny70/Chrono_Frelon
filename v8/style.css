@@ -524,6 +524,13 @@ body {
   opacity: 0.85;
 }
 
+.lang-bar img {
+  width: 28px;
+  height: auto;
+  vertical-align: middle;
+  cursor: pointer;
+}
+
 
 
 
