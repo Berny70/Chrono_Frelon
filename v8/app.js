@@ -16,10 +16,15 @@ let compassActive = false;
 const SUPABASE_URL = "https://pqozgsgytzntrqscevrt.supabase.co";
 const SUPABASE_KEY = "PUBLIC_ANON_KEY";
 
-const supabase = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+if (!window._supabaseClient) {
+  window._supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+  );
+}
+
+const supabase = window._supabaseClient;
+
 
 // ==========================
 // MOYENNE CIRCULAIRE
@@ -501,5 +506,6 @@ async function chargerDonneesAutour(lat, lon) {
 
   return data;
 }
+
 
 
