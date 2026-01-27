@@ -416,5 +416,121 @@ function updateDirection(i) {
   document.getElementById(`dir${i}`).textContent = c.direction + "°";
   saveObservations();
 }
+// ==========================
+// BOUSSOLE : OVERLAY
+// ==========================
+function openCompass(i) {
+  currentCompassIndex = i;
+  currentHeading = null;
+  lastHeading = null;
+  compassActive = false;
+
+  document.getElementById("compassOverlay")?.remove();
+
+  const overlay = document.createElement("div");
+  overlay.id = "compassOverlay";
+  overlay.innerHTML = `
+    <div class="compass-box">
+      <h2>${t("compass_title")} ${chronos[i].color}</h2>
+      <div id="headingValue">---</div>
+      <button data-action="enable">${t("compass_enable")}</button><br><br>
+      <button data-action="save">${t("compass_save")}</button><br><br>
+      <button data-action="close">${t("close")}</button>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+}
+// ==========================
+// ORIENTATION DU TÉLÉPHONE
+// ==========================
+function onOrientation(e) {
+  if (!compassActive) return;
+
+  let heading = null;
+
+  if (typeof e.webkitCompassHeading === "number") {
+    heading = e.webkitCompassHeading;
+  } else if (e.absolute === true && typeof e.alpha === "number") {
+    heading = (360 - e.alpha) % 360;
+  }
+
+  if (heading === null || isNaN(heading)) return;
+
+  if (lastHeading !== null) {
+    let delta = Math.abs(heading - lastHeading);
+    if (delta > 180) delta = 360 - delta;
+    if (delta > 20) return;
+  }
+
+  lastHeading = heading;
+  currentHeading = Math.round(heading);
+
+  const el = document.getElementById("headingValue");
+  if (el) el.textContent = currentHeading + "°";
+}
+// ==========================
+// DÉTAIL DES ESSAIS / DIRECTIONS
+// ==========================
+function openDET(i) {
+  detIndex = i;
+  const c = chronos[i];
+
+  document.getElementById("detOverlay")?.remove();
+
+  const overlay = document.createElement("div");
+  overlay.id = "detOverlay";
+  overlay.className = c.color;
+
+  overlay.innerHTML = `
+    <div class="det-box">
+      <h2>${t("detail_title")} ${c.color}</h2>
+
+      ${c.essais.map((tps, k) => `
+        <div class="det-line">
+          ${t("try")} ${k + 1} : ${Math.ceil(tps)} s
+          <button class="del-essai" data-k="${k}">
+            ${t("delete")}
+          </button>
+        </div>
+      `).join("")}
+
+      <hr>
+      <h3>${t("directions")}</h3>
+
+      ${c.directions.map((d, k) => `
+        <div class="det-line">
+          ${d}°
+          <button class="del-dir" data-k="${k}">
+            ${t("delete")}
+          </button>
+        </div>
+      `).join("")}
+
+      <br>
+      <button id="closeDET">${t("close")}</button>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  overlay.querySelector("#closeDET").onclick = () => overlay.remove();
+
+  overlay.querySelectorAll(".del-essai").forEach(btn => {
+    btn.onclick = () => {
+      chronos[detIndex].essais.splice(btn.dataset.k, 1);
+      updateStats(detIndex);
+      openDET(detIndex);
+    };
+  });
+
+  overlay.querySelectorAll(".del-dir").forEach(btn => {
+    btn.onclick = () => {
+      chronos[detIndex].directions.splice(btn.dataset.k, 1);
+      updateDirection(detIndex);
+      openDET(detIndex);
+    };
+  });
+}
+
 
 
