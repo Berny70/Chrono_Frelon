@@ -3,7 +3,7 @@
 // ==========================
 let LANG = "fr";
 let STRINGS = {};
-const SUPPORTED_LANGS = ["fr", "en", "de", "it"];
+const SUPPORTED_LANGS = ["fr", "en", "de", "it","als"];
 
 // ==========================
 // CHARGEMENT LANGUE
