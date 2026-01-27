@@ -498,6 +498,48 @@ async function chargerDonneesAutour(lat, lon) {
 
   return data;
 }
+// ==========================
+// envoi vers Supabase
+// ==========================
+async function envoyerVersCartePartagee() {
+  // récupérer les observations locales
+  const obs = JSON.parse(
+    localStorage.getItem("chronoObservations") || "[]"
+  );
+
+  if (obs.length === 0) {
+    alert("Aucune observation à envoyer");
+    return;
+  }
+
+  // identifiant téléphone (anonyme, persistant)
+  let phoneId = localStorage.getItem("phone_id");
+  if (!phoneId) {
+    phoneId = crypto.randomUUID();
+    localStorage.setItem("phone_id", phoneId);
+  }
+
+  // préparation des lignes à insérer
+  const rows = obs.map(o => ({
+    lat: o.lat,
+    lon: o.lon,
+    direction: o.direction,
+    distance: o.distance,
+    phone_id: phoneId
+  }));
+
+  // 🔥 INSERT SUPABASE
+  const { error } = await window.supabaseClient
+    .from("chrono_frelon_geo")
+    .insert(rows);
+
+  if (error) {
+    console.error(error);
+    alert("Erreur lors de l’envoi");
+  } else {
+    alert("Observations envoyées vers la carte partagée ✅");
+  }
+}
 
 
 
