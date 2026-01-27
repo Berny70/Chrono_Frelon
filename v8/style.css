@@ -524,12 +524,19 @@ body {
   opacity: 0.85;
 }
 
-.lang-bar img {
-  width: 28px;
+.lang-bar button img {
+  width: 24px;      /* ajuste ici : 20–26 px selon ton goût */
   height: auto;
-  vertical-align: middle;
-  cursor: pointer;
+  display: block;
 }
+.lang-bar button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+
 
 
 
