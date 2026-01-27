@@ -10,11 +10,6 @@ let currentCompassIndex = null;
 let currentHeading = null;
 let lastHeading = null;
 let compassActive = false;
-// ==========================
-// liaison vers la base SupaBase 
-// ==========================
-
-var supabase = window.supabaseClient;
 
 // ==========================
 // MOYENNE CIRCULAIRE
@@ -496,6 +491,7 @@ async function chargerDonneesAutour(lat, lon) {
 
   return data;
 }
+
 
 
 
