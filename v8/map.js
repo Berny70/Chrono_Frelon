@@ -1,9 +1,24 @@
 // ==========================
+// Base SUPABASE
+// ==========================
+const params = new URLSearchParams(window.location.search);
+const MODE_SHARED = params.get("mode") === "shared";
+
+// ==========================
 // DONNÉES
 // ==========================
-const observations = JSON.parse(
-  localStorage.getItem("chronoObservations") || "[]"
-);
+let observations = [];
+
+if (!MODE_SHARED) {
+  // 🟢 MODE LOCAL (inchangé)
+  observations = JSON.parse(
+    localStorage.getItem("chronoObservations") || "[]"
+  );
+
+} else {
+  // 🌍 MODE PARTAGÉ (Supabase)
+  chargerObservationsPartagees();
+}
 
 // ==========================
 // INITIALISATION CARTE
@@ -56,55 +71,60 @@ map.on("moveend", () => {
 // ==========================
 // MESSAGE SI AUCUNE DONNÉE
 // ==========================
-if (observations.length === 0) {
-  alert(
-    t("map_no_data_title") + "\n\n" +
-    "• " + t("map_no_data_1") + "\n" +
-    "• " + t("map_no_data_2")
-  );
+
+if (!MODE_SHARED) {
+  if (observations.length === 0) {
+    alert(
+      t("map_no_data_title") + "\n\n" +
+      "• " + t("map_no_data_1") + "\n" +
+      "• " + t("map_no_data_2")
+    );
+  } else {
+    afficherObservations();
+  }
 }
 
 // ==========================
 // AFFICHAGE POINTS + VECTEURS
 // ==========================
-observations.forEach(obs => {
-  if (
-    obs.lat == null ||
-    obs.lon == null ||
-    obs.distance == null ||
-    obs.direction == null
-  ) return;
+function afficherObservations() {
+  observations.forEach(obs => {
+    if (
+      obs.lat == null ||
+      obs.lon == null ||
+      obs.distance == null ||
+      obs.direction == null
+    ) return;
 
-  const start = [obs.lat, obs.lon];
+    const start = [obs.lat, obs.lon];
 
-  // Point d’observation
-  const marker = L.circleMarker(start, {
-    radius: 6,
-    color: obs.color,
-    fillColor: obs.color,
-    fillOpacity: 1
-  }).addTo(map);
+    const marker = L.circleMarker(start, {
+      radius: 6,
+      color: obs.color || "red",
+      fillColor: obs.color || "red",
+      fillOpacity: 1
+    }).addTo(map);
 
-  marker.bindPopup(
-    `<b>${t("map_station")} ${obs.color}</b><br>
-     ${t("map_distance")}: ${obs.distance} m<br>
-     ${t("map_direction")}: ${obs.direction}°`
-  );
+    marker.bindPopup(
+      `<b>${t("map_station")}</b><br>
+       ${t("map_distance")}: ${obs.distance} m<br>
+       ${t("map_direction")}: ${obs.direction}°`
+    );
 
-  // Calcul du point d’arrivée
-  const dest = destinationPoint(
-    obs.lat,
-    obs.lon,
-    obs.direction,
-    obs.distance
-  );
+    const dest = destinationPoint(
+      obs.lat,
+      obs.lon,
+      obs.direction,
+      obs.distance
+    );
 
-  // Vecteur directionnel
-  L.polyline([start, [dest.lat, dest.lon]], {
-    color: obs.color,
-    weight: 3
-  }).addTo(map);
-});
+    L.polyline([start, [dest.lat, dest.lon]], {
+      color: obs.color || "red",
+      weight: 3
+    }).addTo(map);
+  });
+}
+
 
 // ==========================
 // FONCTION GÉO
@@ -139,3 +159,26 @@ function destinationPoint(lat, lon, bearing, distance) {
 document.getElementById("btnBackMap")?.addEventListener("click", () => {
   location.href = "index.html";
 });
+
+// ==========================
+// Fonction Supabase
+// ==========================
+async function chargerObservationsPartagees() {
+  navigator.geolocation.getCurrentPosition(async pos => {
+    const lat = pos.coords.latitude;
+    const lon = pos.coords.longitude;
+
+    // 🔥 APPEL RPC SUPABASE
+    observations = await chargerDonneesAutour(lat, lon);
+
+    if (observations.length === 0) {
+      alert(t("map_no_shared_data") || "Aucune donnée partagée dans un rayon de 10 km");
+      return;
+    }
+
+    afficherObservations();
+  }, () => {
+    alert("GPS indisponible");
+  });
+}
+
