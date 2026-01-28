@@ -12,25 +12,21 @@
   "nest_location": "Localizzazione del nido",
   "close": "Chiudi",
 
-  /* ===== AIUTO ===== */
   "help_title": "Aiuto – Trappola a stoppino",
   "help_install": "Installazione su smartphone",
   "help_vars": "Funzionamento dell’applicazione",
   "help_contact": "Contatto / feedback dal campo",
 
-  /* ===== INSTALLAZIONE ===== */
   "install_step_1": "Aprire l’applicazione nel browser",
   "install_step_2": "Menu → Aggiungi alla schermata iniziale",
   "install_step_3": "Consentire l’accesso al GPS",
   "install_step_4": "Consentire l’accesso alla bussola",
 
-  /* ===== VARIABILI ===== */
   "vars_1": "Ogni colore corrisponde a una stazione",
   "vars_2": "Avvia / Arresta: misura il tempo",
   "vars_3": "Posizione: registra la posizione GPS",
   "vars_4": "Bussola: registra la direzione",
-
-  /* ===== GPS / BUSSOLA ===== */
+  
   "gps_error": "GPS non disponibile o rifiutato",
   "compass_denied": "Accesso alla bussola negato",
 
@@ -38,13 +34,11 @@
   "compass_enable": "Attiva la bussola",
   "compass_save": "Salva la direzione",
 
-  /* ===== DETTAGLIO ===== */
   "detail_title": "Dettaglio",
   "try": "Tentativo",
   "delete": "Elimina",
   "directions": "Direzioni",
 
-  /* ===== MAPPA ===== */
   "map_local": "Mappa locale",
   "map_send": "Invia alla mappa condivisa",
   "map_shared": "Mappa condivisa",
