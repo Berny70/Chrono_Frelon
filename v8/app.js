@@ -444,12 +444,21 @@ function openCompass(i) {
     <div class="compass-box">
       <h2>${t("compass_title")} ${chronos[i].color}</h2>
       <div id="headingValue">---</div>
-      <button data-action="enable">${t("compass_enable")}</button><br><br>
-      <button data-action="save">${t("compass_save")}</button><br><br>
-      <button data-action="close">${t("close")}</button>
+        <button data-action="enable">
+          <span data-i18n="compass_enable"></span>
+        </button><br><br>
+        
+        <button data-action="save">
+          <span data-i18n="compass_save"></span>
+        </button><br><br>
+        
+        <button data-action="close">
+          <span data-i18n="close"></span>
+        </button>
     </div>
   `;
   document.body.appendChild(overlay);
+  applyTranslations();
 }
 // ==========================
 // ORIENTATION DU TÉLÉPHONE
@@ -542,6 +551,7 @@ function openDET(i) {
     };
   });
 }
+
 
 
 
