@@ -313,56 +313,7 @@ async function envoyerVersCartePartagee() {
   }
 }
 
-// ==========================
-// CARTE PARTAGÉE (ISOLÉE)
-// ==========================
-document.addEventListener("DOMContentLoaded", () => {
-  const mapDiv = document.getElementById("map");
-  if (!mapDiv) return;
 
-  const map = L.map("map").setView([46.5, 2.5], 6);
-
-  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    maxZoom: 19,
-    attribution: "© OpenStreetMap"
-  }).addTo(map);
-
-  const markers = L.markerClusterGroup();
-  map.addLayer(markers);
-
-  map.on("moveend", debounce(() => loadVisiblePoints(map, markers), 300));
-  loadVisiblePoints(map, markers);
-});
-
-async function loadVisiblePoints(map, markers) {
-  const b = map.getBounds();
-
-  let query = window.supabaseClient
-    .from("chrono_frelon_geo")
-    .select("id, lat, lon, direction, distance")
-    .gte("lat", b.getSouth())
-    .lte("lat", b.getNorth())
-    .gte("lon", b.getWest())
-    .lte("lon", b.getEast())
-    .limit(1000);
-
-  const params = new URLSearchParams(location.search);
-  if (params.get("mode") !== "shared") {
-    const phoneId = localStorage.getItem("phone_id");
-    if (phoneId) query = query.eq("phone_id", phoneId);
-  }
-
-  const { data, error } = await query;
-  if (error) return console.error(error);
-
-  markers.clearLayers();
-
-  data.forEach(p => {
-    const m = L.circleMarker([p.lat, p.lon], { radius: 6 });
-    m.bindPopup(`🧭 ${p.direction}°<br>📏 ${p.distance} m`);
-    markers.addLayer(m);
-  });
-}
 
 // ==========================
 // DEBOUNCE
@@ -551,6 +502,7 @@ function openDET(i) {
     };
   });
 }
+
 
 
 
