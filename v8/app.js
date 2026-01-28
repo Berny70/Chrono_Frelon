@@ -82,7 +82,7 @@ window.addEventListener("DOMContentLoaded", () => {
     div.className = `chrono ${color}`;
     div.innerHTML = `
       <div class="row row-main">
-        <button class="start">${t("start")}</button>
+        <<button class="start" data-i18n="start"></button>
         <span class="time" id="t${i}">0.00 s</span>
         <button class="reset">${t("reset")}</button>
       </div>
@@ -103,9 +103,10 @@ window.addEventListener("DOMContentLoaded", () => {
       </div>
 
       <div class="row row-actions">
-        <button class="pos">${t("position")}</button>
-        <button class="compass">${t("compass")}</button>
-        <button class="det">${t("detail")}</button>
+        <button class="reset" data-i18n="reset"></button>
+        <button class="pos" data-i18n="position"></button>
+        <button class="compass" data-i18n="compass"></button>
+        <button class="det" data-i18n="detail"></button>
       </div>
     `;
 
@@ -531,6 +532,7 @@ function openDET(i) {
     };
   });
 }
+
 
 
 
