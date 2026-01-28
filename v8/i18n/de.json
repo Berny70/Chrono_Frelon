@@ -1,6 +1,7 @@
 {
   "app_title": "Locktopf",
   "help": "Hilfe",
+
   "start": "Start / Stopp",
   "reset": "Zurücksetzen",
   "position": "Position",
@@ -10,7 +11,7 @@
   "nest_location": "Nestlokalisierung",
   "close": "Schließen",
 
-  "help_title": "Hilfe – Dochtfalle",
+  "help_title": "Hilfe – Locktopf",
   "help_install": "Installation auf dem Smartphone",
   "help_vars": "Funktionsweise der App",
   "help_contact": "Kontakt / Rückmeldungen aus dem Feld",
@@ -39,15 +40,15 @@
 
   "map_local": "Lokale Karte",
   "map_send": "An geteilte Karte senden",
-  "map_shared": "Geteilte Karte (10 km)",
+  "map_shared": "Geteilte Karte",
 
   "map_title": "Nestlokalisierung",
   "back": "Zurück",
   "map_legend": "Beobachtungspunkte und Richtungen",
 
   "map_no_data_title": "Keine verwertbaren Daten für die Karte",
-  "map_no_data_1": "eine Position erfassen",
-  "map_no_data_2": "eine Richtung mit dem Kompass erfassen",
+  "map_no_data_1": "Bitte zuerst eine Position erfassen",
+  "map_no_data_2": "Bitte eine Richtung mit dem Kompass erfassen",
 
   "map_station": "Station",
   "map_distance": "Entfernung",
