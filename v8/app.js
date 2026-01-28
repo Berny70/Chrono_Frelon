@@ -103,7 +103,6 @@ window.addEventListener("DOMContentLoaded", () => {
       </div>
 
       <div class="row row-actions">
-        <button class="reset" data-i18n="reset"></button>
         <button class="pos" data-i18n="position"></button>
         <button class="compass" data-i18n="compass"></button>
         <button class="det" data-i18n="detail"></button>
@@ -532,6 +531,7 @@ function openDET(i) {
     };
   });
 }
+
 
 
 
