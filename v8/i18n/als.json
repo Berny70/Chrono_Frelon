@@ -1,12 +1,15 @@
 {
   "app_title": "Dochtpot",
   "help": "Hìlf",
+
   "start": "Starte / Stoppe",
   "reset": "Zrìcksetze",
+
   "position": "Position",
   "compass": "Kompass",
   "detail": "Détail",
   "capture": "Bild ufnehme",
+
   "nest_location": "Ort vum Nàscht",
   "close": "Zuemache",
 
@@ -24,5 +27,36 @@
   "detail_title": "Détail",
   "try": "Versuech",
   "delete": "Lösche",
-  "directions": "Rìchtunge"
+  "directions": "Rìchtunge",
+
+  /* ===== AIDE ===== */
+  "help_title": "Hìlf",
+  "help_install": "Installàtion",
+  "help_vars": "Variable",
+  "help_contact": "Kontakt",
+
+  /* ===== INSTALLATION ===== */
+  "install_step_1": "Installìer d’App",
+  "install_step_2": "Mach d’App uf",
+  "install_step_3": "Füeg d’App dezue",
+  "install_step_4": "Fèrdìg",
+
+  /* ===== VARIABLES ===== */
+  "vars_1": "Position vum Telefon",
+  "vars_2": "Rìchtung",
+  "vars_3": "Distànz",
+  "vars_4": "Zìt",
+
+  /* ===== CARTE ===== */
+  "map_title": "Kàrt",
+  "back": "Zrìck",
+  "map_legend": "Légènd",
+
+  "map_no_data_title": "Kèni Dàte",
+  "map_no_data_1": "Kèni Observation gfùnde",
+  "map_no_data_2": "Beweg d’Kàrt odder zoome",
+
+  "map_station": "Stàtion",
+  "map_distance": "Distànz",
+  "map_direction": "Rìchtung"
 }
