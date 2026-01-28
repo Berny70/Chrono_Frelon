@@ -500,20 +500,20 @@ body {
 .lang-bar {
   display: flex;
   justify-content: center;
-  gap: 10px;
+  gap: 4px;                 /* ⬅️ plus compact */
   margin: 6px 0 12px 0;
+  flex-wrap: wrap;          /* ⬅️ évite le débordement */
 }
 
 .lang-bar button {
   background: #f0f0f0;
   border: 1px solid #999;
   border-radius: 6px;
-  padding: 4px 12px;
-  font-size: 0.9em;
+  padding: 4px 6px;         /* ⬅️ padding réduit */
+  font-size: 0.85em;        /* ⬅️ légèrement plus petit */
   font-weight: bold;
   cursor: pointer;
 
-  /* alignement contenu */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -529,12 +529,14 @@ body {
   opacity: 0.85;
 }
 
-/* image du drapeau (Alsace) */
+/* image du drapeau */
 .lang-bar button img {
-  width: 24px;      /* ajuste ici : 20–26 px selon ton goût */
+  width: 22px;              /* ⬅️ un peu plus petit */
   height: auto;
   display: block;
 }
+
+
 
 
 
