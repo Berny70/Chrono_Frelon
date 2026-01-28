@@ -12,25 +12,21 @@
   "nest_location": "Localizacion del nis",
   "close": "Tampar",
 
-  /* ===== AJUDA ===== */
   "help_title": "Ajuda – Pòt amb mècha",
   "help_install": "Installacion sul telefon",
   "help_vars": "Foncionament de l’aplicacion",
   "help_contact": "Contacte / retorns de terren",
 
-  /* ===== INSTALLACION ===== */
   "install_step_1": "Dobrir l’aplicacion dins lo navigador",
   "install_step_2": "Menú → Apondre a l’ecran d’acuèlh",
   "install_step_3": "Autorizar l’accès al GPS",
   "install_step_4": "Autorizar l’accès a la brossòla",
 
-  /* ===== VARIABLAS ===== */
   "vars_1": "Cada color correspond a una estacion",
   "vars_2": "Aviar / Arrestar : mesura lo temps",
   "vars_3": "Posicion : enregistrar la posicion GPS",
   "vars_4": "Brossòla : enregistrar la direccion",
 
-  /* ===== GPS / BROSSÒLA ===== */
   "gps_error": "GPS indisponible o refusat",
   "compass_denied": "Accès a la brossòla refusat",
 
@@ -38,13 +34,11 @@
   "compass_enable": "Activar la brossòla",
   "compass_save": "Enregistrar la direccion",
 
-  /* ===== DETALH ===== */
   "detail_title": "Detalh",
   "try": "Ensag",
   "delete": "Suprimir",
   "directions": "Direccions",
 
-  /* ===== MAPA ===== */
   "map_local": "Mapa locala",
   "map_send": "Mandar a la mapa partejada",
   "map_shared": "Mapa partejada",
