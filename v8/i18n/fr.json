@@ -12,25 +12,21 @@
   "nest_location": "Localisation du nid",
   "close": "Fermer",
 
-  /* ===== AIDE ===== */
   "help_title": "Aide – Pot à mèche",
   "help_install": "Installation sur smartphone",
   "help_vars": "Fonctionnement de l’application",
   "help_contact": "Contact / retours terrain",
 
-  /* ===== INSTALLATION ===== */
   "install_step_1": "Ouvrir l’application dans le navigateur",
   "install_step_2": "Menu → Ajouter à l’écran d’accueil",
   "install_step_3": "Autoriser l’accès au GPS",
   "install_step_4": "Autoriser l’accès à la boussole",
 
-  /* ===== VARIABLES ===== */
   "vars_1": "Chaque couleur correspond à une station",
   "vars_2": "Start / Stop : mesure le temps",
   "vars_3": "Position : enregistre la position GPS",
   "vars_4": "Boussole : enregistre la direction",
 
-  /* ===== GPS / BOUSSOLE ===== */
   "gps_error": "GPS indisponible ou refusé",
   "compass_denied": "Accès à la boussole refusé",
 
@@ -38,13 +34,11 @@
   "compass_enable": "Activer la boussole",
   "compass_save": "Enregistrer la direction",
 
-  /* ===== DÉTAIL ===== */
   "detail_title": "Détail",
   "try": "Essai",
   "delete": "Supprimer",
   "directions": "Directions",
 
-  /* ===== CARTE ===== */
   "map_local": "Carte locale",
   "map_send": "Envoyer vers la carte partagée",
   "map_shared": "Carte partagée",
