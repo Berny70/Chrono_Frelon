@@ -84,7 +84,7 @@ window.addEventListener("DOMContentLoaded", () => {
       <div class="row row-main">
         <<button class="start" data-i18n="start"></button>
         <span class="time" id="t${i}">0.00 s</span>
-        <button class="reset">${t("reset")}</button>
+        <button class="reset" data-i18n="reset"></button>
       </div>
 
       <div class="row row-info">
@@ -532,6 +532,7 @@ function openDET(i) {
     };
   });
 }
+
 
 
 
