@@ -249,10 +249,10 @@ function openLocationMenu() {
   overlay.innerHTML = `
     <div class="loc-box">
       <h2>${t("nest_location")}</h2>
-        <button data-action="local" data-i18n="map_local">🗺️</button>
-        <button data-action="send" data-i18n="map_send">📤</button>
-        <button data-action="shared" data-i18n="map_shared">🌍</button>
-        <button data-action="close" data-i18n="close"></button>
+        <button data-action="local" data-i18n="map_local">🗺️ <span data-i18n="map_local"></span></button>
+        <button data-action="send" data-i18n="map_send">📤 <span data-i18n="map_send"></span></button>
+        <button data-action="shared" data-i18n="map_shared"> 🌍 <span data-i18n="map_shared"></span></button>
+        <button data-action="close" data-i18n="close"> <span data-i18n="close"></span></button>
     </div>
   `;
 
@@ -531,6 +531,7 @@ function openDET(i) {
     };
   });
 }
+
 
 
 
