@@ -268,7 +268,7 @@ function openLocationMenu() {
   `;
 
   document.body.appendChild(overlay);
-
+    applyTranslations();   
   overlay.onclick = e => {
     const btn = e.target.closest("button");
     if (!btn) return;
@@ -542,6 +542,7 @@ function openDET(i) {
     };
   });
 }
+
 
 
 
