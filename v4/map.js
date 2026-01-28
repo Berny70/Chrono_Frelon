@@ -1,9 +1,8 @@
 // ==========================
 // MODE (LOCAL / PARTAGÉ)
 // ==========================
-const mapParams = new URLSearchParams(window.location.search);
-const MODE_SHARED = mapParams.get("mode") === "shared";
-
+const mapSearchParams = new URLSearchParams(window.location.search);
+const MODE_SHARED = mapSearchParams.get("mode") === "shared";
 
 // ==========================
 // DONNÉES
@@ -13,7 +12,7 @@ let observations = [];
 // ==========================
 // INITIALISATION CARTE
 // ==========================
-const map = L.map("map");
+const map = L.map("map").setView([46.5, 2.5], 6);
 
 // Fond de carte
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
@@ -21,14 +20,14 @@ L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
 }).addTo(map);
 
 // ==========================
-// MODE LOCAL : chargement immédiat
+// MODE LOCAL
 // ==========================
 if (!MODE_SHARED) {
   observations = JSON.parse(
     localStorage.getItem("chronoObservations") || "[]"
   );
 
-  if (observations.length === 0) {
+  if (!observations.length) {
     alert(
       t("map_no_data_title") + "\n\n" +
       "• " + t("map_no_data_1") + "\n" +
@@ -42,14 +41,14 @@ if (!MODE_SHARED) {
 }
 
 // ==========================
-// MODE PARTAGÉ : Supabase
+// MODE PARTAGÉ
 // ==========================
 if (MODE_SHARED) {
   chargerObservationsPartagees();
 }
 
 // ==========================
-// SAUVEGARDE DU ZOOM UTILISATEUR
+// SAUVEGARDE ZOOM LOCAL
 // ==========================
 map.on("moveend", () => {
   if (MODE_SHARED) return;
@@ -67,7 +66,7 @@ map.on("moveend", () => {
 });
 
 // ==========================
-// AFFICHAGE DES OBSERVATIONS
+// AFFICHAGE OBSERVATIONS
 // ==========================
 function afficherObservations() {
   observations.forEach(obs => {
@@ -81,7 +80,7 @@ function afficherObservations() {
     const start = [obs.lat, obs.lon];
     const color = obs.color || "red";
 
-    // Point d’observation
+    // Point d'observation
     const marker = L.circleMarker(start, {
       radius: 6,
       color,
@@ -95,7 +94,7 @@ function afficherObservations() {
        ${t("map_direction")}: ${obs.direction}°`
     );
 
-    // Calcul du point d’arrivée
+    // Direction
     const dest = destinationPoint(
       obs.lat,
       obs.lon,
@@ -103,7 +102,6 @@ function afficherObservations() {
       obs.distance
     );
 
-    // Vecteur directionnel
     L.polyline([start, [dest.lat, dest.lon]], {
       color,
       weight: 3
@@ -112,7 +110,7 @@ function afficherObservations() {
 }
 
 // ==========================
-// CENTRAGE DE LA CARTE
+// CENTRAGE CARTE
 // ==========================
 function centrerCarte(data) {
   const points = data
@@ -138,36 +136,58 @@ function centrerCarte(data) {
 }
 
 // ==========================
-// MODE PARTAGÉ : APPEL SUPABASE
+// SUPABASE – RPC
 // ==========================
-async function chargerObservationsPartagees() {
-  navigator.geolocation.getCurrentPosition(async pos => {
-    const lat = pos.coords.latitude;
-    const lon = pos.coords.longitude;
-
-    // 🔥 RPC SUPABASE
-    observations = await chargerDonneesAutour(lat, lon);
-
-    if (!observations || observations.length === 0) {
-      alert(
-        t("map_no_shared_data") ||
-        "Aucune donnée partagée dans un rayon de 10 km"
-      );
-      map.setView([lat, lon], 11);
-      return;
+async function chargerDonneesAutour(lat, lon) {
+  const { data, error } = await window.supabaseClient.rpc(
+    "get_nearby_frelons",
+    {
+      lat,
+      lon,
+      radius_m: 10000
     }
+  );
 
-    centrerCarte(observations);
-    afficherObservations();
+  if (error) {
+    console.error("Erreur RPC Supabase :", error);
+    return [];
+  }
 
-  }, () => {
-    alert("GPS indisponible");
-    map.setView([46.5, 2.5], 6);
-  });
+  return data || [];
 }
 
 // ==========================
-// FONCTION GÉO
+// MODE PARTAGÉ : CHARGEMENT
+// ==========================
+async function chargerObservationsPartagees() {
+  navigator.geolocation.getCurrentPosition(
+    async pos => {
+      const lat = pos.coords.latitude;
+      const lon = pos.coords.longitude;
+
+      observations = await chargerDonneesAutour(lat, lon);
+
+      if (!observations.length) {
+        alert(
+          t("map_no_shared_data") ||
+          "Aucune donnée partagée dans un rayon de 10 km"
+        );
+        map.setView([lat, lon], 11);
+        return;
+      }
+
+      centrerCarte(observations);
+      afficherObservations();
+    },
+    () => {
+      alert(t("gps_error") || "GPS indisponible");
+      map.setView([46.5, 2.5], 6);
+    }
+  );
+}
+
+// ==========================
+// GÉOMÉTRIE : POINT DESTINATION
 // ==========================
 function destinationPoint(lat, lon, bearing, distance) {
   const R = 6371000;
