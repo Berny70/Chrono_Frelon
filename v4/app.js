@@ -159,7 +159,7 @@ function updateStats(i) {
 
   const total = c.essais.reduce((a, b) => a + b, 0);
   const moy = total / c.essais.length;
-  const dist = moy * c.vitesse;
+  const dist = moy * c.vitesse /2;
 
   document.getElementById(`m${i}`).textContent = Math.round(moy) + " s";
   document.getElementById(`d${i}`).textContent = Math.round(dist) + " m";
@@ -502,6 +502,7 @@ function openDET(i) {
     };
   });
 }
+
 
 
 
