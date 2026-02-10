@@ -30,11 +30,11 @@ body {
 }
 
 .top-title {
-  flex: 1;
-  text-align: center;
   font-size: 1.8em;
   font-weight: bold;
+  line-height: 1.1;
 }
+
 
 /* ================================
    HEADER - GAUCHE
@@ -548,6 +548,7 @@ body {
   width: 100%;
   text-align: center;
 }
+
 
 
 
