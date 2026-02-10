@@ -538,18 +538,19 @@ body {
 }
 
 .top-title {
-  font-size: 1.8em;
+  font-size: 1.4em;
   font-weight: bold;
   line-height: 1.1;
   white-space: nowrap;      /* ⬅️ pas de coupure interne */
 }
 
 .top-subtitle {
-  font-size: 0.9em;
-  opacity: 0.8;
+  font-size: 0.8em;
+  opacity: 0.75;
   margin-top: 2px;
   white-space: nowrap;      /* ⬅️ pas de coupure interne */
 }
+
 
 
 
