@@ -542,6 +542,13 @@ body {
   text-align: center;
 }
 
+.top-title,
+.top-subtitle {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
 
 
 
