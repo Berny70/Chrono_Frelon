@@ -31,31 +31,41 @@ function moyenneCirculaire(degs) {
 // ==========================
 // SAUVEGARDE OBSERVATIONS
 // ==========================
-function saveObservations() {
-  const obs = chronos.map(c => {
-    if (
-      c.lat === "--" ||
-      c.lon === "--" ||
-      !c.essais.length ||
-      c.direction == null
-    ) return null;
-
-    const total = c.essais.reduce((a, b) => a + b, 0);
-    const moy = total / c.essais.length;
-
-    return {
-      lat: parseFloat(c.lat),
-      lon: parseFloat(c.lon),
-      direction: c.direction,
-      distance: Math.round(moy * c.vitesse),
-      color: c.color
-    };
-  }).filter(Boolean);
-
-  if (obs.length) {
-    localStorage.setItem("chronoObservations", JSON.stringify(obs));
+  function saveObservations() {
+    const obs = chronos.map(c => {
+      if (
+        c.lat === "--" ||
+        c.lon === "--" ||
+        c.direction == null
+      ) return null;
+  
+      // ⬅️ temps moyen
+      let moy = 0;
+  
+      if (c.essais.length > 0) {
+        const total = c.essais.reduce((a, b) => a + b, 0);
+        moy = total / c.essais.length;
+      }
+  
+      // ⬅️ règle métier explicite
+      const distance =
+        moy > 0
+          ? Math.round(moy * c.vitesse / 2)
+          : 0;
+  
+      return {
+        lat: parseFloat(c.lat),
+        lon: parseFloat(c.lon),
+        direction: c.direction,
+        distance,
+        color: c.color
+      };
+    }).filter(Boolean);
+  
+    if (obs.length) {
+      localStorage.setItem("chronoObservations", JSON.stringify(obs));
+    }
   }
-}
 
 // ==========================
 // INITIALISATION UI
@@ -502,6 +512,7 @@ function openDET(i) {
     };
   });
 }
+
 
 
 
