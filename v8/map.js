@@ -93,19 +93,53 @@ function afficherObservations() {
        ${t("map_distance")}: ${obs.distance} m<br>
        ${t("map_direction")}: ${obs.direction}°`
     );
-
     // Direction
-    const dest = destinationPoint(
-      obs.lat,
-      obs.lon,
-      obs.direction,
-      obs.distance
-    );
+    let dest;
+    let polylineOptions;
+    
+    // CAS 1 — distance inconnue → trait hypothétique 500 m pointillé
+    if (obs.distance === 0) {
+    
+      dest = destinationPoint(
+        obs.lat,
+        obs.lon,
+        obs.direction,
+        500
+      );
+    
+      polylineOptions = {
+        color: color,
+        weight: 2,
+        dashArray: "6 6",
+        opacity: 0.8
+      };
+    
+    // CAS 2 — distance connue → trait réel
+    } else {
+    
+      dest = destinationPoint(
+        obs.lat,
+        obs.lon,
+        obs.direction,
+        obs.distance
+      );
+    
+      polylineOptions = {
+        color: color,
+        weight: 3,
+        opacity: 1
+      };
+    }
+    
+    L.polyline(
+      [start, [dest.lat, dest.lon]],
+      polylineOptions
+    ).addTo(map);
 
-    L.polyline([start, [dest.lat, dest.lon]], {
-      color,
-      weight: 3
-    }).addTo(map);
+
+
+
+    
   });
 }
 
