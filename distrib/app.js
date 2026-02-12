@@ -386,13 +386,31 @@ async function envoyerVersCartePartagee() {
     localStorage.setItem("phone_id", phoneId);
   }
 
-  const rows = obs.map(o => ({
-    lat: o.lat,
-    lon: o.lon,
-    direction: o.direction,
-    distance: o.distance,
-    phone_id: phoneId
-  }));
+    const rows = obs.map(o => {
+    
+      let distance = 0;
+    
+      // MODE DIRECTION ONLY
+      if (MODE_DIRECTION_ONLY) {
+        distance = 500; // valeur fixe pour tracer les tirets
+      }
+    
+      // MODE CHRONO
+      else if (o.essais && o.essais.length && o.vitesse) {
+        const total = o.essais.reduce((a, b) => a + b, 0);
+        const moy = total / o.essais.length;
+        distance = moy * o.vitesse / 2;
+      }
+    
+      return {
+        lat: o.lat,
+        lon: o.lon,
+        direction: o.direction,
+        distance: Math.round(distance),
+        phone_id: phoneId
+      };
+    });
+
 
   const { error } = await window.supabaseClient
     .from("chrono_frelon_geo")
@@ -597,6 +615,7 @@ function resetDirectionOnly(i) {
 
   saveObservations();
 }
+
 
 
 
