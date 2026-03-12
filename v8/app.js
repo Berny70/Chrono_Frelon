@@ -413,6 +413,10 @@ function openCompass(i) {
           <span data-i18n="compass_save"></span>
         </button><br><br>
         
+        <button data-action="reset">
+          🗑 <span data-i18n="delete_data"></span>
+        </button>
+        
         <button data-action="close">
           <span data-i18n="close"></span>
         </button>
@@ -512,6 +516,7 @@ function openDET(i) {
     };
   });
 }
+
 
 
 
