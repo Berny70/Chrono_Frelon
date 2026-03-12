@@ -135,7 +135,46 @@ function afficherObservations() {
       [start, [dest.lat, dest.lon]],
       polylineOptions
     ).addTo(map);
-
+      // ==========================
+      // CÔNE AUTOUR DU POINT ESTIMÉ
+      // ==========================
+      if (obs.distance > 0) {
+      
+        const coneAngle = 15; // ±15°
+        const coneLength = 30; // 30 m
+      
+        const left = destinationPoint(
+          dest.lat,
+          dest.lon,
+          obs.direction - coneAngle,
+          coneLength
+        );
+      
+        const right = destinationPoint(
+          dest.lat,
+          dest.lon,
+          obs.direction + coneAngle,
+          coneLength
+        );
+      
+        const back = destinationPoint(
+          dest.lat,
+          dest.lon,
+          obs.direction + 180,
+          coneLength
+        );
+      
+        L.polygon([
+          [back.lat, back.lon],
+          [left.lat, left.lon],
+          [right.lat, right.lon]
+        ], {
+          color: color,
+          fillColor: color,
+          fillOpacity: 0.2,
+          weight: 1
+        }).addTo(map);
+      }
 
 
 
