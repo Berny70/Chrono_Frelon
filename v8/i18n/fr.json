@@ -44,7 +44,7 @@
   "map_local": "Carte locale",
   "map_send": "Envoyer vers la carte partagée",
   "map_shared": "Carte partagée",
-  "delete_data" : "Supprimer les données",
+  "delete_data" : "Supprimer les données locales",
 
   "map_title": "Localisation du nid",
   "back": "Retour",
