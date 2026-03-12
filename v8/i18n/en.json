@@ -44,6 +44,7 @@
   "map_local": "Local map",
   "map_send": "Send to shared map",
   "map_shared": "Shared map",
+  "delete_data" : "Delete data",
 
   "map_title": "Nest location",
   "back": "Back",
