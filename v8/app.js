@@ -287,6 +287,15 @@ function openLocationMenu() {
     if (btn.dataset.action === "shared") location.href = "map.html?mode=shared";
     if (btn.dataset.action === "send") envoyerVersCartePartagee();
     if (btn.dataset.action === "close") overlay.remove();
+    if (btn.dataset.action === "reset") {
+    if (!confirm("Supprimer toutes les données ?")) return;
+  
+    localStorage.removeItem("chronoObservations");
+    localStorage.removeItem("mapView");
+  
+    alert("Données supprimées");
+    overlay.remove();
+  }
   };
 }
 
@@ -516,6 +525,7 @@ function openDET(i) {
     };
   });
 }
+
 
 
 
