@@ -44,5 +44,7 @@
   "map_no_data_2": "Enrollañ un tu gant ar gibell",
   "map_station": "Savlec’h",
   "map_distance": "Hed",
-  "map_direction": "Tu"
+  "map_direction": "Tu",
+  "times": "Amzerioù",
+  "no_times":"Amzer ebet enrollet"
 }
