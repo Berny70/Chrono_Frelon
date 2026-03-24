@@ -357,6 +357,9 @@ function openLocationMenu() {
         <button data-action="close">
           <span data-i18n="close"></span>
         </button>
+        <button data-action="reset">
+          🗑 <span data-i18n="delete_data"></span>
+        </button>
     </div>
   `;
 
