@@ -43,5 +43,7 @@
   "map_no_data_2": "Registrare una direzione con la bussola",
   "map_station": "Stazione",
   "map_distance": "Distanza",
-  "map_direction": "Direzione"
+  "map_direction": "Direzione",
+  "times":"Tempi",
+  "no_times":"Nessun tempo registrato"
 }
