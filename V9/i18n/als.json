@@ -43,5 +43,7 @@
   "map_no_data_2": "Beweg d’Kàrt odder zoome",
   "map_station": "Stàtion",
   "map_distance": "Distànz",
-  "map_direction": "Rìchtung"
+  "map_direction": "Rìchtung",
+   "times": "Zite",
+  "no_times":"Kei Zit gspeichert"
 }
