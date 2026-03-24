@@ -43,5 +43,7 @@
   "map_no_data_2": "Enregistrar una direccion amb la brossòla",
   "map_station": "Estacion",
   "map_distance": "Distància",
-  "map_direction": "Direccion"
+  "map_direction": "Direccion",
+  "times":"Temps",
+  "no_times":"Cap de temps enregistrat"
 }
