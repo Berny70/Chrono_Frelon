@@ -76,80 +76,132 @@ map.on("moveend", () => {
 // ==========================
 // AFFICHAGE OBSERVATIONS
 // ==========================
-function afficherObservations() {
-  observations.forEach(obs => {
-
-    if (
-      obs.lat == null ||
-      obs.lon == null ||
-      obs.direction == null
-    ) return;
-
-    const start = [obs.lat, obs.lon];
-    const color = obs.color || "red";
-
-    // Point d'observation
-    const marker = L.circleMarker(start, {
-      radius: 6,
-      color,
-      fillColor: color,
-      fillOpacity: 1
-    }).addTo(map);
-
-    marker.bindPopup(
-      `<b>${t("map_station")}</b><br>
-       ${t("map_distance")}: ${obs.distance} m<br>
-       ${t("map_direction")}: ${obs.direction}°`
-    );
-
-    let dest;
-    let polylineOptions;
-
-    // ==========================
-    // CAS 1 — distance inconnue
-    // ==========================
-    if (obs.distance === 0) {
-
-      dest = destinationPoint(
-        obs.lat,
-        obs.lon,
-        obs.direction,
-        500
-      );
-
-      polylineOptions = {
-        color,
-        weight: 2,
-        dashArray: "6 6",
-        opacity: 0.8
-      };
-
-    // ==========================
-    // CAS 2 — distance connue
-    // ==========================
-    } else {
-
-      dest = destinationPoint(
-        obs.lat,
-        obs.lon,
-        obs.direction,
-        obs.distance
-      );
-
-      polylineOptions = {
-        color,
-        weight: 3,
-        opacity: 1
-      };
-    }
-
-    L.polyline(
-      [start, [dest.lat, dest.lon]],
-      polylineOptions
-    ).addTo(map);
-  });
+    function afficherObservations() {
+    
+      // reset des points pour éviter accumulation
+      pointsNid = [];
+    
+      observations.forEach(obs => {
+    
+        if (
+          obs.lat == null ||
+          obs.lon == null ||
+          obs.direction == null
+        ) return;
+    
+        const start = [obs.lat, obs.lon];
+        const color = obs.color || "red";
+    
+        // ==========================
+        // POINT D'OBSERVATION
+        // ==========================
+        const marker = L.circleMarker(start, {
+          radius: 6,
+          color,
+          fillColor: color,
+          fillOpacity: 1
+        }).addTo(map);
+    
+        marker.bindPopup(
+          `<b>${t("map_station")}</b><br>
+           ${t("map_distance")}: ${obs.distance} m<br>
+           ${t("map_direction")}: ${obs.direction}°`
+        );
+    
+        let dest;
+        let polylineOptions;
+    
+        // ==========================
+        // CAS 1 — distance inconnue
+        // ==========================
+        if (obs.distance === 0) {
+    
+          dest = destinationPoint(
+            obs.lat,
+            obs.lon,
+            obs.direction,
+            500
+          );
+    
+          polylineOptions = {
+            color,
+            weight: 2,
+            dashArray: "6 6",
+            opacity: 0.8
+          };
+    
+        // ==========================
+        // CAS 2 — distance connue
+        // ==========================
+        } else {
+    
+          dest = destinationPoint(
+            obs.lat,
+            obs.lon,
+            obs.direction,
+            obs.distance
+          );
+    
+          polylineOptions = {
+            color,
+            weight: 3,
+            opacity: 1
+          };
+        }
+    
+        // ==========================
+        // TRACE DU VECTEUR
+        // ==========================
+        L.polyline(
+          [start, [dest.lat, dest.lon]],
+          polylineOptions
+        ).addTo(map);
+    
+        // ==========================
+        // STOCKAGE POUR NID
+        // ==========================
+        if (obs.distance > 0) {
+          pointsNid.push([dest.lat, dest.lon]);
+        }
+    
+        // ==========================
+        // CERCLE 50 m
+        // ==========================
+        if (obs.distance > 0 && dest) {
+          L.circle([dest.lat, dest.lon], {
+            radius: 50,
+            color: color,
+            fillColor: color,
+            fillOpacity: 0.2,
+            weight: 1
+          }).addTo(map);
+        }
+    
+      });
+    
+      // ==========================
+      // CALCUL NID PROBABLE
+      // ==========================
+      if (pointsNid.length >= 2) {
+    
+        let latSum = 0;
+        let lonSum = 0;
+    
+        pointsNid.forEach(p => {
+          latSum += p[0];
+          lonSum += p[1];
+        });
+    
+        const latMoy = latSum / pointsNid.length;
+        const lonMoy = lonSum / pointsNid.length;
+    
+        L.marker([latMoy, lonMoy], {
+          title: "Nid probable"
+        })
+        .addTo(map)
+        .bindPopup("📍 Nid probable");
+      }
 }
-
 // ==========================
 // CENTRAGE CARTE
 // ==========================
