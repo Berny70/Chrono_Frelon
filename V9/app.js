@@ -580,54 +580,90 @@ function onOrientation(e) {
 // ==========================
 // DÉTAIL DES ESSAIS / DIRECTIONS
 // ==========================
-function openDET(i) {
-  detIndex = i;
-  const c = chronos[i];
-
-  document.getElementById("detOverlay")?.remove();
-
-  const overlay = document.createElement("div");
-  overlay.id = "detOverlay";
-  overlay.className = c.color;
-
-  overlay.innerHTML = `
-    <div class="det-box">
-      <h2>${t("detail_title")} ${c.color}</h2>
-
-      <h3>${t("directions")}</h3>
-
-      ${
-        c.directions.length
-          ? c.directions.map((d, k) => `
-              <div class="det-line">
-                ${d}°
-                <button class="del-dir" data-k="${k}">
-                  ${t("delete")}
-                </button>
-              </div>
-            `).join("")
-          : `<div class="det-line"><i>${t("no_direction") || "Aucune direction enregistrée"}</i></div>`
-      }
-
-      <br>
-      <button id="closeDET">${t("close")}</button>
-    </div>
-  `;
-
-  document.body.appendChild(overlay);
-
-  // fermeture
-  overlay.querySelector("#closeDET").onclick = () => overlay.remove();
-
-  // suppression d’une direction
-  overlay.querySelectorAll(".del-dir").forEach(btn => {
-    btn.onclick = () => {
-      chronos[detIndex].directions.splice(btn.dataset.k, 1);
-      updateDirection(detIndex);
-      openDET(detIndex);
-    };
-  });
-}
+    function openDET(i) {
+      detIndex = i;
+      const c = chronos[i];
+    
+      document.getElementById("detOverlay")?.remove();
+    
+      const overlay = document.createElement("div");
+      overlay.id = "detOverlay";
+      overlay.className = c.color;
+    
+      overlay.innerHTML = `
+        <div class="det-box">
+          <h2>${t("detail_title")} ${c.color}</h2>
+    
+          <!-- ========================== -->
+          <!-- TEMPS -->
+          <!-- ========================== -->
+          <h3>${t("times") || "Temps"}</h3>
+    
+          ${
+            c.essais.length
+              ? c.essais.map((tps, k) => `
+                  <div class="det-line">
+                    ${Math.round(tps)} s
+                    <button class="del-essai" data-k="${k}">
+                      ${t("delete")}
+                    </button>
+                  </div>
+                `).join("")
+              : `<div class="det-line"><i>${t("no_times") || "Aucun temps enregistré"}</i></div>`
+          }
+    
+          <hr>
+    
+          <!-- ========================== -->
+          <!-- DIRECTIONS -->
+          <!-- ========================== -->
+          <h3>${t("directions")}</h3>
+    
+          ${
+            c.directions.length
+              ? c.directions.map((d, k) => `
+                  <div class="det-line">
+                    ${d}°
+                    <button class="del-dir" data-k="${k}">
+                      ${t("delete")}
+                    </button>
+                  </div>
+                `).join("")
+              : `<div class="det-line"><i>${t("no_direction") || "Aucune direction enregistrée"}</i></div>`
+          }
+    
+          <br>
+          <button id="closeDET">${t("close")}</button>
+        </div>
+      `;
+    
+      document.body.appendChild(overlay);
+    
+      // fermeture
+      overlay.querySelector("#closeDET").onclick = () => overlay.remove();
+    
+      // ==========================
+      // SUPPRESSION TEMPS
+      // ==========================
+      overlay.querySelectorAll(".del-essai").forEach(btn => {
+        btn.onclick = () => {
+          chronos[detIndex].essais.splice(btn.dataset.k, 1);
+          updateStats(detIndex);
+          openDET(detIndex);
+        };
+      });
+    
+      // ==========================
+      // SUPPRESSION DIRECTION
+      // ==========================
+      overlay.querySelectorAll(".del-dir").forEach(btn => {
+        btn.onclick = () => {
+          chronos[detIndex].directions.splice(btn.dataset.k, 1);
+          updateDirection(detIndex);
+          openDET(detIndex);
+        };
+      });
+    }
 function resetDirectionOnly(i) {
   const c = chronos[i];
 
