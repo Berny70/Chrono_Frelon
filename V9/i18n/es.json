@@ -43,5 +43,7 @@
   "map_no_data_2": "Registrar una dirección con la brújula",
   "map_station": "Estación",
   "map_distance": "Distancia",
-  "map_direction": "Dirección"
+  "map_direction": "Dirección",
+  "times":"Tiempos",
+  "no_times":"Ningún tiempo registrado"
 }
