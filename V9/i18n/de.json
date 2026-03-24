@@ -54,5 +54,7 @@
 
   "map_station": "Station",
   "map_distance": "Entfernung",
-  "map_direction": "Richtung"
+  "map_direction": "Richtung",
+  "times": "Zeiten",
+  "no_times":"Keine Zeiten gespeichert"
 }
