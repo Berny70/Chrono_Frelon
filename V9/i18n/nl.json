@@ -43,5 +43,7 @@
   "map_no_data_2": "Een richting vastleggen met het kompas",
   "map_station": "Station",
   "map_distance": "Afstand",
-  "map_direction": "Richting"
+  "map_direction": "Richting",
+  "times":"Tijden",
+  "no_times":"Geen tijden geregistreerd"
 }
