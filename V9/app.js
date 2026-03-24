@@ -373,6 +373,27 @@ function openLocationMenu() {
     if (btn.dataset.action === "shared") location.href = "map.html?mode=shared";
     if (btn.dataset.action === "send") envoyerVersCartePartagee();
     if (btn.dataset.action === "close") overlay.remove();
+    if (btn.dataset.action === "reset") {
+
+    if (!confirm(t("confirm_delete_local") || "Supprimer toutes les données locales ?")) return;
+  
+    // suppression données locales
+    localStorage.removeItem("chronoObservations");
+    localStorage.removeItem("mapView");
+  
+    // reset mémoire (optionnel mais propre)
+    chronos.forEach(c => {
+      c.lat = "--";
+      c.lon = "--";
+      c.direction = 0;
+      c.directions = [];
+      c.essais = [];
+    });
+  
+    alert(t("data_deleted") || "Données locales supprimées");
+  
+    location.reload(); // 👉 recharge propre
+}
   };
 }
 
