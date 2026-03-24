@@ -10,7 +10,7 @@ let currentCompassIndex = null;
 let currentHeading = null;
 let lastHeading = null;
 let compassActive = false;
-let pointsNid = [];
+
 // ==========================
 // mode au démarrage 
 // ==========================
