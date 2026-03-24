@@ -69,9 +69,12 @@ function moyenneCirculaire(degs) {
   function restoreObservations() {
     const obs = JSON.parse(localStorage.getItem("chronoObservations") || "[]");
   
-    obs.forEach((o, i) => {
-      if (!chronos[i]) return;
-      const c = chronos[i];
+    obs.forEach(o => {
+    
+      const c = chronos.find(c => c.color === o.color);
+      if (!c) return;
+    
+      const i = chronos.indexOf(c);
   
       // état interne
       c.lat = o.lat.toFixed(5);
