@@ -43,5 +43,7 @@
   "map_no_data_2": "Iparorratzarekin norabide bat erregistratu",
   "map_station": "Gunea",
   "map_distance": "Distantzia",
-  "map_direction": "Norabidea"
+  "map_direction": "Norabidea",
+  "times":"Denborak",
+  "no-times": "Ez dago denborarik gordeta"
 }
