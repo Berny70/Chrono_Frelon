@@ -56,5 +56,7 @@
 
   "map_station": "Station",
   "map_distance": "Distance",
-  "map_direction": "Direction"
+  "map_direction": "Direction",
+  "times":"Times",
+  "no_times":"No times recorded"
 }
