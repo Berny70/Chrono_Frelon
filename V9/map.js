@@ -93,6 +93,17 @@ map.on("moveend", () => {
         const color = obs.color || "red";
     
         // ==========================
+        // RECALCUL DISTANCE (IMPORTANT)
+        // ==========================
+        let distance = 0;
+    
+        if (obs.essais && obs.essais.length && obs.vitesse) {
+          const total = obs.essais.reduce((a, b) => a + b, 0);
+          const moy = total / obs.essais.length;
+          distance = moy * obs.vitesse / 2;
+        }
+    
+        // ==========================
         // POINT D'OBSERVATION
         // ==========================
         const marker = L.circleMarker(start, {
@@ -104,7 +115,7 @@ map.on("moveend", () => {
     
         marker.bindPopup(
           `<b>${t("map_station")}</b><br>
-           ${t("map_distance")}: ${obs.distance} m<br>
+           ${t("map_distance")}: ${Math.round(distance)} m<br>
            ${t("map_direction")}: ${obs.direction}°`
         );
     
@@ -114,7 +125,7 @@ map.on("moveend", () => {
         // ==========================
         // CAS 1 — distance inconnue
         // ==========================
-        if (obs.distance === 0) {
+        if (distance === 0) {
     
           dest = destinationPoint(
             obs.lat,
@@ -139,7 +150,7 @@ map.on("moveend", () => {
             obs.lat,
             obs.lon,
             obs.direction,
-            obs.distance
+            distance
           );
     
           polylineOptions = {
@@ -160,14 +171,14 @@ map.on("moveend", () => {
         // ==========================
         // STOCKAGE POUR NID
         // ==========================
-        if (obs.distance > 0) {
+        if (distance > 0) {
           pointsNid.push([dest.lat, dest.lon]);
         }
     
         // ==========================
         // CERCLE 50 m
         // ==========================
-        if (obs.distance > 0 && dest) {
+        if (distance > 0 && dest) {
           L.circle([dest.lat, dest.lon], {
             radius: 50,
             color: color,
@@ -201,7 +212,7 @@ map.on("moveend", () => {
         .addTo(map)
         .bindPopup("📍 Nid probable");
       }
-}
+    }
 // ==========================
 // CENTRAGE CARTE
 // ==========================
