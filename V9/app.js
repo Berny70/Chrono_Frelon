@@ -387,40 +387,58 @@ function openLocationMenu() {
   document.body.appendChild(overlay);
     applyTranslations();   
     loadDeclinaison();
-  overlay.onclick = e => {
-    const btn = e.target.closest("button");
-    if (!btn) return;
-
-    if (btn.dataset.action === "local") location.href = "map.html";
-    if (btn.dataset.action === "shared") location.href = "map.html?mode=shared";
-    if (btn.dataset.action === "send") envoyerVersCartePartagee();
-    if (btn.dataset.action === "close") overlay.remove();
-    if (btn.dataset.action === "reset") {
-
-    if (!confirm(t("confirm_delete_local") || "Supprimer toutes les données locales ?")) return;
-      
-    if (btn.dataset.action === "decliPlus") {  changeDeclinaison(0.1);}
-    if (btn.dataset.action === "decliMinus") {  changeDeclinaison(-0.1);}
-    // suppression données locales
-    localStorage.removeItem("chronoObservations");
-    localStorage.removeItem("mapView");
+    
+    overlay.onclick = e => {
+      const btn = e.target.closest("button");
+      if (!btn) return;
+    
+      // ==========================
+      // NAVIGATION
+      // ==========================
+      if (btn.dataset.action === "local") location.href = "map.html";
+      if (btn.dataset.action === "shared") location.href = "map.html?mode=shared";
+      if (btn.dataset.action === "send") envoyerVersCartePartagee();
+    
+      // ==========================
+      // DECLINAISON
+      // ==========================
+      if (btn.dataset.action === "decliPlus") {
+        changeDeclinaison(0.1);
+      }
+    
+      if (btn.dataset.action === "decliMinus") {
+        changeDeclinaison(-0.1);
+      }
+    
+      // ==========================
+      // RESET DONNÉES
+      // ==========================
+      if (btn.dataset.action === "reset") {
+    
+        if (!confirm(t("confirm_delete_local") || "Supprimer toutes les données locales ?")) return;
+    
+        localStorage.removeItem("chronoObservations");
+        localStorage.removeItem("mapView");
+    
+        chronos.forEach(c => {
+          c.lat = "--";
+          c.lon = "--";
+          c.direction = 0;
+          c.directions = [];
+          c.essais = [];
+        });
+    
+        alert(t("data_deleted") || "Données locales supprimées");
+    
+        location.reload();
+      }
+    
+      // ==========================
+      // FERMETURE
+      // ==========================
+      if (btn.dataset.action === "close") overlay.remove();
+    };
   
-    // reset mémoire (optionnel mais propre)
-    chronos.forEach(c => {
-      c.lat = "--";
-      c.lon = "--";
-      c.direction = 0;
-      c.directions = [];
-      c.essais = [];
-    });
-  
-    alert(t("data_deleted") || "Données locales supprimées");
-  
-    location.reload(); // 👉 recharge propre
-}
-  };
-}
-
 // ==========================
 // ENVOI SUPABASE
 // ==========================
