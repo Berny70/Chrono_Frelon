@@ -174,7 +174,9 @@ function afficherObservations() {
     // ==========================
     // TRACE
     // ==========================
+// ==========================
 // TRACE
+// ==========================
 L.polyline(
   [start, [dest.lat, dest.lon]],
   polylineOptions
@@ -198,6 +200,9 @@ if (distance > 0) {
     weight: 1
   }).addTo(map);
 }
+
+  }); // ✅ FIN DU forEach
+}     // ✅ FIN DE afficherObservations
 // ==========================
 // CENTRAGE CARTE
 // ==========================
