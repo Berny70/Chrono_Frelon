@@ -386,6 +386,7 @@ function openLocationMenu() {
 
   document.body.appendChild(overlay);
     applyTranslations();   
+    loadDeclinaison();
   overlay.onclick = e => {
     const btn = e.target.closest("button");
     if (!btn) return;
