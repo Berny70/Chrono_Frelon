@@ -354,12 +354,14 @@ function openLocationMenu() {
           🌍 <span data-i18n="map_shared"></span>
         </button>
         
+         <button data-action="manual">
+          ✏️ Saisie manuelle
+        </button>
+        
         <button data-action="close">
           <span data-i18n="close"></span>
         </button>
-        <button data-action="manual">
-          ✏️ Saisie manuelle
-        </button>
+
     </div>
   `;
 
