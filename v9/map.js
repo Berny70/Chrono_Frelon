@@ -3,7 +3,7 @@
 // ==========================
 const mapSearchParams = new URLSearchParams(window.location.search);
 const MODE_SHARED = mapSearchParams.get("mode") === "shared";
-
+const color = obs.color === "manual" ? "black" : (obs.color || "red");
 // ==========================
 // DONNÉES
 // ==========================
