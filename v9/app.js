@@ -382,6 +382,14 @@ function openLocationMenu() {
     if (btn.dataset.action === "send") envoyerVersCartePartagee();
     if (btn.dataset.action === "close") overlay.remove();
     if (btn.dataset.action === "manual") openManualInput();
+    if (btn.dataset.action === "reset") {
+
+    if (!confirm(t("confirm_delete_local") || "Supprimer toutes les données locales ?")) return;  
+    localStorage.removeItem("chronoObservations");
+    localStorage.removeItem("mapView");  
+    alert(t("data_deleted") || "Données locales supprimées");
+    location.reload();
+  }
   };
 }
 
