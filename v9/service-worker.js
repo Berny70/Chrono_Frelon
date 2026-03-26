@@ -2,8 +2,8 @@
    SERVICE WORKER – Chrono Frelon
    ========================== */
 
-const APP_VERSION = "11.74";
-const CACHE_NAME = "chrono-frelon-v11.74";
+const APP_VERSION = "11.75";
+const CACHE_NAME = "chrono-frelon-v11.75";
 
 /* ⚠️ Liste STRICTE des fichiers à mettre en cache
    (éviter "./" qui peut matcher trop large) */
