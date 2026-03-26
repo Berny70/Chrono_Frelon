@@ -266,3 +266,45 @@ function destinationPoint(lat, lon, bearing, distance) {
 document.getElementById("btnBackMap")?.addEventListener("click", () => {
   location.href = "index.html";
 });
+// ==========================
+// DECLINAISON SIMPLE
+// ==========================
+let declinaison = 0;
+
+// chargement
+function initDeclinaison() {
+  const saved = localStorage.getItem("declinaison");
+
+  if (saved !== null) {
+    declinaison = parseFloat(saved);
+  } else {
+    declinaison = 3;
+  }
+
+  const input = document.getElementById("declinaisonInput");
+  if (input) input.value = declinaison;
+}
+
+// modification
+function setupDeclinaison() {
+  const input = document.getElementById("declinaisonInput");
+  if (!input) return;
+
+  input.addEventListener("change", () => {
+    let val = parseFloat(input.value.replace(",", "."));
+
+    if (isNaN(val)) return;
+
+    if (val > 30) val = 30;
+    if (val < -30) val = -30;
+
+    declinaison = val;
+    localStorage.setItem("declinaison", declinaison);
+  });
+}
+
+// init
+window.addEventListener("load", () => {
+  initDeclinaison();
+  setupDeclinaison();
+});
