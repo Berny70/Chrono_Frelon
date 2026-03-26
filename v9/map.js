@@ -319,18 +319,19 @@ document.getElementById("btnBackMap")?.addEventListener("click", () => {
 // ==========================
 let declinaison = 0;
 
-// chargement
 function initDeclinaison() {
+  const input = document.getElementById("declinaisonInput");
+  if (!input) return;
+
   const saved = localStorage.getItem("declinaison");
 
   if (saved !== null) {
     declinaison = parseFloat(saved);
   } else {
-    declinaison = 3;
+    declinaison = 3; // valeur par défaut
   }
 
-  const input = document.getElementById("declinaisonInput");
-  if (input) input.value = declinaison;
+  input.value = declinaison.toFixed(1);
 }
 
 // modification
@@ -338,7 +339,7 @@ function setupDeclinaison() {
   const input = document.getElementById("declinaisonInput");
   if (!input) return;
 
-  input.addEventListener("change", () => {
+  input.addEventListener("input", () => {
     let val = parseFloat(input.value.replace(",", "."));
 
     if (isNaN(val)) return;
@@ -347,6 +348,7 @@ function setupDeclinaison() {
     if (val < -30) val = -30;
 
     declinaison = val;
+
     localStorage.setItem("declinaison", declinaison);
   });
 }
