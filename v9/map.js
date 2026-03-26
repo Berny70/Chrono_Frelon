@@ -350,4 +350,4 @@ function initDeclinaison() {
   const input = document.getElementById("declinaisonInput");
   if (input) input.value = declinaison;
 }
-
+console.log("INPUT:", document.getElementById("declinaisonInput"));
