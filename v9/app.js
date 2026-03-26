@@ -388,7 +388,8 @@ overlay.innerHTML = `
   document.body.appendChild(overlay);
 
   applyTranslations();
-
+  initDeclinaison();
+  setupDeclinaison();
   // ✅ VERSION ROBUSTE (IMPORTANT)
   overlay.addEventListener("click", e => {
 
