@@ -24,7 +24,7 @@ function loadDeclinaison() {
   if (saved !== null) {
     declinaison = parseFloat(saved);
   } else {
-    declinaison = 2.5; // valeur par défaut (Paris)
+    declinaison = 3; // valeur par défaut (Paris)
   }
 
   const input = document.getElementById("declinaisonInput");
