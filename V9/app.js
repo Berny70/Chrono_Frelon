@@ -685,31 +685,60 @@ function onOrientation(e) {
         };
       });
     }
-function resetDirectionOnly(i) {
-  const c = chronos[i];
-
-  c.lat = "--";
-  c.lon = "--";
-  c.directions = [];
-  c.direction = 0;
-
-  document.getElementById(`lat${i}`).textContent = "--";
-  document.getElementById(`lon${i}`).textContent = "--";
-  document.getElementById(`dir${i}`).textContent = "0°";
-
-  saveObservations();
-}
-
-
-
-
-
-
-
-
-
-
-
+    function resetDirectionOnly(i) {
+      const c = chronos[i];
+    
+      c.lat = "--";
+      c.lon = "--";
+      c.directions = [];
+      c.direction = 0;
+    
+      document.getElementById(`lat${i}`).textContent = "--";
+      document.getElementById(`lon${i}`).textContent = "--";
+      document.getElementById(`dir${i}`).textContent = "0°";
+    
+      saveObservations();
+    }
+      // ==========================
+      // Declinaison
+      // ==========================
+    let declinaison = 0.0;
+    
+    function loadDeclinaison() {
+      const saved = localStorage.getItem("declinaison");
+      if (saved !== null) {
+        declinaison = parseFloat(saved);
+      }
+      updateDeclinaisonDisplay();
+    }
+    
+    function updateDeclinaisonDisplay() {
+      const el = document.getElementById("declinaisonValue");
+      if (!el) return;
+    
+      el.innerText =
+        (declinaison >= 0 ? "+" : "") + declinaison.toFixed(1) + "°";
+    }
+    
+    function changeDeclinaison(delta) {
+      declinaison += delta;
+    
+      if (declinaison > 30) declinaison = 30;
+      if (declinaison < -30) declinaison = -30;
+    
+      localStorage.setItem("declinaison", declinaison);
+      updateDeclinaisonDisplay();
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
 
 
 
