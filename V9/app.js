@@ -438,7 +438,7 @@ function openLocationMenu() {
       // ==========================
       if (btn.dataset.action === "close") overlay.remove();
     };
-  
+}
 // ==========================
 // ENVOI SUPABASE
 // ==========================
