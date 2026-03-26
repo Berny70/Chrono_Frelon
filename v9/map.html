@@ -44,8 +44,42 @@
       font-size: 0.9em;
       box-shadow: 0 0 5px rgba(0,0,0,0.3);
     }
+
+    /* ✅ DECLINAISON */
+    .declinaison-box {
+      position: absolute;
+      top: 60px;
+      left: 10px;
+      z-index: 9999;
+
+      background: white;
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-size: 0.9em;
+
+      display: flex;
+      align-items: center;
+      gap: 6px;
+
+      box-shadow: 0 0 5px rgba(0,0,0,0.3);
+    }
+
+    .declinaison-box input {
+      width: 60px;
+      text-align: center;
+    }
   </style>
 </head>
+
+<body>
+
+<button id="btnBackMap">
+  ⬅ <span data-i18n="back">Retour</span>
+</button>
+
+<div id="map"></div>
+
+<!-- ✅ BON EMPLACEMENT -->
 <div class="declinaison-box">
   Déclinaison :
   <input
@@ -54,13 +88,6 @@
     inputmode="decimal"
   > °
 </div>
-<body>
-
-<button id="btnBackMap">
-  ⬅ <span data-i18n="back">Retour</span>
-</button>
-
-<div id="map"></div>
 
 <div class="legend">
   <b>Chrono Frelon – V7</b><br>
@@ -79,7 +106,7 @@
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script src="./js/supabase.js"></script>
 
-<!-- Carte UNIQUEMENT -->
+<!-- Carte -->
 <script src="./map.js"></script>
 
 </body>
