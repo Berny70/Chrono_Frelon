@@ -357,6 +357,9 @@ function openLocationMenu() {
         <button data-action="close">
           <span data-i18n="close"></span>
         </button>
+        <button data-action="manual">
+          ✏️ Saisie manuelle
+        </button>
     </div>
   `;
 
@@ -370,6 +373,7 @@ function openLocationMenu() {
     if (btn.dataset.action === "shared") location.href = "map.html?mode=shared";
     if (btn.dataset.action === "send") envoyerVersCartePartagee();
     if (btn.dataset.action === "close") overlay.remove();
+    if (btn.dataset.action === "manual") openManualInput();
   };
 }
 
@@ -614,6 +618,72 @@ function resetDirectionOnly(i) {
   document.getElementById(`dir${i}`).textContent = "0°";
 
   saveObservations();
+}
+// ==========================
+// Saisie manuelle 
+// =================//
+function openManualInput() {
+
+  document.getElementById("manualOverlay")?.remove();
+
+  const overlay = document.createElement("div");
+  overlay.id = "manualOverlay";
+
+  overlay.innerHTML = `
+    <div class="loc-box">
+      <h2>Saisie manuelle</h2>
+
+      <input id="manTime" type="datetime-local"><br><br>
+
+      Lat : <input id="manLat" type="text"><br><br>
+      Lon : <input id="manLon" type="text"><br><br>
+
+      Direction : <input id="manDir" type="number"><br><br>
+      Distance (m) : <input id="manDist" type="number"><br><br>
+
+      <button id="manSave">Ajouter</button>
+      <button id="manClose">Fermer</button>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  // bouton fermer
+  document.getElementById("manClose").onclick = () => overlay.remove();
+
+  // bouton ajouter
+  document.getElementById("manSave").onclick = () => {
+
+    const lat = parseFloat(document.getElementById("manLat").value);
+    const lon = parseFloat(document.getElementById("manLon").value);
+    const dir = parseFloat(document.getElementById("manDir").value);
+    const dist = parseFloat(document.getElementById("manDist").value);
+
+    if (isNaN(lat) || isNaN(lon) || isNaN(dir)) {
+      alert("Données invalides");
+      return;
+    }
+
+    // création observation
+    const obs = {
+      lat,
+      lon,
+      direction: dir,
+      distance: dist || 0,
+      essais: [],
+      vitesse: 0,
+      color: "manual"
+    };
+
+    // sauvegarde
+    const data = JSON.parse(localStorage.getItem("chronoObservations") || "[]");
+    data.push(obs);
+    localStorage.setItem("chronoObservations", JSON.stringify(data));
+
+    alert("Point ajouté ✅");
+
+    overlay.remove();
+  };
 }
 
 
