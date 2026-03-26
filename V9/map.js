@@ -8,13 +8,56 @@ const MODE_SHARED = mapSearchParams.get("mode") === "shared";
 // DONNÉES
 // ==========================
 let observations = [];
+let pointsNid = [];
+
+// ==========================
+// DECLINAISON
+// ==========================
+let declinaison = 0.0;
+
+// Charger depuis localStorage
+function loadDeclinaison() {
+  const saved = localStorage.getItem("declinaison");
+  if (saved !== null) {
+    declinaison = parseFloat(saved);
+  }
+  updateDisplay();
+}
+
+// Affichage
+function updateDisplay() {
+  const el = document.getElementById("declinaisonValue");
+  if (!el) return;
+
+  el.innerText =
+    (declinaison >= 0 ? "+" : "") + declinaison.toFixed(1) + "°";
+}
+
+// Modification
+function changeDeclinaison(delta) {
+  declinaison += delta;
+
+  if (declinaison > 30) declinaison = 30;
+  if (declinaison < -30) declinaison = -30;
+
+  localStorage.setItem("declinaison", declinaison);
+  updateDisplay();
+
+  // 🔄 rafraîchir affichage carte
+  map.eachLayer(layer => {
+    if (layer instanceof L.Marker || layer instanceof L.Polyline || layer instanceof L.Circle) {
+      map.removeLayer(layer);
+    }
+  });
+
+  afficherObservations();
+}
 
 // ==========================
 // INITIALISATION CARTE
 // ==========================
 const map = L.map("map").setView([46.5, 2.5], 6);
 
-// Fond de carte
 L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution: "© OpenStreetMap"
 }).addTo(map);
@@ -27,10 +70,9 @@ if (!MODE_SHARED) {
     localStorage.getItem("chronoObservations") || "[]"
   );
 
-  // 🔧 NORMALISATION (OPTION B compatible)
   observations = observations.map(o => {
     if (o.distance == null) {
-      o.distance = 0; // distance inconnue → hypothèse
+      o.distance = 0;
     }
     return o;
   });
@@ -76,149 +118,154 @@ map.on("moveend", () => {
 // ==========================
 // AFFICHAGE OBSERVATIONS
 // ==========================
-    function afficherObservations() {
-    
-      // reset des points pour éviter accumulation
-      pointsNid = [];
-    
-      observations.forEach(obs => {
-    
-        if (
-          obs.lat == null ||
-          obs.lon == null ||
-          obs.direction == null
-        ) return;
-    
-        const start = [obs.lat, obs.lon];
-        const color = obs.color || "red";
-    
-        // ==========================
-        // RECALCUL DISTANCE (IMPORTANT)
-        // ==========================
-        let distance = 0;
-    
-        if (obs.essais && obs.essais.length && obs.vitesse) {
-          const total = obs.essais.reduce((a, b) => a + b, 0);
-          const moy = total / obs.essais.length;
-          distance = moy * obs.vitesse / 2;
-        }
-    
-        // ==========================
-        // POINT D'OBSERVATION
-        // ==========================
-        const marker = L.circleMarker(start, {
-          radius: 6,
-          color,
-          fillColor: color,
-          fillOpacity: 1
-        }).addTo(map);
-    
-        marker.bindPopup(
-          `<b>${t("map_station")}</b><br>
-           ${t("map_distance")}: ${Math.round(distance)} m<br>
-           ${t("map_direction")}: ${obs.direction}°`
-        );
-    
-        let dest;
-        let polylineOptions;
-    
-        // ==========================
-        // CAS 1 — distance inconnue
-        // ==========================
-        if (distance === 0) {
-    
-          dest = destinationPoint(
-            obs.lat,
-            obs.lon,
-            obs.direction,
-            500
-          );
-    
-          polylineOptions = {
-            color,
-            weight: 2,
-            dashArray: "6 6",
-            opacity: 0.8
-          };
-    
-        // ==========================
-        // CAS 2 — distance connue
-        // ==========================
-        } else {
-    
-          dest = destinationPoint(
-            obs.lat,
-            obs.lon,
-            obs.direction,
-            distance
-          );
-    
-          polylineOptions = {
-            color,
-            weight: 3,
-            opacity: 1
-          };
-        }
-    
-        // ==========================
-        // TRACE DU VECTEUR
-        // ==========================
-        L.polyline(
-          [start, [dest.lat, dest.lon]],
-          polylineOptions
-        ).addTo(map);
-    
-        // ==========================
-        // STOCKAGE POUR NID
-        // ==========================
-        if (distance > 0) {
-          pointsNid.push([dest.lat, dest.lon]);
-        }
-    
-        // ==========================
-        // CERCLE 50 m
-        // ==========================
-        if (distance > 0 && dest) {
-          L.circle([dest.lat, dest.lon], {
-            radius: 50,
-            color: color,
-            fillColor: color,
-            fillOpacity: 0.2,
-            weight: 1
-          }).addTo(map);
-        }
-    
-      });
-    
-      // ==========================
-      // CALCUL NID PROBABLE
-      // ==========================
-      if (pointsNid.length >= 2) {
-    
-        let latSum = 0;
-        let lonSum = 0;
-    
-        pointsNid.forEach(p => {
-          latSum += p[0];
-          lonSum += p[1];
-        });
-    
-        const latMoy = latSum / pointsNid.length;
-        const lonMoy = lonSum / pointsNid.length;
-    
-        L.marker([latMoy, lonMoy], {
-          title: "Nid probable"
-        })
-        .addTo(map)
-        .bindPopup("📍 Nid probable");
-      }
+function afficherObservations() {
+
+  pointsNid = [];
+
+  observations.forEach(obs => {
+
+    if (
+      obs.lat == null ||
+      obs.lon == null ||
+      obs.direction == null
+    ) return;
+
+    const start = [obs.lat, obs.lon];
+    const color = obs.color || "red";
+
+    // ==========================
+    // DECLINAISON APPLIQUÉE
+    // ==========================
+    let directionCorrigee = obs.direction + declinaison;
+
+    if (directionCorrigee < 0) directionCorrigee += 360;
+    if (directionCorrigee >= 360) directionCorrigee -= 360;
+
+    // ==========================
+    // RECALCUL DISTANCE
+    // ==========================
+    let distance = 0;
+
+    if (obs.essais && obs.essais.length && obs.vitesse) {
+      const total = obs.essais.reduce((a, b) => a + b, 0);
+      const moy = total / obs.essais.length;
+      distance = moy * obs.vitesse / 2;
     }
+
+    // ==========================
+    // POINT
+    // ==========================
+    const marker = L.circleMarker(start, {
+      radius: 6,
+      color,
+      fillColor: color,
+      fillOpacity: 1
+    }).addTo(map);
+
+    marker.bindPopup(
+      `<b>${t("map_station")}</b><br>
+       ${t("map_distance")}: ${Math.round(distance)} m<br>
+       ${t("map_direction")}: ${Math.round(directionCorrigee)}°`
+    );
+
+    let dest;
+    let polylineOptions;
+
+    // ==========================
+    // DISTANCE INCONNUE
+    // ==========================
+    if (distance === 0) {
+
+      dest = destinationPoint(
+        obs.lat,
+        obs.lon,
+        directionCorrigee,
+        500
+      );
+
+      polylineOptions = {
+        color,
+        weight: 2,
+        dashArray: "6 6",
+        opacity: 0.8
+      };
+
+    } else {
+
+      dest = destinationPoint(
+        obs.lat,
+        obs.lon,
+        directionCorrigee,
+        distance
+      );
+
+      polylineOptions = {
+        color,
+        weight: 3,
+        opacity: 1
+      };
+    }
+
+    // ==========================
+    // TRACE
+    // ==========================
+    L.polyline(
+      [start, [dest.lat, dest.lon]],
+      polylineOptions
+    ).addTo(map);
+
+    // ==========================
+    // STOCKAGE NID
+    // ==========================
+    if (distance > 0) {
+      pointsNid.push([dest.lat, dest.lon]);
+    }
+
+    // ==========================
+    // CERCLE
+    // ==========================
+    if (distance > 0 && dest) {
+      L.circle([dest.lat, dest.lon], {
+        radius: 50,
+        color,
+        fillColor: color,
+        fillOpacity: 0.2,
+        weight: 1
+      }).addTo(map);
+    }
+
+  });
+
+  // ==========================
+  // NID PROBABLE
+  // ==========================
+  if (pointsNid.length >= 2) {
+
+    let latSum = 0;
+    let lonSum = 0;
+
+    pointsNid.forEach(p => {
+      latSum += p[0];
+      lonSum += p[1];
+    });
+
+    const latMoy = latSum / pointsNid.length;
+    const lonMoy = lonSum / pointsNid.length;
+
+    L.marker([latMoy, lonMoy], {
+      title: "Nid probable"
+    })
+    .addTo(map)
+    .bindPopup("📍 Nid probable");
+  }
+}
+
 // ==========================
 // CENTRAGE CARTE
 // ==========================
 function centrerCarte(data) {
   const points = data
-    .filter(o => o.lat && o.lon)
+    .filter(o => o.lat != null && o.lon != null)
     .map(o => [o.lat, o.lon]);
 
   const savedView = localStorage.getItem("mapView");
@@ -240,7 +287,7 @@ function centrerCarte(data) {
 }
 
 // ==========================
-// SUPABASE – RPC
+// SUPABASE
 // ==========================
 async function chargerDonneesAutour(lat, lon) {
   const { data, error } = await window.supabaseClient.rpc(
@@ -261,7 +308,7 @@ async function chargerDonneesAutour(lat, lon) {
 }
 
 // ==========================
-// MODE PARTAGÉ : CHARGEMENT
+// MODE PARTAGÉ
 // ==========================
 async function chargerObservationsPartagees() {
   navigator.geolocation.getCurrentPosition(
@@ -271,7 +318,6 @@ async function chargerObservationsPartagees() {
 
       observations = await chargerDonneesAutour(lat, lon);
 
-      // normalisation distance
       observations = observations.map(o => {
         if (o.distance == null) o.distance = 0;
         return o;
@@ -297,7 +343,7 @@ async function chargerObservationsPartagees() {
 }
 
 // ==========================
-// GÉOMÉTRIE : POINT DESTINATION
+// GÉOMÉTRIE
 // ==========================
 function destinationPoint(lat, lon, bearing, distance) {
   const R = 6371000;
@@ -329,3 +375,8 @@ function destinationPoint(lat, lon, bearing, distance) {
 document.getElementById("btnBackMap")?.addEventListener("click", () => {
   location.href = "index.html";
 });
+
+// ==========================
+// INIT
+// ==========================
+window.addEventListener("load", loadDeclinaison);
