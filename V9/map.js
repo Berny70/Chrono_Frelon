@@ -34,24 +34,27 @@ function loadDeclinaison() {
 // ==========================
 // INPUT DECLINAISON
 // ==========================
-function setupDeclinaisonInput() {
-  const input = document.getElementById("declinaisonInput");
-  if (!input) return;
-
-  input.addEventListener("input", () => {
-    let val = parseFloat(input.value);
-
-    if (isNaN(val)) return;
-
-    if (val > 30) val = 30;
-    if (val < -30) val = -30;
-
-    declinaison = val;
-    localStorage.setItem("declinaison", declinaison);
-
-    redrawMap();
-  });
-}
+    function setupDeclinaisonInput() {
+      const input = document.getElementById("declinaisonInput");
+      if (!input) return;
+    
+      input.addEventListener("change", () => {
+        let val = parseFloat(input.value.replace(",", "."));
+    
+        if (isNaN(val)) return;
+    
+        // limites
+        if (val > 30) val = 30;
+        if (val < -30) val = -30;
+    
+        declinaison = val;
+        localStorage.setItem("declinaison", declinaison);
+    
+        input.value = declinaison.toFixed(1);
+    
+        redrawMap();
+      });
+    }
 
 // ==========================
 // REFRESH CARTE
