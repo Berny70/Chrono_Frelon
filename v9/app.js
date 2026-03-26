@@ -375,7 +375,7 @@ overlay.innerHTML = `
 
     <hr>
 
-    <button data-action="reset">
+    <button data-action="Reset">
       🗑 <span data-i18n="delete_data"></span>
     </button>
 
