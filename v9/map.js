@@ -174,11 +174,29 @@ function afficherObservations() {
     // ==========================
     // TRACE
     // ==========================
-    L.polyline(
-      [start, [dest.lat, dest.lon]],
-      polylineOptions
-    ).addTo(map);
-  });
+// TRACE
+L.polyline(
+  [start, [dest.lat, dest.lon]],
+  polylineOptions
+).addTo(map);
+
+// ✅ POINT AU BOUT
+L.circleMarker([dest.lat, dest.lon], {
+  radius: 5,
+  color: color,
+  fillColor: color,
+  fillOpacity: 1
+}).addTo(map);
+
+// ✅ CERCLE 50 m
+if (distance > 0) {
+  L.circle([dest.lat, dest.lon], {
+    radius: 50,
+    color: color,
+    fillColor: color,
+    fillOpacity: 0.2,
+    weight: 1
+  }).addTo(map);
 }
 // ==========================
 // CENTRAGE CARTE
