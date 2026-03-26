@@ -99,7 +99,7 @@ function afficherObservations() {
     marker.bindPopup(
       `<b>${t("map_station")}</b><br>
        ${t("map_distance")}: ${obs.distance} m<br>
-       ${t("map_direction")}: ${obs.direction}°`
+       ${t("map_direction")}: ${obs.direction + declinaison}°`
     );
 
     let dest;
@@ -113,7 +113,7 @@ function afficherObservations() {
       dest = destinationPoint(
         obs.lat,
         obs.lon,
-        obs.direction,
+        obs.direction + declinaison,
         500
       );
 
@@ -132,7 +132,7 @@ function afficherObservations() {
       dest = destinationPoint(
         obs.lat,
         obs.lon,
-        obs.direction,
+        obs.direction + declinaison,
         obs.distance
       );
 
