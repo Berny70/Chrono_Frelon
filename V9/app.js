@@ -397,7 +397,9 @@ function openLocationMenu() {
     if (btn.dataset.action === "reset") {
 
     if (!confirm(t("confirm_delete_local") || "Supprimer toutes les données locales ?")) return;
-  
+      
+    if (btn.dataset.action === "decliPlus") {  changeDeclinaison(0.1);}
+    if (btn.dataset.action === "decliMinus") {  changeDeclinaison(-0.1);}
     // suppression données locales
     localStorage.removeItem("chronoObservations");
     localStorage.removeItem("mapView");
