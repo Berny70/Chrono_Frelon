@@ -334,7 +334,7 @@ function setupDeclinaison() {
 }
 
 // init
-window.addEventListener("load", () => {
+document.addEventListener("DOMContentLoaded", () => {
   initDeclinaison();
   setupDeclinaison();
 });
