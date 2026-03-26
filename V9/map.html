@@ -45,7 +45,7 @@
       box-shadow: 0 0 5px rgba(0,0,0,0.3);
     }
 
-    /* ✅ BOX DECLINAISON */
+    /* ✅ BOX DECLINAISON PROPRE */
     .declinaison-box {
       position: absolute;
       top: 60px;
@@ -58,9 +58,11 @@
       z-index: 2000;
     }
 
-    .declinaison-box button {
-      padding: 4px 8px;
-      margin: 2px;
+    .declinaison-box input {
+      width: 60px;
+      text-align: center;
+      font-size: 1em;
+      margin-left: 5px;
     }
   </style>
 </head>
@@ -73,16 +75,18 @@
 
 <div id="map"></div>
 
-<!-- ✅ BOX DECLINAISON (AJOUT ICI) -->
+<!-- ✅ NOUVELLE VERSION PROPRE -->
 <div class="declinaison-box">
-  <label>Déclinaison :</label><br>
-
-  <button onclick="changeDeclinaison(-0.1)">−</button>
-  <span id="declinaisonValue">0.0°</span>
-  <button onclick="changeDeclinaison(0.1)">+</button>
-
-  <br>
-  <small>Est = + / Ouest = −</small>
+  <label>
+    Déclinaison :
+    <input
+      type="number"
+      id="declinaisonInput"
+      step="0.1"
+      min="-30"
+      max="30"
+    > °
+  </label>
 </div>
 
 <div class="legend">
