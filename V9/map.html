@@ -45,24 +45,27 @@
       box-shadow: 0 0 5px rgba(0,0,0,0.3);
     }
 
-    /* ✅ BOX DECLINAISON PROPRE */
+    /* 🧭 BOX DECLINAISON */
     .declinaison-box {
       position: absolute;
       top: 60px;
       left: 10px;
       background: white;
-      padding: 10px;
+      padding: 8px 10px;
       border-radius: 6px;
       font-size: 0.9em;
       box-shadow: 0 0 5px rgba(0,0,0,0.3);
       z-index: 2000;
+
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
     .declinaison-box input {
-      width: 60px;
+      width: 55px;
       text-align: center;
       font-size: 1em;
-      margin-left: 5px;
     }
   </style>
 </head>
@@ -75,17 +78,15 @@
 
 <div id="map"></div>
 
-<!-- ✅ NOUVELLE VERSION PROPRE -->
+<!-- 🧭 DECLINAISON SIMPLE -->
 <div class="declinaison-box">
-  <label>
-    Déclinaison :
-    <input
-      type="text"
-      id="declinaisonInput"
-      inputmode="decimal"
-      placeholder="3.0"
-      style="width:60px; text-align:center;"
-    > °
+  Déclinaison :
+  <input
+    type="text"
+    id="declinaisonInput"
+    inputmode="decimal"
+    placeholder="3.0"
+  > °
 </div>
 
 <div class="legend">
