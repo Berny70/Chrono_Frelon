@@ -339,60 +339,86 @@ function openLocationMenu() {
 
   const overlay = document.createElement("div");
   overlay.id = "locOverlay";
-    overlay.innerHTML = `
-      <div class="loc-box">
-        <h2>${t("nest_location")}</h2>
-    
-        <button data-action="local">
-          🗺️ <span data-i18n="map_local"></span>
-        </button>
-    
-        <button data-action="send">
-          📤 <span data-i18n="map_send"></span>
-        </button>
-    
-        <button data-action="shared">
-          🌍 <span data-i18n="map_shared"></span>
-        </button>
-    
-        <button data-action="manual">
-          ✏️ Saisie manuelle
-        </button>
-    
-        <hr>
-    
-        <button data-action="reset">
-          🗑 <span data-i18n="delete_data"></span>
-        </button>
-    
-        <button data-action="close">
-          <span data-i18n="close"></span>
-        </button>
-      </div>
-    `;
+
+  overlay.innerHTML = `
+    <div class="loc-box">
+      <h2>${t("nest_location")}</h2>
+
+      <button data-action="local">
+        🗺️ <span data-i18n="map_local"></span>
+      </button>
+
+      <button data-action="send">
+        📤 <span data-i18n="map_send"></span>
+      </button>
+
+      <button data-action="shared">
+        🌍 <span data-i18n="map_shared"></span>
+      </button>
+
+      <button data-action="manual">
+        ✏️ Saisie manuelle
+      </button>
+
+      <hr>
+
+      <button data-action="reset">
+        🗑 <span data-i18n="delete_data"></span>
+      </button>
+
+      <button data-action="close">
+        <span data-i18n="close"></span>
+      </button>
+    </div>
+  `;
 
   document.body.appendChild(overlay);
-    applyTranslations();   
-  overlay.onclick = e => {
+
+  applyTranslations();
+
+  // ✅ VERSION ROBUSTE (IMPORTANT)
+  overlay.addEventListener("click", e => {
+
     const btn = e.target.closest("button");
     if (!btn) return;
 
-    if (btn.dataset.action === "local") location.href = "map.html";
-    if (btn.dataset.action === "shared") location.href = "map.html?mode=shared";
-    if (btn.dataset.action === "send") envoyerVersCartePartagee();
-    if (btn.dataset.action === "close") overlay.remove();
-    if (btn.dataset.action === "manual") openManualInput();
-    if (btn.dataset.action === "reset") {
+    const action = btn.dataset.action;
 
-    if (!confirm(t("confirm_delete_local") || "Supprimer toutes les données locales ?")) return;  
-    localStorage.removeItem("chronoObservations");
-    localStorage.removeItem("mapView");  
-    alert(t("data_deleted") || "Données locales supprimées");
-    location.reload();
-  }
-  };
+    console.log("ACTION:", action); // debug
+
+    // ==========================
+    // NAVIGATION
+    // ==========================
+    if (action === "local") location.href = "map.html";
+    if (action === "shared") location.href = "map.html?mode=shared";
+    if (action === "send") envoyerVersCartePartagee();
+
+    // ==========================
+    // POPUP MANUEL
+    // ==========================
+    if (action === "manual") openManualInput();
+
+    // ==========================
+    // FERMETURE
+    // ==========================
+    if (action === "close") overlay.remove();
+
+    // ==========================
+    // RESET
+    // ==========================
+    if (action === "reset") {
+
+      if (!confirm(t("confirm_delete_local") || "Supprimer toutes les données locales ?")) return;
+
+      localStorage.removeItem("chronoObservations");
+      localStorage.removeItem("mapView");
+
+      alert(t("data_deleted") || "Données locales supprimées");
+
+      location.reload();
+    }
+  });
 }
-
 // ==========================
 // ENVOI SUPABASE
 // ==========================
