@@ -77,8 +77,9 @@ map.on("moveend", () => {
 // AFFICHAGE OBSERVATIONS
 // ==========================
 function afficherObservations() {
+
   observations.forEach(obs => {
-   const color = obs.color || "red";  // ✅ ici c'est bon
+
     if (
       obs.lat == null ||
       obs.lon == null ||
@@ -86,9 +87,39 @@ function afficherObservations() {
     ) return;
 
     const start = [obs.lat, obs.lon];
-    const color = obs.color || "red";
 
-    // Point d'observation
+    // couleur (manuel = noir)
+    const color = obs.color === "manual"
+      ? "black"
+      : (obs.color || "red");
+
+    // ==========================
+    // DISTANCE (manuel OU calcul)
+    // ==========================
+    let distance = obs.distance || 0;
+
+    if (
+      distance === 0 &&
+      obs.essais &&
+      obs.essais.length &&
+      obs.vitesse
+    ) {
+      const total = obs.essais.reduce((a, b) => a + b, 0);
+      const moy = total / obs.essais.length;
+      distance = moy * obs.vitesse / 2;
+    }
+
+    // ==========================
+    // DIRECTION AVEC DECLINAISON
+    // ==========================
+    let direction = obs.direction + declinaison;
+
+    if (direction < 0) direction += 360;
+    if (direction >= 360) direction -= 360;
+
+    // ==========================
+    // POINT
+    // ==========================
     const marker = L.circleMarker(start, {
       radius: 6,
       color,
@@ -98,22 +129,22 @@ function afficherObservations() {
 
     marker.bindPopup(
       `<b>${t("map_station")}</b><br>
-       ${t("map_distance")}: ${obs.distance} m<br>
-       ${t("map_direction")}: ${obs.direction + declinaison}°`
+       ${t("map_distance")}: ${Math.round(distance)} m<br>
+       ${t("map_direction")}: ${Math.round(direction)}°`
     );
 
     let dest;
     let polylineOptions;
 
     // ==========================
-    // CAS 1 — distance inconnue
+    // DISTANCE INCONNUE
     // ==========================
-    if (obs.distance === 0) {
+    if (distance === 0) {
 
       dest = destinationPoint(
         obs.lat,
         obs.lon,
-        obs.direction + declinaison,
+        direction,
         500
       );
 
@@ -124,16 +155,13 @@ function afficherObservations() {
         opacity: 0.8
       };
 
-    // ==========================
-    // CAS 2 — distance connue
-    // ==========================
     } else {
 
       dest = destinationPoint(
         obs.lat,
         obs.lon,
-        obs.direction + declinaison,
-        obs.distance
+        direction,
+        distance
       );
 
       polylineOptions = {
@@ -143,13 +171,15 @@ function afficherObservations() {
       };
     }
 
+    // ==========================
+    // TRACE
+    // ==========================
     L.polyline(
       [start, [dest.lat, dest.lon]],
       polylineOptions
     ).addTo(map);
   });
 }
-
 // ==========================
 // CENTRAGE CARTE
 // ==========================
