@@ -727,7 +727,38 @@ function openManualInput() {
     overlay.remove();
   };
 }
+window.openManualInput = function() {
 
+  document.getElementById("manualOverlay")?.remove();
+
+  const overlay = document.createElement("div");
+  overlay.id = "manualOverlay";
+
+  overlay.innerHTML = `
+    <div class="manual-box">
+      <h2>Saisie manuelle</h2>
+
+      <input id="manTime" type="datetime-local"><br>
+
+      Lat : <input id="manLat" type="text"><br>
+      Lon : <input id="manLon" type="text"><br>
+
+      Direction : <input id="manDir" type="number"><br>
+      Distance (m) : <input id="manDist" type="number"><br>
+
+      <button id="manSave">Ajouter</button>
+      <button id="manClose">Fermer</button>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  document.getElementById("manClose").onclick = () => overlay.remove();
+
+  document.getElementById("manSave").onclick = () => {
+    alert("OK");
+  };
+};
 
 
 
