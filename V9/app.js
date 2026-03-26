@@ -399,17 +399,7 @@ function openLocationMenu() {
       if (btn.dataset.action === "shared") location.href = "map.html?mode=shared";
       if (btn.dataset.action === "send") envoyerVersCartePartagee();
     
-      // ==========================
-      // DECLINAISON
-      // ==========================
-      if (btn.dataset.action === "decliPlus") {
-        changeDeclinaison(0.1);
-      }
-    
-      if (btn.dataset.action === "decliMinus") {
-        changeDeclinaison(-0.1);
-      }
-    
+
       // ==========================
       // RESET DONNÉES
       // ==========================
