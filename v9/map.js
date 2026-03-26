@@ -338,5 +338,16 @@ window.addEventListener("load", () => {
   initDeclinaison();
   setupDeclinaison();
 });
+function initDeclinaison() {
+  const saved = localStorage.getItem("declinaison");
 
+  if (saved !== null) {
+    declinaison = parseFloat(saved);
+  } else {
+    declinaison = 3;
+  }
+
+  const input = document.getElementById("declinaisonInput");
+  if (input) input.value = declinaison;
+}
 
