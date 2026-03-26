@@ -44,16 +44,24 @@
       font-size: 0.9em;
       box-shadow: 0 0 5px rgba(0,0,0,0.3);
     }
-    <div class="declinaison-box">
-      <label>Déclinaison :</label><br>
-    
-      <button onclick="changeDeclinaison(-0.1)">−</button>
-      <span id="declinaisonValue">0.0°</span>
-      <button onclick="changeDeclinaison(0.1)">+</button>
-    
-      <br>
-      <small>Est = + / Ouest = −</small>
-    </div>
+
+    /* ✅ BOX DECLINAISON */
+    .declinaison-box {
+      position: absolute;
+      top: 60px;
+      left: 10px;
+      background: white;
+      padding: 10px;
+      border-radius: 6px;
+      font-size: 0.9em;
+      box-shadow: 0 0 5px rgba(0,0,0,0.3);
+      z-index: 2000;
+    }
+
+    .declinaison-box button {
+      padding: 4px 8px;
+      margin: 2px;
+    }
   </style>
 </head>
 
@@ -64,6 +72,18 @@
 </button>
 
 <div id="map"></div>
+
+<!-- ✅ BOX DECLINAISON (AJOUT ICI) -->
+<div class="declinaison-box">
+  <label>Déclinaison :</label><br>
+
+  <button onclick="changeDeclinaison(-0.1)">−</button>
+  <span id="declinaisonValue">0.0°</span>
+  <button onclick="changeDeclinaison(0.1)">+</button>
+
+  <br>
+  <small>Est = + / Ouest = −</small>
+</div>
 
 <div class="legend">
   <b>Chrono Frelon – V7</b><br>
@@ -82,7 +102,7 @@
 <script src="https://unpkg.com/@supabase/supabase-js@2"></script>
 <script src="./js/supabase.js"></script>
 
-<!-- Carte UNIQUEMENT -->
+<!-- Carte -->
 <script src="./map.js"></script>
 
 </body>
