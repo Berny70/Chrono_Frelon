@@ -361,15 +361,16 @@ function openLocationMenu() {
         <hr>
     
         <!-- 🧭 DECLINAISON -->
-        <div>
-          <b>Déclinaison :</b><br>
-    
-          <button data-action="decliMinus">−</button>
-          <span id="declinaisonValue">0.0°</span>
-          <button data-action="decliPlus">+</button>
-    
-          <br>
-          <small>Est = + / Ouest = −</small>
+       <div style="margin-top:10px;">
+          Déclinaison :
+          <input
+            type="number"
+            id="declinaisonInput"
+            step="0.1"
+            min="-30"
+            max="30"
+            style="width:60px; text-align:center;"
+          > °
         </div>
     
         <hr>
