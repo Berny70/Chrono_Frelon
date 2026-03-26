@@ -342,9 +342,10 @@ function openLocationMenu() {
 
   const overlay = document.createElement("div");
   overlay.id = "locOverlay";
-  overlay.innerHTML = `
-    <div class="loc-box">
-      <h2>${t("nest_location")}</h2>
+     overlay.innerHTML = `
+      <div class="loc-box">
+        <h2>${t("nest_location")}</h2>
+    
         <button data-action="local">
           🗺️ <span data-i18n="map_local"></span>
         </button>
@@ -356,15 +357,32 @@ function openLocationMenu() {
         <button data-action="shared">
           🌍 <span data-i18n="map_shared"></span>
         </button>
-        
-        <button data-action="close">
-          <span data-i18n="close"></span>
-        </button>
+    
+        <hr>
+    
+        <!-- 🧭 DECLINAISON -->
+        <div>
+          <b>Déclinaison :</b><br>
+    
+          <button data-action="decliMinus">−</button>
+          <span id="declinaisonValue">0.0°</span>
+          <button data-action="decliPlus">+</button>
+    
+          <br>
+          <small>Est = + / Ouest = −</small>
+        </div>
+    
+        <hr>
+    
         <button data-action="reset">
           🗑 <span data-i18n="delete_data"></span>
         </button>
-    </div>
-  `;
+    
+        <button data-action="close">
+          <span data-i18n="close"></span>
+        </button>
+      </div>
+    `;
 
   document.body.appendChild(overlay);
     applyTranslations();   
