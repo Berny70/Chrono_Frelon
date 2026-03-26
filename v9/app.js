@@ -738,7 +738,7 @@ window.openManualInput = function() {
     <div class="manual-box">
       <h2>Saisie manuelle</h2>
 
-      <input id="manTime" type="datetime-local"><br>
+      Date <input id="manTime" type="datetime-local"><br>
 
       Lat : <input id="manLat" type="text"><br>
       Lon : <input id="manLon" type="text"><br>
