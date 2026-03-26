@@ -579,7 +579,26 @@ body {
   border-color: #4caf50;
   opacity: 1;
 }
+.declinaison-box {
+  position: absolute;
+  top: 60px;
+  left: 10px;
+  background: white;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 0.9em;
+  box-shadow: 0 0 5px rgba(0,0,0,0.3);
+  z-index: 2000;
 
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.declinaison-box input {
+  width: 55px;
+  text-align: center;
+}
 
 
 
