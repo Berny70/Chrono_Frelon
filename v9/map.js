@@ -3,7 +3,7 @@
 // ==========================
 const mapSearchParams = new URLSearchParams(window.location.search);
 const MODE_SHARED = mapSearchParams.get("mode") === "shared";
-const color = obs.color === "manual" ? "black" : (obs.color || "red");
+
 // ==========================
 // DONNÉES
 // ==========================
@@ -78,7 +78,7 @@ map.on("moveend", () => {
 // ==========================
 function afficherObservations() {
   observations.forEach(obs => {
-
+   const color = obs.color || "red";  // ✅ ici c'est bon
     if (
       obs.lat == null ||
       obs.lon == null ||
