@@ -340,9 +340,22 @@ function openLocationMenu() {
   const overlay = document.createElement("div");
   overlay.id = "locOverlay";
 
-  overlay.innerHTML = `
+overlay.innerHTML = `
   <div class="loc-box">
     <h2>${t("nest_location")}</h2>
+
+    <!-- ✅ DECLINAISON JUSTE SOUS LE TITRE -->
+    <div style="margin-bottom:10px;">
+      Déclinaison :
+      <input
+        type="text"
+        id="declinaisonInput"
+        inputmode="decimal"
+        style="width:60px; text-align:center;"
+      > °
+    </div>
+
+    <hr>
 
     <button data-action="local">
       🗺️ <span data-i18n="map_local"></span>
@@ -359,19 +372,6 @@ function openLocationMenu() {
     <button data-action="manual">
       ✏️ Saisie manuelle
     </button>
-
-    <hr>
-
-    <!-- ✅ DECLINAISON SIMPLE -->
-    <div>
-      Déclinaison :
-      <input
-        type="text"
-        id="declinaisonInput"
-        inputmode="decimal"
-        style="width:60px; text-align:center;"
-      > °
-    </div>
 
     <hr>
 
