@@ -46,5 +46,6 @@
   "map_direction": "Richting",
   "times":"Tijden",
   "no_times":"Geen tijden geregistreerd",
-  "manual_input": "Handmatige invoer"
+  "manual_input": "Handmatige invoer",
+  "magnetic_declination": "Magnetische declinatie"
 }
