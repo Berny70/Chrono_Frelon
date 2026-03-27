@@ -45,5 +45,6 @@
   "map_distance": "Distància",
   "map_direction": "Direccion",
   "times":"Temps",
-  "no_times":"Cap de temps enregistrat"
+  "no_times":"Cap de temps enregistrat",
+  "manual_input": "Entrada manuala"
 }
