@@ -45,5 +45,6 @@
   "map_distance": "Afstand",
   "map_direction": "Richting",
   "times":"Tijden",
-  "no_times":"Geen tijden geregistreerd"
+  "no_times":"Geen tijden geregistreerd",
+  "manual_input": "Handmatige invoer"
 }
