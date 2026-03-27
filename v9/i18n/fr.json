@@ -59,5 +59,6 @@
   "map_direction": "Direction",
   "times":"Temps",
   "no_times":"Aucun temps enregistré",
-  "manual_input": "Saisie manuelle"
+  "manual_input": "Saisie manuelle",
+  "magnetic_declination": "Déclinaison magnétique"
 }
