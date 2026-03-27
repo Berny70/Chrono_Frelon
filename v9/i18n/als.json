@@ -45,5 +45,6 @@
   "map_distance": "Distànz",
   "map_direction": "Rìchtung",
    "times": "Zite",
-  "no_times":"Kei Zit gspeichert"
+  "no_times":"Kei Zit gspeichert",
+  "manual_input": "Manuelli Eingab"
 }
