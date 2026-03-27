@@ -46,5 +46,6 @@
   "map_direction": "Direccion",
   "times":"Temps",
   "no_times":"Cap de temps enregistrat",
-  "manual_input": "Entrada manuala"
+  "manual_input": "Entrada manuala",
+  "magnetic_declination": "Deklinazio magnetikoa"
 }
