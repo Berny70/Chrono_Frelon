@@ -57,5 +57,6 @@
   "map_direction": "Richtung",
   "times": "Zeiten",
   "no_times":"Keine Zeiten gespeichert",
-  "manual_input": "Manuelle Eingabe"
+  "manual_input": "Manuelle Eingabe",
+  "magnetic_declination": "Magnetische Deklination"
 }
