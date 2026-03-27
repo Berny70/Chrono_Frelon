@@ -45,5 +45,6 @@
   "map_distance": "Distantzia",
   "map_direction": "Norabidea",
   "times":"Denborak",
-  "no-times": "Ez dago denborarik gordeta"
+  "no-times": "Ez dago denborarik gordeta",
+  "manual_input": "Sarrera eskuz"
 }
