@@ -46,5 +46,6 @@
   "map_direction": "Rìchtung",
    "times": "Zite",
   "no_times":"Kei Zit gspeichert",
-  "manual_input": "Manuelli Eingab"
+  "manual_input": "Manuelli Eingab",
+  "magnetic_declination": "Magnetisch Deklination"
 }
