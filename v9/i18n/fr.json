@@ -58,5 +58,6 @@
   "map_distance": "Distance",
   "map_direction": "Direction",
   "times":"Temps",
-  "no_times":"Aucun temps enregistré"
+  "no_times":"Aucun temps enregistré",
+  "manual_input": "Saisie manuelle"
 }
