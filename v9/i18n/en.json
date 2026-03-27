@@ -58,5 +58,6 @@
   "map_distance": "Distance",
   "map_direction": "Direction",
   "times":"Times",
-  "no_times":"No times recorded"
+  "no_times":"No times recorded",
+  "manual_input": "Manual input"
 }
