@@ -370,7 +370,7 @@ overlay.innerHTML = `
     </button>
 
     <button data-action="manual">
-      ✏️ Saisie manuelle
+      ✏️ <span data-i18n="manual_input"></span>
     </button>
 
     <hr>
