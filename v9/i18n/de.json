@@ -56,5 +56,6 @@
   "map_distance": "Entfernung",
   "map_direction": "Richtung",
   "times": "Zeiten",
-  "no_times":"Keine Zeiten gespeichert"
+  "no_times":"Keine Zeiten gespeichert",
+  "manual_input": "Manuelle Eingabe"
 }
