@@ -46,5 +46,6 @@
   "map_distance": "Hed",
   "map_direction": "Tu",
   "times": "Amzerioù",
-  "no_times":"Amzer ebet enrollet"
+  "no_times":"Amzer ebet enrollet",
+  "manual_input": "Enankad dre zorn"
 }
