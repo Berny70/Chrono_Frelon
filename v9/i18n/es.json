@@ -45,5 +45,6 @@
   "map_distance": "Distancia",
   "map_direction": "Dirección",
   "times":"Tiempos",
-  "no_times":"Ningún tiempo registrado"
+  "no_times":"Ningún tiempo registrado",
+  "manual_input": "Entrada manual"
 }
