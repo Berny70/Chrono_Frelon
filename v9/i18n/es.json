@@ -46,5 +46,6 @@
   "map_direction": "Dirección",
   "times":"Tiempos",
   "no_times":"Ningún tiempo registrado",
-  "manual_input": "Entrada manual"
+  "manual_input": "Entrada manual",
+  "magnetic_declination": "Declinación magnética"
 }
