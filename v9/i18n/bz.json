@@ -47,5 +47,6 @@
   "map_direction": "Tu",
   "times": "Amzerioù",
   "no_times":"Amzer ebet enrollet",
-  "manual_input": "Enankad dre zorn"
+  "manual_input": "Enankad dre zorn",
+  "magnetic_declination": "Deklinañs magnetek"
 }
