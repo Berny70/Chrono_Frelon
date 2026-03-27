@@ -46,5 +46,6 @@
   "map_direction": "Norabidea",
   "times":"Denborak",
   "no-times": "Ez dago denborarik gordeta",
-  "manual_input": "Sarrera eskuz"
+  "manual_input": "Sarrera eskuz",
+  "magnetic_declination": "Deklinazio magnetikoa"
 }
