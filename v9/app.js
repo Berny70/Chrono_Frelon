@@ -676,9 +676,21 @@ function resetDirectionOnly(i) {
   saveObservations();
 }
 // ==========================
-// Saisie manuelle 
-// =================//
-function openManualInput() {
+// PARSE ROBUSTE
+// ==========================
+function parseNombre(val) {
+  if (!val) return NaN;
+
+  val = val.replace(",", ".");
+  val = val.replace(/[^0-9.\-]/g, "");
+
+  return parseFloat(val);
+}
+
+// ==========================
+// POPUP SAISIE MANUELLE
+// ==========================
+window.openManualInput = function () {
 
   document.getElementById("manualOverlay")?.remove();
 
@@ -686,16 +698,16 @@ function openManualInput() {
   overlay.id = "manualOverlay";
 
   overlay.innerHTML = `
-    <div class="loc-box">
+    <div class="manual-box">
       <h2>Saisie manuelle</h2>
 
-      <input id="manTime" type="datetime-local"><br><br>
+      Date : <input id="manTime" type="datetime-local"><br><br>
 
       Lat : <input id="manLat" type="text"><br><br>
       Lon : <input id="manLon" type="text"><br><br>
 
-      Direction : <input id="manDir" type="number"><br><br>
-      Distance (m) : <input id="manDist" type="number"><br><br>
+      Direction : <input id="manDir" type="text"><br><br>
+      Distance (m) : <input id="manDist" type="text"><br><br>
 
       <button id="manSave">Ajouter</button>
       <button id="manClose">Fermer</button>
@@ -704,19 +716,40 @@ function openManualInput() {
 
   document.body.appendChild(overlay);
 
-  // bouton fermer
+  // ==========================
+  // FERMETURE
+  // ==========================
   document.getElementById("manClose").onclick = () => overlay.remove();
 
-  // bouton ajouter
+  // ==========================
+  // AJOUT
+  // ==========================
   document.getElementById("manSave").onclick = () => {
 
-    const lat = parseFloat(document.getElementById("manLat").value);
-    const lon = parseFloat(document.getElementById("manLon").value);
-    const dir = parseFloat(document.getElementById("manDir").value);
-    const dist = parseFloat(document.getElementById("manDist").value);
+    const lat = parseNombre(document.getElementById("manLat").value);
+    const lon = parseNombre(document.getElementById("manLon").value);
+    const dir = parseNombre(document.getElementById("manDir").value);
+    const dist = parseNombre(document.getElementById("manDist").value);
 
+    // validation minimale
     if (isNaN(lat) || isNaN(lon) || isNaN(dir)) {
       alert("Données invalides");
+      return;
+    }
+
+    // validation réaliste
+    if (lat < -90 || lat > 90) {
+      alert("Latitude invalide");
+      return;
+    }
+
+    if (lon < -180 || lon > 180) {
+      alert("Longitude invalide");
+      return;
+    }
+
+    if (dir < 0 || dir > 360) {
+      alert("Direction invalide");
       return;
     }
 
@@ -725,7 +758,7 @@ function openManualInput() {
       lat,
       lon,
       direction: dir,
-      distance: dist || 0,
+      distance: isNaN(dist) ? 0 : dist,
       essais: [],
       vitesse: 0,
       color: "manual"
@@ -739,38 +772,6 @@ function openManualInput() {
     alert("Point ajouté ✅");
 
     overlay.remove();
-  };
-}
-window.openManualInput = function() {
-
-  document.getElementById("manualOverlay")?.remove();
-
-  const overlay = document.createElement("div");
-  overlay.id = "manualOverlay";
-
-  overlay.innerHTML = `
-    <div class="manual-box">
-      <h2>Saisie manuelle</h2>
-
-      Date <input id="manTime" type="datetime-local"><br>
-
-      Lat : <input id="manLat" type="text"><br>
-      Lon : <input id="manLon" type="text"><br>
-
-      Direction : <input id="manDir" type="number"><br>
-      Distance (m) : <input id="manDist" type="number"><br>
-
-      <button id="manSave">Ajouter</button>
-      <button id="manClose">Fermer</button>
-    </div>
-  `;
-
-  document.body.appendChild(overlay);
-
-  document.getElementById("manClose").onclick = () => overlay.remove();
-
-  document.getElementById("manSave").onclick = () => {
-    alert("OK");
   };
 };
 
