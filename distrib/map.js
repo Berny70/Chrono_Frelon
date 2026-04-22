@@ -149,7 +149,7 @@ function afficherObservations() {
         obs.lat,
         obs.lon,
         direction,
-        500
+        1500
       );
 
       polylineOptions = {
