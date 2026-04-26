@@ -438,31 +438,25 @@ overlay.innerHTML = `
 // ENVOI SUPABASE
 // ==========================
 async function envoyerVersCartePartagee() {
+  console.log("1 - début");
   const obs = JSON.parse(localStorage.getItem("chronoObservations") || "[]");
+  console.log("2 - obs:", obs.length, obs);
   if (!obs.length) return alert("Aucune observation");
-
   let phoneId = localStorage.getItem("phone_id");
   if (!phoneId) {
     phoneId = crypto.randomUUID();
     localStorage.setItem("phone_id", phoneId);
   }
-
-    const rows = obs.map(o => {
-    
+  console.log("3 - phoneId:", phoneId);
+  const rows = obs.map(o => {
       let distance = 0;
-    
-      // MODE DIRECTION ONLY
       if (MODE_DIRECTION_ONLY) {
-        distance = 500; // valeur fixe pour tracer les tirets
-      }
-    
-      // MODE CHRONO
-      else if (o.essais && o.essais.length && o.vitesse) {
+        distance = 500;
+      } else if (o.essais && o.essais.length && o.vitesse) {
         const total = o.essais.reduce((a, b) => a + b, 0);
         const moy = total / o.essais.length;
         distance = moy * o.vitesse / 2;
       }
-    
       return {
         lat: o.lat,
         lon: o.lon,
@@ -471,12 +465,12 @@ async function envoyerVersCartePartagee() {
         phone_id: phoneId
       };
     });
-
-
+  console.log("4 - rows:", rows);
+  console.log("5 - supabaseClient:", window.supabaseClient);
   const { error } = await window.supabaseClient
     .from("chrono_frelon_geo")
     .insert(rows);
-
+  console.log("6 - retour insert, error:", error);
   if (error) {
     console.error(error);
     alert("Erreur Supabase");
