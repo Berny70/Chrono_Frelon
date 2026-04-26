@@ -1,7 +1,7 @@
 // /js/supabase.js
 
-const SUPABASE_URL = "https://pqozgsgytzntrqscevrt.supabase.co";
-const SUPABASE_KEY = "sb_publishable_lPacACUx-QTq_-mV7DDc_g_xUQHDCsK";
+const SUPABASE_URL = "https://nxrezfbzhhuxtnwhbjzz.supabase.co";
+const SUPABASE_KEY = "sb_publishable_pv2SCbULI-7GStKIuRmWFg_zbaC69KE";
 
 // Initialisation UNIQUE (globale)
 if (!window.supabaseClient) {
