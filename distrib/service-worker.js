@@ -2,8 +2,8 @@
    SERVICE WORKER – Chrono Frelon
    ========================== */
 
-const APP_VERSION = "12.7";
-const CACHE_NAME = "chrono-frelon-v12.7";
+const APP_VERSION = "12.8";
+const CACHE_NAME = "chrono-frelon-v12.8";
 
 /* ⚠️ Liste STRICTE des fichiers à mettre en cache
    (éviter "./" qui peut matcher trop large) */
@@ -61,13 +61,29 @@ self.addEventListener("activate", event => {
 self.addEventListener("fetch", event => {
   const req = event.request;
 
-  /* 🔒 Ne jamais intercepter :
-     - requêtes externes
-     - requêtes non GET */
   if (
     req.method !== "GET" ||
     !req.url.startsWith(self.location.origin)
   ) {
+    return;
+  }
+
+  // Network-first pour index.html et service-worker.js
+  // pour détecter les mises à jour
+  const isNavigation = req.destination === "document" ||
+                       req.url.includes("service-worker.js") ||
+                       req.url.includes("version.js");
+
+  if (isNavigation) {
+    event.respondWith(
+      fetch(req)
+        .then(res => {
+          const clone = res.clone();
+          caches.open(CACHE_NAME).then(c => c.put(req, clone));
+          return res;
+        })
+        .catch(() => caches.match(req))
+    );
     return;
   }
 
@@ -76,9 +92,8 @@ self.addEventListener("fetch", event => {
       return (
         cacheRes ||
         fetch(req).catch(() => {
-          // fallback minimal si réseau KO
           if (req.destination === "document") {
-            return caches.match("/Chrono_Frelon/index.html");
+            return caches.match("/Chrono_Frelon/distrib/index.html");
           }
         })
       );
