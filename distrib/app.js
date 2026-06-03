@@ -19,15 +19,10 @@ let compassListenersAdded = false;
   const pilotId = localStorage.getItem('pilot_id');
   if (!pilotId) return;
 
-  // Vérifier si ce pilot_id est un admin ou pilote dans admin_profiles
   const { data } = await window.supabaseClient
-    .from('admin_profiles')
-    .select('id, role')
-    .eq('id', pilotId)
-    .in('role', ['superadmin', 'admin_dept', 'pilot'])
-    .single();
+    .rpc('chassnid_is_admin', { p_pilot_id: pilotId });
 
-  if (data) {
+  if (data === true) {
     const btn = document.getElementById('btnAdmin');
     if (btn) {
       btn.style.display = '';
