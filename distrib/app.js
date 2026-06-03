@@ -13,8 +13,30 @@ let compassActive = false;
 let compassListenersAdded = false;
 
 // ==========================
-// RATTACHEMENT PILOTE
+// BOUTON ADMIN
 // ==========================
+(async function initAdminButton() {
+  const pilotId = localStorage.getItem('pilot_id');
+  if (!pilotId) return;
+
+  // Vérifier si ce pilot_id est un admin ou pilote dans admin_profiles
+  const { data } = await window.supabaseClient
+    .from('admin_profiles')
+    .select('id, role')
+    .eq('id', pilotId)
+    .in('role', ['superadmin', 'admin_dept', 'pilot'])
+    .single();
+
+  if (data) {
+    const btn = document.getElementById('btnAdmin');
+    if (btn) {
+      btn.style.display = '';
+      btn.addEventListener('click', () => {
+        window.open('https://berny70.github.io/Chrono_Frelon_Admin/', '_blank');
+      });
+    }
+  }
+})();
 const DEFAULT_PILOT_ID = 'af095067-eb9b-4603-b850-0406e777b252'; // Bernard par défaut
 
 (function initPilotId() {
