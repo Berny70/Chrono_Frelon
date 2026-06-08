@@ -35,10 +35,15 @@ let compassListenersAdded = false;
 const DEFAULT_PILOT_ID = 'af095067-eb9b-4603-b850-0406e777b252'; // Bernard par défaut
 
 (function initPilotId() {
-  const params  = new URLSearchParams(window.location.search);
-  const pilotParam = params.get('pilot');
+  const params      = new URLSearchParams(window.location.search);
+  const pilotParam  = params.get('pilot');
   if (pilotParam) {
-    // QR Code scanné — mémoriser le pilote
+    // QR Code scanné — mémoriser le pilote et forcer le rattachement
+    const oldPilot = localStorage.getItem('pilot_id');
+    if (oldPilot !== pilotParam) {
+      // Nouveau pilote — réinitialiser le flag de rattachement
+      localStorage.removeItem('pilot_attached');
+    }
     localStorage.setItem('pilot_id', pilotParam);
   } else if (!localStorage.getItem('pilot_id')) {
     // Pas de pilote connu — rattacher à Bernard par défaut
@@ -492,6 +497,9 @@ async function envoyerVersCartePartagee() {
       .upsert({ pilot_id: pilotId, phone_id: phoneId }, { onConflict: 'pilot_id,phone_id' });
     if (!attachError) {
       localStorage.setItem("pilot_attached", "1");
+      console.log("Rattachement OK — pilot:", pilotId, "phone:", phoneId);
+    } else {
+      console.error("Erreur rattachement:", attachError);
     }
   }
 
