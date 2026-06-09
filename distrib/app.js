@@ -38,13 +38,9 @@ const DEFAULT_PILOT_ID = 'af095067-eb9b-4603-b850-0406e777b252'; // Bernard par 
   const params      = new URLSearchParams(window.location.search);
   const pilotParam  = params.get('pilot');
   if (pilotParam) {
-    // QR Code scanné — mémoriser le pilote et forcer le rattachement
-    const oldPilot = localStorage.getItem('pilot_id');
-    if (oldPilot !== pilotParam) {
-      // Nouveau pilote — réinitialiser le flag de rattachement
-      localStorage.removeItem('pilot_attached');
-    }
+    // QR Code scanné — toujours réinitialiser le rattachement
     localStorage.setItem('pilot_id', pilotParam);
+    localStorage.removeItem('pilot_attached');
   } else if (!localStorage.getItem('pilot_id')) {
     // Pas de pilote connu — rattacher à Bernard par défaut
     localStorage.setItem('pilot_id', DEFAULT_PILOT_ID);
@@ -491,7 +487,7 @@ async function envoyerVersCartePartagee() {
   // ── Rattachement pilote (une seule fois) ──────────────────
   const pilotId = localStorage.getItem("pilot_id") || DEFAULT_PILOT_ID;
   const alreadyAttached = localStorage.getItem("pilot_attached");
-  if (!alreadyAttached) {
+  if (!alreadyAttached && window.supabaseClient) {
     const { error: attachError } = await window.supabaseClient
       .from("pilot_users")
       .upsert({ pilot_id: pilotId, phone_id: phoneId }, { onConflict: 'pilot_id,phone_id' });
@@ -501,6 +497,8 @@ async function envoyerVersCartePartagee() {
     } else {
       console.error("Erreur rattachement:", attachError);
     }
+  } else if (!alreadyAttached) {
+    console.warn("supabaseClient non disponible au moment du rattachement");
   }
 
   const rows = obs.map(o => {
