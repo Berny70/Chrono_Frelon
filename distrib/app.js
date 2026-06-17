@@ -565,9 +565,18 @@ document.addEventListener("click", async e => {
     lastHeading = null;
     currentHeading = null;
 
+    const isIOS = typeof DeviceOrientationEvent !== "undefined" &&
+                  typeof DeviceOrientationEvent.requestPermission === "function";
+
     if (!compassListenersAdded) {
-      window.addEventListener("deviceorientationabsolute", onOrientation, true);
-      window.addEventListener("deviceorientation", onOrientation, true);
+      if (isIOS) {
+        // iOS : uniquement deviceorientation + webkitCompassHeading (vraie boussole calibrée).
+        // deviceorientationabsolute sur iOS donne un alpha non calibré et fausse la mesure.
+        window.addEventListener("deviceorientation", onOrientation, true);
+      } else {
+        window.addEventListener("deviceorientationabsolute", onOrientation, true);
+        window.addEventListener("deviceorientation", onOrientation, true);
+      }
       compassListenersAdded = true;
     }
 
@@ -638,7 +647,9 @@ function onOrientation(e) {
 
   let heading = null;
 
-  if (typeof e.webkitCompassHeading === "number") {
+  // webkitCompassHeading (iOS) est toujours prioritaire et fiable :
+  // c'est la boussole calibrée au nord magnétique réel.
+  if (typeof e.webkitCompassHeading === "number" && !isNaN(e.webkitCompassHeading)) {
     heading = e.webkitCompassHeading;
   } else if (e.absolute === true && typeof e.alpha === "number") {
     heading = (360 - e.alpha) % 360;
