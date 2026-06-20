@@ -749,9 +749,16 @@ function openDET(i) {
   overlay.id = "detOverlay";
   overlay.className = c.color;
 
+  const myPseudo = localStorage.getItem("my_pseudo");
+
   overlay.innerHTML = `
     <div class="det-box">
       <h2>${t("detail_title")} ${c.color}</h2>
+
+      ${myPseudo
+        ? `<p style="font-size:12px;opacity:0.75;margin:-6px 0 10px">🏷️ Mon pseudo : <b>${myPseudo}</b></p>`
+        : `<p style="font-size:12px;opacity:0.75;margin:-6px 0 10px">🏷️ Aucun pseudo défini — touche l'icône étiquette en haut de l'écran</p>`
+      }
 
       <h3>${t("directions")}</h3>
 
