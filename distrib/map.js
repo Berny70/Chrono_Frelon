@@ -18,10 +18,45 @@ let observations = [];
 const map = L.map("map").setView([46.5, 2.5], 6);
 const observationsLayer = L.layerGroup().addTo(map);
 
-// Fond de carte
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  attribution: "© OpenStreetMap"
-}).addTo(map);
+// ── FONDS DE CARTE (alignés sur ChassNid Admin) ────────────
+const BASEMAPS = {
+  osm:       { label: '🗺 Standard',  url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',                                                          opts: { attribution: '© OpenStreetMap', maxZoom: 19 } },
+  topo:      { label: '🏔 Topo',      url: 'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',                                                            opts: { attribution: '© OpenTopoMap',   maxZoom: 17 } },
+  relief:    { label: '🌄 Relief',    url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Shaded_Relief/MapServer/tile/{z}/{y}/{x}',          opts: { attribution: '© Esri',          maxZoom: 13 } },
+  satellite: { label: '🛰 Satellite', url: 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',                opts: { attribution: '© Esri',          maxZoom: 19 } },
+};
+
+let currentBasemapLayer = null;
+
+function applyBasemap(key) {
+  const bm = BASEMAPS[key] || BASEMAPS.osm;
+  if (currentBasemapLayer) map.removeLayer(currentBasemapLayer);
+  currentBasemapLayer = L.tileLayer(bm.url, bm.opts).addTo(map);
+  localStorage.setItem('chassnid_basemap', key);
+  document.querySelectorAll('.basemap-btn').forEach(btn => {
+    btn.classList.toggle('basemap-btn--active', btn.dataset.basemap === key);
+  });
+}
+
+function addBasemapControl() {
+  const ctrl = L.control({ position: 'bottomright' });
+  ctrl.onAdd = () => {
+    const div = L.DomUtil.create('div', 'basemap-control');
+    div.innerHTML = Object.entries(BASEMAPS).map(([key, bm]) =>
+      `<button class="basemap-btn${key === (localStorage.getItem('chassnid_basemap') || 'osm') ? ' basemap-btn--active' : ''}" data-basemap="${key}">${bm.label}</button>`
+    ).join('');
+    L.DomEvent.disableClickPropagation(div);
+    div.addEventListener('click', e => {
+      const btn = e.target.closest('.basemap-btn');
+      if (btn) applyBasemap(btn.dataset.basemap);
+    });
+    return div;
+  };
+  ctrl.addTo(map);
+}
+
+applyBasemap(localStorage.getItem('chassnid_basemap') || 'osm');
+addBasemapControl();
 
 // ==========================
 // MODE LOCAL
@@ -137,73 +172,20 @@ function afficherObservations() {
        ${t("map_direction")}: ${Math.round(direction)}°`
     );
 
-    let dest;
-    let polylineOptions;
-
     // ==========================
-    // DISTANCE INCONNUE
+    // FUSEAU DIRECTIONNEL (±5°)
     // ==========================
-    if (distance === 0) {
+    const fuseauLength = distance === 0 ? 1500 : distance;
+    const fuseauPoints = buildFuseau(obs.lat, obs.lon, direction, fuseauLength, 5);
 
-      dest = destinationPoint(
-        obs.lat,
-        obs.lon,
-        direction,
-        1500
-      );
-
-      polylineOptions = {
-        color,
-        weight: 2,
-        dashArray: "6 6",
-        opacity: 0.8
-      };
-
-    } else {
-
-      dest = destinationPoint(
-        obs.lat,
-        obs.lon,
-        direction,
-        distance
-      );
-
-      polylineOptions = {
-        color,
-        weight: 3,
-        opacity: 1
-      };
-    }
-
-    // ==========================
-    // TRACE
-    // ==========================
-// ==========================
-// TRACE
-// ==========================
-L.polyline(
-  [start, [dest.lat, dest.lon]],
-  polylineOptions
-).addTo(observationsLayer);
-
-// ✅ POINT AU BOUT
-L.circleMarker([dest.lat, dest.lon], {
-  radius: 5,
-  color: color,
-  fillColor: color,
-  fillOpacity: 1
-}).addTo(observationsLayer);
-
-// ✅ CERCLE 50 m
-if (distance > 0) {
-  L.circle([dest.lat, dest.lon], {
-    radius: 50,
-    color: color,
-    fillColor: color,
-    fillOpacity: 0.2,
-    weight: 1
-  }).addTo(observationsLayer);
-}
+    L.polygon(fuseauPoints, {
+      color,
+      weight:      1.5,
+      opacity:     0.8,
+      fillColor:   color,
+      fillOpacity: 0.22,
+      dashArray:   distance === 0 ? "6 6" : null,
+    }).addTo(observationsLayer);
 
   }); // ✅ FIN DU forEach
 }     // ✅ FIN DE afficherObservations
@@ -288,6 +270,23 @@ async function chargerObservationsPartagees() {
       map.setView([46.5, 2.5], 6);
     }
   );
+}
+
+// ==========================
+// CONSTRUCTION DU FUSEAU (secteur angulaire ±5°)
+// ==========================
+function buildFuseau(lat, lon, bearing, lengthM, halfAngleDeg) {
+  const steps  = 8;
+  const points = [[lat, lon]];
+
+  for (let i = 0; i <= steps; i++) {
+    const a   = bearing - halfAngleDeg + (2 * halfAngleDeg * i / steps);
+    const dst = destinationPoint(lat, lon, a, lengthM);
+    points.push([dst.lat, dst.lon]);
+  }
+
+  points.push([lat, lon]);
+  return points;
 }
 
 // ==========================
