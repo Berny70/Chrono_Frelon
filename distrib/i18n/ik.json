@@ -35,7 +35,7 @@
   "map_send": "Mapa partekatura bidali",
   "map_shared": "Mapa partekatua",
   "map_title": "Habia kokapena",
-  "delete_data" : "Datu lokalak ezabatu",       
+  "delete_data": "Datu lokalak ezabatu",
   "back": "Itzuli",
   "map_legend": "Behaketa-puntuak eta norabideak",
   "map_no_data_title": "Ez dago maparako datu erabilgarririk",
@@ -44,8 +44,10 @@
   "map_station": "Gunea",
   "map_distance": "Distantzia",
   "map_direction": "Norabidea",
-  "times":"Denborak",
+  "times": "Denborak",
   "no-times": "Ez dago denborarik gordeta",
   "manual_input": "Sarrera eskuz",
-  "magnetic_declination": "Deklinazio magnetikoa"
+  "magnetic_declination": "Deklinazio magnetikoa",
+  "mode_chrono": "Kronoa",
+  "mode_direction": "Norabidea"
 }

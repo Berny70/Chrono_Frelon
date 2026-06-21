@@ -13,7 +13,7 @@
   "map_local": "Lokali Kàrt",
   "map_shared": "Geteilter Kàrt",
   "map_send": "Schìcke",
-  "delete_data" : "Lokali Dàte lösche",
+  "delete_data": "Lokali Dàte lösche",
   "gps_error": "GPS-Fähler",
   "compass_denied": "Kompass nìt erlàubt",
   "compass_title": "Rìchtung",
@@ -22,7 +22,7 @@
   "detail_title": "Détail",
   "try": "Versuech",
   "delete": "Lösche",
-  "directions": "Rìchtunge",  
+  "directions": "Rìchtunge",
   "help_title": "Hìlf",
   "help_install": "Installàtion",
   "help_vars": "Variable",
@@ -44,8 +44,10 @@
   "map_station": "Stàtion",
   "map_distance": "Distànz",
   "map_direction": "Rìchtung",
-   "times": "Zite",
-  "no_times":"Kei Zit gspeichert",
+  "times": "Zite",
+  "no_times": "Kei Zit gspeichert",
   "manual_input": "Manuelli Eingab",
-  "magnetic_declination": "Magnetisch Deklination"
+  "magnetic_declination": "Magnetisch Deklination",
+  "mode_chrono": "Chrono",
+  "mode_direction": "Richtig"
 }

@@ -34,7 +34,7 @@
   "map_local": "Mapa local",
   "map_send": "Enviar al mapa compartido",
   "map_shared": "Mapa compartido",
-  "delete_data" : "Eliminar datos locales",
+  "delete_data": "Eliminar datos locales",
   "map_title": "Localización del nido",
   "back": "Volver",
   "map_legend": "Puntos de observación y direcciones",
@@ -44,8 +44,10 @@
   "map_station": "Estación",
   "map_distance": "Distancia",
   "map_direction": "Dirección",
-  "times":"Tiempos",
-  "no_times":"Ningún tiempo registrado",
+  "times": "Tiempos",
+  "no_times": "Ningún tiempo registrado",
   "manual_input": "Entrada manual",
-  "magnetic_declination": "Declinación magnética"
+  "magnetic_declination": "Declinación magnética",
+  "mode_chrono": "Crono",
+  "mode_direction": "Dirección"
 }

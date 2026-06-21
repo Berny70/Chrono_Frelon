@@ -34,7 +34,7 @@
   "map_local": "Mapa locala",
   "map_send": "Mandar a la mapa partejada",
   "map_shared": "Mapa partejada",
-  "delete_data" : "Suprimir las donadas localas",
+  "delete_data": "Suprimir las donadas localas",
   "map_title": "Localizacion del nis",
   "back": "Tornar",
   "map_legend": "Punts d’observacion e direccions",
@@ -44,8 +44,10 @@
   "map_station": "Estacion",
   "map_distance": "Distància",
   "map_direction": "Direccion",
-  "times":"Temps",
-  "no_times":"Cap de temps enregistrat",
+  "times": "Temps",
+  "no_times": "Cap de temps enregistrat",
   "manual_input": "Entrada manuala",
-  "magnetic_declination": "Deklinazio magnetikoa"
+  "magnetic_declination": "Deklinazio magnetikoa",
+  "mode_chrono": "Crono",
+  "mode_direction": "Direccion"
 }

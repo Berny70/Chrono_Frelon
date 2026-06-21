@@ -1,7 +1,6 @@
 {
   "app_title": "Pod gwialenn",
   "app_subtitle": "Kronometr + Roud",
-
   "help": "Sikour",
   "start": "Loc’hañ / Arsaviñ",
   "reset": "Adderaouekaat",
@@ -35,7 +34,7 @@
   "map_local": "Kartenn lec’hel",
   "map_send": "Kas d’ar gartenn rannet",
   "map_shared": "Kartenn rannet",
-  "delete_data" : "Dilemel ar roadennoù lec'hel",
+  "delete_data": "Dilemel ar roadennoù lec'hel",
   "map_title": "Lec’hiadur ar vagell",
   "back": "Distreiñ",
   "map_legend": "Poentoù evezhiañ ha tuioù",
@@ -46,7 +45,9 @@
   "map_distance": "Hed",
   "map_direction": "Tu",
   "times": "Amzerioù",
-  "no_times":"Amzer ebet enrollet",
+  "no_times": "Amzer ebet enrollet",
   "manual_input": "Enankad dre zorn",
-  "magnetic_declination": "Deklinañs magnetek"
+  "magnetic_declination": "Deklinañs magnetek",
+  "mode_chrono": "Kont",
+  "mode_direction": "Tu"
 }

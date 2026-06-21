@@ -21,7 +21,7 @@
   "vars_1": "Ogni colore corrisponde a una stazione",
   "vars_2": "Avvia / Arresta: misura il tempo",
   "vars_3": "Posizione: registra la posizione GPS",
-  "vars_4": "Bussola: registra la direzione",  
+  "vars_4": "Bussola: registra la direzione",
   "gps_error": "GPS non disponibile o rifiutato",
   "compass_denied": "Accesso alla bussola negato",
   "compass_title": "Bussola",
@@ -34,7 +34,7 @@
   "map_local": "Mappa locale",
   "map_send": "Invia alla mappa condivisa",
   "map_shared": "Mappa condivisa",
-  "delete_data" : "Elimina dati locali",
+  "delete_data": "Elimina dati locali",
   "map_title": "Localizzazione del nido",
   "back": "Indietro",
   "map_legend": "Punti di osservazione e direzioni",
@@ -44,8 +44,10 @@
   "map_station": "Stazione",
   "map_distance": "Distanza",
   "map_direction": "Direzione",
-  "times":"Tempi",
-  "no_times":"Nessun tempo registrato",
+  "times": "Tempi",
+  "no_times": "Nessun tempo registrato",
   "manual_input": "Inserimento manuale",
-  "magnetic_declination": "Declinazione magnetica"
+  "magnetic_declination": "Declinazione magnetica",
+  "mode_chrono": "Timer",
+  "mode_direction": "Direzione"
 }
