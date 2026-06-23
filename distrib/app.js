@@ -93,7 +93,15 @@ document.getElementById("btnPseudo")?.addEventListener("click", openPseudoMenu);
     const btn = document.getElementById('btnAdmin');
     if (btn) {
       btn.style.display = '';
-      btn.addEventListener('click', () => {
+      btn.addEventListener('click', async () => {
+        // Enregistrer le phone_id dans admin_profiles
+        const phoneId = localStorage.getItem('phone_id');
+        if (phoneId) {
+          await window.supabaseClient.rpc('chassnid_register_phone_id', {
+            p_pilot_id: pilotId,
+            p_phone_id: phoneId,
+          });
+        }
         window.open('https://berny70.github.io/Chrono_Frelon_Admin/', '_blank');
       });
     }
