@@ -455,6 +455,11 @@ overlay.innerHTML = `
   <div class="loc-box">
     <h2>${t("nest_location")}</h2>
 
+    ${localStorage.getItem("my_pseudo")
+      ? `<p style="font-size:13px;color:#c8a44a;margin:-4px 0 8px;text-align:center">🏷️ ${localStorage.getItem("my_pseudo")}</p>`
+      : `<p style="font-size:12px;opacity:0.6;margin:-4px 0 8px;text-align:center">🏷️ Aucun pseudo — touche l'icône étiquette</p>`
+    }
+
     <!-- ✅ DECLINAISON JUSTE SOUS LE TITRE -->
     <div style="margin-bottom:10px;">
       Déclinaison :
