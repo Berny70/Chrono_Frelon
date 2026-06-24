@@ -12,75 +12,6 @@ let lastHeading = null;
 let compassActive = false;
 let compassListenersAdded = false;
 
-// ==========================
-// MON PSEUDO (sentinelle)
-// ==========================
-function openPseudoMenu() {
-  document.getElementById("pseudoOverlay")?.remove();
-
-  const pilotId  = localStorage.getItem("pilot_id") || DEFAULT_PILOT_ID;
-  const phoneId  = localStorage.getItem("phone_id");
-  const current  = localStorage.getItem("my_pseudo") || "";
-
-  const overlay = document.createElement("div");
-  overlay.id = "pseudoOverlay";
-  overlay.innerHTML = `
-    <div class="loc-box">
-      <h2>🏷️ Mon pseudo</h2>
-      <p style="font-size:13px;opacity:0.8;margin-bottom:12px">
-        Donne-toi un pseudo pour que ton pilote te reconnaisse facilement.
-      </p>
-      <div style="margin-bottom:14px;">
-        <input
-          type="text"
-          id="pseudoInput"
-          placeholder="Ex : Jean du Chemin des Crêtes"
-          maxlength="40"
-          style="width:100%;box-sizing:border-box;padding:8px;text-align:center;"
-          value="${current.replace(/"/g, '&quot;')}"
-        >
-      </div>
-      <hr>
-      <button data-action="savePseudo">
-        💾 Enregistrer
-      </button>
-      <button data-action="closePseudo">
-        Fermer
-      </button>
-    </div>
-  `;
-
-  document.body.appendChild(overlay);
-
-  overlay.addEventListener("click", async e => {
-    const btn = e.target.closest("button");
-    if (!btn) return;
-    const action = btn.dataset.action;
-
-    if (action === "savePseudo") {
-      const val = document.getElementById("pseudoInput").value.trim();
-      if (!phoneId) { overlay.remove(); return; }
-
-      btn.disabled = true;
-      const { error } = await window.supabaseClient.rpc("chassnid_sentinel_set_pseudo", {
-        p_phone_id: phoneId,
-        p_pilot_id: pilotId,
-        p_pseudo:   val,
-      });
-      btn.disabled = false;
-
-      if (!error) {
-        localStorage.setItem("my_pseudo", val);
-        overlay.remove();
-      }
-    }
-
-    if (action === "closePseudo") overlay.remove();
-  });
-}
-
-document.getElementById("btnPseudo")?.addEventListener("click", openPseudoMenu);
-
 
 (async function initAdminButton() {
   const pilotId = localStorage.getItem('pilot_id');
@@ -455,10 +386,19 @@ overlay.innerHTML = `
   <div class="loc-box">
     <h2>${t("nest_location")}</h2>
 
-    ${localStorage.getItem("my_pseudo")
-      ? `<p style="font-size:13px;color:#c8a44a;margin:-4px 0 8px;text-align:center">🏷️ ${localStorage.getItem("my_pseudo")}</p>`
-      : `<p style="font-size:12px;opacity:0.6;margin:-4px 0 8px;text-align:center">🏷️ Aucun pseudo — touche l'icône étiquette</p>`
-    }
+    <!-- Pseudo directement dans la popup -->
+    <div style="margin-bottom:10px;display:flex;gap:6px;align-items:center">
+      <span style="font-size:14px">🏷️</span>
+      <input
+        type="text"
+        id="pseudoInLoc"
+        placeholder="Mon pseudo…"
+        maxlength="40"
+        value="${(localStorage.getItem("my_pseudo") || "").replace(/"/g, '&quot;')}"
+        style="flex:1;border:1px solid #ccc;border-radius:6px;padding:6px 8px;font-size:13px;font-family:inherit"
+      >
+      <button data-action="savePseudoLoc" style="background:#c8a44a;color:#fff;border:none;border-radius:6px;padding:6px 10px;font-size:13px;cursor:pointer">💾</button>
+    </div>
 
     <!-- ✅ DECLINAISON JUSTE SOUS LE TITRE -->
     <div style="margin-bottom:10px;">
@@ -527,6 +467,21 @@ overlay.innerHTML = `
     // POPUP MANUEL
     // ==========================
     if (action === "manual") openManualInput();
+
+    // Sauvegarde pseudo depuis la popup localisation
+    if (action === "savePseudoLoc") {
+      const val = document.getElementById("pseudoInLoc")?.value.trim();
+      const pilotId  = localStorage.getItem("pilot_id") || DEFAULT_PILOT_ID;
+      const phoneId  = localStorage.getItem("phone_id");
+      if (phoneId && val !== undefined) {
+        localStorage.setItem("my_pseudo", val);
+        window.supabaseClient?.rpc("chassnid_sentinel_set_pseudo", {
+          p_phone_id: phoneId,
+          p_pilot_id: pilotId,
+          p_pseudo:   val,
+        });
+      }
+    }
 
     // ==========================
     // FERMETURE
