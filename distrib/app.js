@@ -447,7 +447,7 @@ overlay.innerHTML = `
   initDeclinaison();
   setupDeclinaison();
   // ✅ VERSION ROBUSTE (IMPORTANT)
-  overlay.addEventListener("click", e => {
+  overlay.addEventListener("click", async e => {
 
     const btn = e.target.closest("button");
     if (!btn) return;
