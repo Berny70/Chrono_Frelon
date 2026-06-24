@@ -470,16 +470,26 @@ overlay.innerHTML = `
 
     // Sauvegarde pseudo depuis la popup localisation
     if (action === "savePseudoLoc") {
-      const val = document.getElementById("pseudoInLoc")?.value.trim();
-      const pilotId  = localStorage.getItem("pilot_id") || DEFAULT_PILOT_ID;
-      const phoneId  = localStorage.getItem("phone_id");
+      const val     = document.getElementById("pseudoInLoc")?.value.trim();
+      const btn     = e.target.closest("button");
+      const pilotId = localStorage.getItem("pilot_id") || DEFAULT_PILOT_ID;
+      const phoneId = localStorage.getItem("phone_id");
+
       if (phoneId && val !== undefined) {
+        if (btn) { btn.disabled = true; btn.textContent = "⏳"; }
         localStorage.setItem("my_pseudo", val);
-        window.supabaseClient?.rpc("chassnid_sentinel_set_pseudo", {
+
+        const { error } = await window.supabaseClient?.rpc("chassnid_sentinel_set_pseudo", {
           p_phone_id: phoneId,
           p_pilot_id: pilotId,
           p_pseudo:   val,
-        });
+        }) || {};
+
+        if (btn) {
+          btn.disabled = false;
+          btn.textContent = error ? "❌" : "✅";
+          setTimeout(() => { btn.textContent = "💾"; }, 2000);
+        }
       }
     }
 
