@@ -264,6 +264,7 @@ async function chargerObservationsPartagees() {
 
       centrerCarte(observations);
       afficherObservations();
+      chargerEtAfficherNids(lat, lon);
     },
     () => {
       alert(t("gps_error") || "GPS indisponible");
@@ -367,3 +368,41 @@ document.addEventListener("DOMContentLoaded", () => {
   initDeclinaison();
   setupDeclinaison();
 });
+
+// ==========================
+// NIDS TROUVÉS
+// ==========================
+
+const nestsLayer = L.layerGroup().addTo(map);
+
+const nestIcon = L.divIcon({
+  html: '<div style="font-size:28px;line-height:1;filter:drop-shadow(0 2px 3px rgba(0,0,0,0.4))">🪺</div>',
+  className: '',
+  iconSize:   [32, 32],
+  iconAnchor: [16, 28],
+  popupAnchor:[0, -28],
+});
+
+async function chargerEtAfficherNids(lat, lon) {
+  nestsLayer.clearLayers();
+
+  const { data, error } = await window.supabaseClient
+    .from('nests')
+    .select('*')
+    .order('found_at', { ascending: false });
+
+  if (error || !data) return;
+
+  data.forEach(n => {
+    const marker = L.marker([n.lat, n.lon], { icon: nestIcon }).addTo(nestsLayer);
+    const date   = n.found_at ? new Date(n.found_at).toLocaleDateString('fr-FR') : '—';
+    const pilote = n.pilot_nom || '—';
+    marker.bindPopup(
+      `<div style="font-family:sans-serif;font-size:13px">
+        <div style="font-weight:700;color:#7b3f00;margin-bottom:4px">🪺 Nid trouvé</div>
+        <div>📅 ${date}</div>
+        <div>👤 ${pilote}</div>
+      </div>`, { maxWidth: 200 }
+    );
+  });
+}
