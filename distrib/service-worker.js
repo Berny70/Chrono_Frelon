@@ -1,46 +1,21 @@
 /* ==========================
    SERVICE WORKER – Chrono Frelon
+   Network-first sur tout — mise à jour fiable
    ========================== */
 
-const APP_VERSION = "14.1";
-const CACHE_NAME = "chrono-frelon-v14.1";
-
-/* ⚠️ Liste STRICTE des fichiers à mettre en cache
-   (éviter "./" qui peut matcher trop large) */
-const FILES_TO_CACHE = [
-  "./",
-  "./index.html",
-  "./style.css",
-  "./app.js",
-  "./version.js",
-  "./manifest.json",
-  "./icon_4_chrono_2.png",
-
-  // JS
-  "./js/i18n.js",
-  "./js/help.js",
-
-  // I18N
-  "./i18n/fr.json",
-  "./i18n/en.json",
-  "./i18n/de.json",
-  "./i18n/it.json"
-];
+const APP_VERSION = "14.2";
+const CACHE_NAME  = "chrono-frelon-v14.2";
 
 /* ==========================
-   INSTALL
+   INSTALL — on ne précache rien,
+   le cache se remplit au fur et à mesure
    ========================== */
 self.addEventListener("install", event => {
   self.skipWaiting();
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(cache => {
-      return cache.addAll(FILES_TO_CACHE);
-    })
-  );
 });
 
 /* ==========================
-   ACTIVATE
+   ACTIVATE — purger les anciens caches
    ========================== */
 self.addEventListener("activate", event => {
   event.waitUntil(
@@ -56,11 +31,13 @@ self.addEventListener("activate", event => {
 });
 
 /* ==========================
-   FETCH (SÉCURISÉ)
+   FETCH — Network-first sur tout
+   Fallback cache si hors ligne
    ========================== */
 self.addEventListener("fetch", event => {
   const req = event.request;
 
+  // Ignorer les requêtes non-GET et cross-origin (Supabase, tuiles…)
   if (
     req.method !== "GET" ||
     !req.url.startsWith(self.location.origin)
@@ -68,36 +45,26 @@ self.addEventListener("fetch", event => {
     return;
   }
 
-  // Network-first pour index.html et service-worker.js
-  // pour détecter les mises à jour
-  const isNavigation = req.destination === "document" ||
-                       req.url.includes("service-worker.js") ||
-                       req.url.includes("version.js");
-
-  if (isNavigation) {
-    event.respondWith(
-      fetch(req)
-        .then(res => {
+  event.respondWith(
+    fetch(req)
+      .then(res => {
+        // Mettre en cache la réponse fraîche
+        if (res.ok) {
           const clone = res.clone();
           caches.open(CACHE_NAME).then(c => c.put(req, clone));
-          return res;
-        })
-        .catch(() => caches.match(req))
-    );
-    return;
-  }
-
-  event.respondWith(
-    caches.match(req).then(cacheRes => {
-      return (
-        cacheRes ||
-        fetch(req).catch(() => {
+        }
+        return res;
+      })
+      .catch(() => {
+        // Hors ligne : servir depuis le cache
+        return caches.match(req).then(cached => {
+          if (cached) return cached;
+          // Fallback ultime : page d'accueil
           if (req.destination === "document") {
             return caches.match("/Chrono_Frelon/distrib/index.html");
           }
-        })
-      );
-    })
+        });
+      })
   );
 });
 
@@ -106,50 +73,6 @@ self.addEventListener("fetch", event => {
    ========================== */
 self.addEventListener("message", event => {
   if (event.data === "GET_VERSION") {
-    event.source.postMessage({
-      version: APP_VERSION
-    });
+    event.source.postMessage({ version: APP_VERSION });
   }
 });
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
