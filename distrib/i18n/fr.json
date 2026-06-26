@@ -1,5 +1,5 @@
 {
-  "app_title": "Pot à mèche",
+  "app_title": "ChassFrelon",
   "help": "Aide",
   "start": "Start / Stop",
   "reset": "Reset",
@@ -9,7 +9,7 @@
   "capture": "Capture d’écran",
   "nest_location": "Localisation du nid",
   "close": "Fermer",
-  "help_title": "Aide – Pot à mèche",
+  "help_title": "Aide – ChassFrelon",
   "app_subtitle": "Chronos + Direction",
   "help_install": "Installation sur smartphone",
   "help_vars": "Fonctionnement de l’application",
