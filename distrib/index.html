@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>VigiNid</title>
+  <title>Pot à Mèche</title>
 
   <!-- PWA -->
   <link rel="manifest" href="./manifest.json">
@@ -188,7 +188,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const file = new File([blob], filename, { type: "image/png" });
         await navigator.share({
           files: [file],
-          title: "VigiNid"
+          title: "Pot à Mèche"
         });
         return;
       } catch (e) {}
