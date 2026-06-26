@@ -1,5 +1,5 @@
 {
-  "app_title": "ChassFrelon",
+  "app_title": "VigiNid",
   "help": "Aide",
   "start": "Start / Stop",
   "reset": "Reset",
@@ -9,7 +9,7 @@
   "capture": "Capture d’écran",
   "nest_location": "Localisation du nid",
   "close": "Fermer",
-  "help_title": "Aide – ChassFrelon",
+  "help_title": "Aide – VigiNid",
   "app_subtitle": "Chronos + Direction",
   "help_install": "Installation sur smartphone",
   "help_vars": "Fonctionnement de l’application",
