@@ -8,7 +8,20 @@ fetch('service-worker.js')
       document.getElementById('version').textContent = "version " + match[1];
     }
   });
-const chronoColors = ["red", "blue", "green", "white"];
+// Code couleur international marquage de reine
+// 1/6=blanc, 2/7=jaune, 3/8=rouge, 4/9=vert, 5/0=bleu
+const QUEEN_COLORS = {
+  1: 'white', 6: 'white',
+  2: 'yellow', 7: 'yellow',
+  3: 'red', 8: 'red',
+  4: 'green', 9: 'green',
+  5: 'blue', 0: 'blue'
+};
+const YEAR_DIGIT = new Date().getFullYear() % 10;
+const YEAR_COLOR = QUEEN_COLORS[YEAR_DIGIT];
+const ALL_COLORS = ['white', 'yellow', 'red', 'green', 'blue'];
+// Mettre la couleur de l'année en premier
+const chronoColors = [YEAR_COLOR, ...ALL_COLORS.filter(c => c !== YEAR_COLOR)];
 const chronos = [];
 window.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("chronos");
