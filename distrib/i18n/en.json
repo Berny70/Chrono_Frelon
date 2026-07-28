@@ -31,6 +31,8 @@
   "try": "Trial",
   "delete": "Delete",
   "directions": "Directions",
+  "essais_title": "Timed attempts",
+  "no_essai": "No attempt recorded",
   "map_local": "Local map",
   "map_send": "Send to shared map",
   "map_shared": "Shared map",

@@ -753,6 +753,21 @@ function openDET(i) {
           : `<div class="det-line"><i>${t("no_direction") || "Aucune direction enregistrée"}</i></div>`
       }
 
+      <h3>${t("essais_title")}</h3>
+
+      ${
+        c.essais.length
+          ? c.essais.map((e, k) => `
+              <div class="det-line">
+                ${e.toFixed(2)} s → ${Math.round(e * c.vitesse / 2)} m
+                <button class="del-essai" data-k="${k}">
+                  ${t("delete")}
+                </button>
+              </div>
+            `).join("")
+          : `<div class="det-line"><i>${t("no_essai")}</i></div>`
+      }
+
       <br>
       <button id="closeDET">${t("close")}</button>
     </div>
@@ -768,6 +783,15 @@ function openDET(i) {
     btn.onclick = () => {
       chronos[detIndex].directions.splice(btn.dataset.k, 1);
       updateDirection(detIndex);
+      openDET(detIndex);
+    };
+  });
+
+  // suppression d’un essai chronométré
+  overlay.querySelectorAll(".del-essai").forEach(btn => {
+    btn.onclick = () => {
+      chronos[detIndex].essais.splice(btn.dataset.k, 1);
+      updateStats(detIndex);
       openDET(detIndex);
     };
   });

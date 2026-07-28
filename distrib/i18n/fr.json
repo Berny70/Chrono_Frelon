@@ -31,6 +31,8 @@
   "try": "Essai",
   "delete": "Supprimer",
   "directions": "Directions",
+  "essais_title": "Essais chronométrés",
+  "no_essai": "Aucun essai enregistré",
   "map_local": "Carte locale",
   "map_send": "Envoyer vers la carte partagée",
   "map_shared": "Carte partagée",
