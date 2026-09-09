@@ -592,6 +592,45 @@ function debounce(fn, delay) {
 // ==========================
 // GESTION BOUTONS BOUSSOLE
 // ==========================
+// ==========================
+// BOUSSOLE : ÉCOUTEURS + RÉABONNEMENT AUTOMATIQUE
+// ==========================
+// Sur Android notamment, le verrouillage de l'écran ou le passage en
+// arrière-plan (fréquent en marchant vers un point d'observation) peut
+// couper silencieusement les écouteurs deviceorientation, sans que rien
+// ne le signale ni ne s'y réabonne au retour - la boussole "disparaît"
+// alors sans raison apparente, y compris après désinstallation/
+// réinstallation (le problème n'est pas dans l'installation).
+function _attachOrientationListeners() {
+  const isIOS = typeof DeviceOrientationEvent !== "undefined" &&
+                typeof DeviceOrientationEvent.requestPermission === "function";
+  if (isIOS) {
+    // iOS : uniquement deviceorientation + webkitCompassHeading (vraie boussole calibrée).
+    // deviceorientationabsolute sur iOS donne un alpha non calibré et fausse la mesure.
+    window.addEventListener("deviceorientation", onOrientation, true);
+  } else {
+    window.addEventListener("deviceorientationabsolute", onOrientation, true);
+    window.addEventListener("deviceorientation", onOrientation, true);
+  }
+}
+
+function _detachOrientationListeners() {
+  window.removeEventListener("deviceorientation", onOrientation, true);
+  window.removeEventListener("deviceorientationabsolute", onOrientation, true);
+}
+
+let _visibilityRebindAdded = false;
+function _ensureVisibilityRebind() {
+  if (_visibilityRebindAdded) return;
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible" && compassActive) {
+      _detachOrientationListeners();
+      _attachOrientationListeners();
+    }
+  });
+  _visibilityRebindAdded = true;
+}
+
 document.addEventListener("click", async e => {
   const btn = e.target.closest("button");
   if (!btn || !btn.dataset.action) return;
@@ -610,22 +649,13 @@ document.addEventListener("click", async e => {
     lastHeading = null;
     currentHeading = null;
 
-    const isIOS = typeof DeviceOrientationEvent !== "undefined" &&
-                  typeof DeviceOrientationEvent.requestPermission === "function";
-
     if (!compassListenersAdded) {
-      if (isIOS) {
-        // iOS : uniquement deviceorientation + webkitCompassHeading (vraie boussole calibrée).
-        // deviceorientationabsolute sur iOS donne un alpha non calibré et fausse la mesure.
-        window.addEventListener("deviceorientation", onOrientation, true);
-      } else {
-        window.addEventListener("deviceorientationabsolute", onOrientation, true);
-        window.addEventListener("deviceorientation", onOrientation, true);
-      }
+      _attachOrientationListeners();
       compassListenersAdded = true;
     }
 
     compassActive = true;
+    _ensureVisibilityRebind();
   }
 
   if (action === "save") {
