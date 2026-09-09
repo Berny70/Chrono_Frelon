@@ -602,16 +602,16 @@ function debounce(fn, delay) {
 // alors sans raison apparente, y compris après désinstallation/
 // réinstallation (le problème n'est pas dans l'installation).
 function _attachOrientationListeners() {
-  const isIOS = typeof DeviceOrientationEvent !== "undefined" &&
-                typeof DeviceOrientationEvent.requestPermission === "function";
-  if (isIOS) {
-    // iOS : uniquement deviceorientation + webkitCompassHeading (vraie boussole calibrée).
-    // deviceorientationabsolute sur iOS donne un alpha non calibré et fausse la mesure.
-    window.addEventListener("deviceorientation", onOrientation, true);
-  } else {
-    window.addEventListener("deviceorientationabsolute", onOrientation, true);
-    window.addEventListener("deviceorientation", onOrientation, true);
-  }
+  // Attache toujours les deux écouteurs, sans se fier à la détection
+  // iOS (typeof requestPermission === "function"), qui n'est pas fiable
+  // à 100% - certaines versions de Chrome Android la supportent aussi
+  // partiellement, ce qui pouvait faire sauter à tort l'écouteur
+  // deviceorientationabsolute dont certains appareils Android ont
+  // besoin. Sans risque sur iOS : onOrientation() donne de toute façon
+  // la priorité à webkitCompassHeading (la boussole calibrée) dès
+  // qu'il est présent, peu importe quel évènement l'a déclenché.
+  window.addEventListener("deviceorientationabsolute", onOrientation, true);
+  window.addEventListener("deviceorientation", onOrientation, true);
 }
 
 function _detachOrientationListeners() {
